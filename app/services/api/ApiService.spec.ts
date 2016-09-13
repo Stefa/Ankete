@@ -4,7 +4,7 @@ import { ApiService } from "./ApiService";
 import {BaseRequestOptions, Http, ConnectionBackend, ResponseOptions, Response} from "@angular/http";
 
 describe('ApiService', () => {
-    const apiUrl = 'localhost:3210';
+    const apiUrl = 'http://localhost:3210';
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -23,7 +23,7 @@ describe('ApiService', () => {
         });
     });
     it('gets data from api', inject([ApiService, MockBackend], fakeAsync((service: ApiService, backand: MockBackend) => {
-        let getResponse: any;
+        let getResponse: any = {};
         let getUrl = apiUrl+'/users/1';
         backand.connections.subscribe((connection: MockConnection) => {
             expect(connection.request.url).toBe(getUrl);
@@ -37,7 +37,4 @@ describe('ApiService', () => {
         expect(getResponse.name).toBe('Zaphod');
     })));
 
-    it('does', () => {
-        expect(true).toEqual(true);
-    });
 });
