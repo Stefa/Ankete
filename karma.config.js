@@ -6,10 +6,8 @@ module.exports = function(config) {
         frameworks: ['jasmine'],
 
         files: [
-            // Polyfills.
-
+            // Polyfills
             'node_modules/core-js/client/shim.min.js',
-
             'node_modules/reflect-metadata/Reflect.js',
 
             // System.js for module loading
@@ -18,6 +16,7 @@ module.exports = function(config) {
 
             // Zone.js dependencies
             'node_modules/zone.js/dist/zone.js',
+            'node_modules/zone.js/dist/long-stack-trace-zone.js',
             'node_modules/zone.js/dist/proxy.js',
             'node_modules/zone.js/dist/sync-test.js',
             'node_modules/zone.js/dist/jasmine-patch.js',
@@ -28,7 +27,7 @@ module.exports = function(config) {
             { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },
             { pattern: 'node_modules/rxjs/**/*.js.map', included: false, watched: false },
 
-            // 'index.html',
+            {pattern: 'systemjs.config.js', included: false, watched: false},
             {pattern: 'karma-test-shim.js', included: true, watched: true},
 
             // paths loaded via module imports
@@ -55,7 +54,16 @@ module.exports = function(config) {
             "/app/": "/base/app/"
         },
 
-        reporters: ['nyan'],
+        reporters: ['nyan', 'html'],
+        // HtmlReporter configuration
+        htmlReporter: {
+            // Open this file to see results in browser
+            outputFile: '_test-output/tests.html',
+
+            // Optional
+            pageTitle: 'Unit Tests',
+            subPageTitle: __dirname
+        },
         port: 9876,
         colors: true,
         logLevel: config.LOG_INFO,

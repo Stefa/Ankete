@@ -25,60 +25,45 @@ var allSpecFiles = Object.keys(window.__karma__.files)
 
 // Load our SystemJS configuration.
 System.config({
-    baseURL: '/base'
+    baseURL: '/base',
+    map: {
+        '@angular/core/testing': 'npm:@angular/core/bundles/core-testing.umd.js',
+        '@angular/common/testing': 'npm:@angular/common/bundles/common-testing.umd.js',
+        '@angular/compiler/testing': 'npm:@angular/compiler/bundles/compiler-testing.umd.js',
+        '@angular/platform-browser/testing': 'npm:@angular/platform-browser/bundles/platform-browser-testing.umd.js',
+        '@angular/platform-browser-dynamic/testing': 'npm:@angular/platform-browser-dynamic/bundles/platform-browser-dynamic-testing.umd.js',
+        '@angular/http/testing': 'npm:@angular/http/bundles/http-testing.umd.js',
+        '@angular/router/testing': 'npm:@angular/router/bundles/router-testing.umd.js',
+        '@angular/forms/testing': 'npm:@angular/forms/bundles/forms-testing.umd.js',
+    }
 });
 
-System.config(
-    {
-        paths: {
-            // paths serve as alias
-            'npm:': 'node_modules/'
-        },
-        map: {
-            'app': 'app',
-            '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
-            '@angular/common': 'npm:@angular/common/bundles/common.umd.js',
-            '@angular/compiler': 'npm:@angular/compiler/bundles/compiler.umd.js',
-            '@angular/http': 'npm:@angular/http/bundles/http.umd.js',
-            '@angular/platform-browser': 'npm:@angular/platform-browser/bundles/platform-browser.umd.js',
-            '@angular/platform-browser-dynamic': 'npm:@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js',
+System.import('systemjs.config.js')
+    .then(initTestBed)
+    .then(initTesting);
 
-            // angular testing umd bundles
-            '@angular/core/testing': 'npm:@angular/core/bundles/core-testing.umd.js',
-            '@angular/common/testing': 'npm:@angular/common/bundles/common-testing.umd.js',
-            '@angular/compiler/testing': 'npm:@angular/compiler/bundles/compiler-testing.umd.js',
-            '@angular/http/testing': 'npm:@angular/http/bundles/http-testing.umd.js',
-            '@angular/platform-browser/testing': 'npm:@angular/platform-browser/bundles/platform-browser-testing.umd.js',
-            '@angular/platform-browser-dynamic/testing': 'npm:@angular/platform-browser-dynamic/bundles/platform-browser-dynamic-testing.umd.js',
+function initTestBed(){
+    return Promise.all([
+        System.import('@angular/core/testing'),
+        System.import('@angular/platform-browser-dynamic/testing')
+    ])
 
-            // other libraries
-            'rxjs': 'npm:rxjs'
-        },
-        packages: {
-            'app': {
-                defaultExtension: 'js'
-            },
-            'rxjs': {
-                defaultExtension: 'js'
-            }
-        }
-    });
+        .then(function (providers) {
+            var coreTesting    = providers[0];
+            var browserTesting = providers[1];
 
-Promise.all([
-    System.import('@angular/core/testing'),
-    System.import('@angular/platform-browser-dynamic/testing')
-]).then(function (providers) {
-    var testing = providers[0];
-    var testingBrowser = providers[1];
+            coreTesting.TestBed.initTestEnvironment(
+                browserTesting.BrowserDynamicTestingModule,
+                browserTesting.platformBrowserDynamicTesting());
+        })
+}
 
-    testing.TestBed.initTestEnvironment(testingBrowser.BrowserDynamicTestingModule,
-        testingBrowser.platformBrowserDynamicTesting());
-
-}).then(function() {
-    // Finally, load all spec files.
-    // This will run the tests directly.
+// Import all spec files and start karma
+function initTesting () {
     return Promise.all(
         allSpecFiles.map(function (moduleName) {
             return System.import(moduleName);
-        }));
-}).then(__karma__.start, __karma__.error);
+        })
+    )
+        .then(__karma__.start, __karma__.error);
+}
