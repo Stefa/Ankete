@@ -2,8 +2,7 @@ import {Injectable} from "@angular/core";
 import {ApiService} from "../api/ApiService";
 import {User} from "../../data/User";
 
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import {Observable} from 'rxjs/Rx';
 
 @Injectable()
 export class UserService {
@@ -17,14 +16,31 @@ export class UserService {
                 return this.createUserObject(res);
             }
 
-            return null;
+            throw new Error('User structure is not valid!');
+        }).catch((error: any) => {
+            let errorMessage: string = error.message;
+            if(error.hasOwnProperty('status') && error.status === 404) {
+                errorMessage = 'Requested user does not exist!'
+            }
+            if(errorMessage.startsWith('Error: ')) {
+                errorMessage = errorMessage.substring(8);
+            }
+            return Observable.throw(errorMessage);
         });
     }
 
     private checkIfUserObject(user: any) {
-        let requiredProperties = ['id', 'type', 'name', 'surname', 'username', 'password', 'birthday', 'phone', 'email'];
+        let requiredProperties = ['id', 'type', 'name', 'surname', 'email'];
         for (let property of requiredProperties) {
             if(!user.hasOwnProperty(property)) {
+                return false;
+            }
+        }
+
+        let allProperties = ['id', 'type', 'name', 'surname', 'username', 'password', 'birthday', 'phone', 'email'];
+        for (let property in user) {
+            if(!user.hasOwnProperty(property)) continue;
+            if(allProperties.indexOf(property) === -1) {
                 return false;
             }
         }

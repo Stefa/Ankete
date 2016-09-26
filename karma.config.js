@@ -11,7 +11,6 @@ module.exports = function(config) {
             'node_modules/reflect-metadata/Reflect.js',
 
             // System.js for module loading
-            'node_modules/systemjs/dist/system-polyfills.js',
             'node_modules/systemjs/dist/system.src.js',
 
             // Zone.js dependencies

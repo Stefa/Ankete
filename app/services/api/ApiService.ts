@@ -1,6 +1,5 @@
 import {Http, Response} from "@angular/http";
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs/Rx';
 import {Injectable} from "@angular/core";
 
 @Injectable()
@@ -10,11 +9,14 @@ export class ApiService{
     constructor(public http: Http) {
     }
 
-    get(path: string) {
+    get(path: string): Observable<Response> {
         let requestPath = ApiService.BASE_URL + path;
         let res: Observable<Response> = this.http.request(requestPath);
-        return res.map((res: any) => res.json());
-
-        // return this.http.request(ApiService.BASE_URL+path).map((res: any) => res.json());
+        return res.map((res: any) => res.json()).catch((error: any) => {
+            let apiError: any = {};
+            apiError.message = error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+            apiError.status = error.status;
+            return Observable.throw(apiError);
+        });
     }
 }

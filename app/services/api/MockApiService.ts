@@ -1,21 +1,18 @@
+import {Observable} from 'rxjs/Rx';
+
 export class MockApiService {
     get;
-    private fakeResponse;
+    private fakeObservable;
 
-    constructor() {
-        this.get = jasmine.createSpy('get').and.returnValue(this);
-    }
-
-    subscribe(callback) {
-        callback(this.fakeResponse);
-    }
-
-    map(callback) {
-        this.fakeResponse = callback(this.fakeResponse);
-        return this;
+    init() {
+        this.get = jasmine.createSpy('get').and.returnValue(this.fakeObservable);
     }
 
     setResponse(json: any): void {
-        this.fakeResponse = json;
+        this.fakeObservable = Observable.of(json);
+    }
+
+    setError(error: any): void {
+        this.fakeObservable = Observable.throw(error);
     }
 }

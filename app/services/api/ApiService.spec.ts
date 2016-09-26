@@ -22,6 +22,17 @@ describe('ApiService', () => {
             ]
         });
     });
+
+    function mockConnectionError(backend: MockBackend, expectedUrl: string, status: number, message: string) {
+        backend.connections.subscribe((connection: MockConnection) => {
+            expect(connection.request.url).toBe(expectedUrl);
+            let error: any = new Error();
+            error.status = status;
+            error.statusText = message;
+            connection.mockError(error);
+        });
+    }
+
     it('gets data from api', inject([ApiService, MockBackend], fakeAsync((service: ApiService, backand: MockBackend) => {
         let getResponse: any = {};
         let getUrl = apiUrl+'/users/1';
@@ -36,5 +47,43 @@ describe('ApiService', () => {
         tick();
         expect(getResponse.name).toBe('Zaphod');
     })));
+
+    it('Handles http errors by throwing status code and presentable message', inject(
+        [ApiService, MockBackend],
+        fakeAsync((service: ApiService, backend: MockBackend) => {
+            let getUrl = apiUrl+'/users/0';
+            let getResponse: any;
+            let getError: any;
+            mockConnectionError(backend, getUrl, 404, 'Not Found');
+            service.get('users/0').subscribe(
+                (response) => getResponse = response,
+                (error) => getError = error
+            );
+            tick();
+
+            expect(getResponse).not.toBeDefined();
+            expect(getError.status).toBe(404);
+            expect(getError.message).toBe('404 - Not Found')
+        })
+    ));
+
+    it('Handles errors when server is not responding by throwing presentable message', inject(
+        [ApiService, MockBackend],
+        fakeAsync((service: ApiService, backend: MockBackend) => {
+            let getUrl = apiUrl+'/users/0';
+            let getResponse: any;
+            let getError: any;
+            mockConnectionError(backend, getUrl, 0, '');
+            service.get('users/0').subscribe(
+                (response) => getResponse = response,
+                (error) => getError = error
+            );
+            tick();
+
+            expect(getResponse).not.toBeDefined();
+            expect(getError.status).toBe(0);
+            expect(getError.message).toBe('Server error')
+        })
+    ));
 
 });
