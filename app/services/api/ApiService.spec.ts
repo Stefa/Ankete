@@ -33,22 +33,45 @@ describe('ApiService', () => {
         });
     }
 
-    it('gets data from api', inject([ApiService, MockBackend], fakeAsync((service: ApiService, backand: MockBackend) => {
-        let getResponse: any = {};
-        let getUrl = apiUrl+'/users/1';
-        backand.connections.subscribe((connection: MockConnection) => {
-            expect(connection.request.url).toBe(getUrl);
-            let response: ResponseOptions = new ResponseOptions({body: '{"name":"Zaphod","type":"author"}'});
-            connection.mockRespond(new Response(response));
-        });
-        service.get('users/1').subscribe((response) => {
-            getResponse = response;
-        });
-        tick();
-        expect(getResponse.name).toBe('Zaphod');
-    })));
+    it('gets object from the api',
+        inject([ApiService, MockBackend], fakeAsync((service: ApiService, backand: MockBackend) => {
+            let getResponse: any = {};
+            let getUrl = apiUrl+'/users/1';
+            backand.connections.subscribe((connection: MockConnection) => {
+                expect(connection.request.url).toBe(getUrl);
+                let response: ResponseOptions = new ResponseOptions({body: '{"name":"Zaphod","type":"author"}'});
+                connection.mockRespond(new Response(response));
+            });
+            service.get('users/1').subscribe((response) => {
+                getResponse = response;
+            });
+            tick();
+            expect(getResponse.name).toBe('Zaphod');
+        }))
+    );
 
-    it('Handles http errors by throwing status code and presentable message', inject(
+    it('gets array of objects from the api', inject(
+        [ApiService, MockBackend],
+        fakeAsync((service: ApiService, backand: MockBackend) => {
+            let getResponse: any = {};
+            let getUrl = apiUrl+'/users';
+            backand.connections.subscribe((connection: MockConnection) => {
+                expect(connection.request.url).toBe(getUrl);
+                let response: ResponseOptions = new ResponseOptions({
+                    body: '[{"name":"Zaphod","type":"author"},{"name":"Marvin","type":"admin"}]'
+                });
+                connection.mockRespond(new Response(response));
+            });
+            service.get('users').subscribe((response) => {
+                getResponse = response;
+            });
+            tick();
+            expect(getResponse[0].name).toBe('Zaphod');
+            expect(getResponse[1].type).toBe('admin');
+        })
+    ));
+
+    it('handles http errors by throwing status code and presentable message', inject(
         [ApiService, MockBackend],
         fakeAsync((service: ApiService, backend: MockBackend) => {
             let getUrl = apiUrl+'/users/0';
@@ -67,7 +90,7 @@ describe('ApiService', () => {
         })
     ));
 
-    it('Handles errors when server is not responding by throwing presentable message', inject(
+    it('handles errors when server is not responding by throwing presentable message', inject(
         [ApiService, MockBackend],
         fakeAsync((service: ApiService, backend: MockBackend) => {
             let getUrl = apiUrl+'/users/0';

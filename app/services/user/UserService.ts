@@ -6,14 +6,17 @@ import {Observable} from 'rxjs/Rx';
 
 @Injectable()
 export class UserService {
+    static ALL_PROPERTIES = ['id', 'type', 'name', 'surname', 'username', 'password', 'birthday', 'phone', 'email'];
+    static REQUIRED_PROPERTIES = ['id', 'type', 'name', 'surname', 'email'];
+
     constructor(public api: ApiService) {
 
     }
 
     getUser(id: number): Observable<User> {
         return this.api.get('users/'+id).map((res:any) => {
-            if(this.checkIfUserObject(res)) {
-                return this.createUserObject(res);
+            if(UserService.checkIfUserObject(res)) {
+                return UserService.createUserObject(res);
             }
 
             throw new Error('User structure is not valid!');
@@ -29,27 +32,58 @@ export class UserService {
         });
     }
 
-    private checkIfUserObject(user: any) {
-        let requiredProperties = ['id', 'type', 'name', 'surname', 'email'];
-        for (let property of requiredProperties) {
+    static checkIfUserObject(user: any) {
+        for (let property of UserService.REQUIRED_PROPERTIES) {
             if(!user.hasOwnProperty(property)) {
                 return false;
             }
         }
 
-        let allProperties = ['id', 'type', 'name', 'surname', 'username', 'password', 'birthday', 'phone', 'email'];
         for (let property in user) {
             if(!user.hasOwnProperty(property)) continue;
-            if(allProperties.indexOf(property) === -1) {
+            if(UserService.ALL_PROPERTIES.indexOf(property) === -1) {
                 return false;
             }
         }
         return true;
     }
 
-    private createUserObject(user: any):User {
+    static createUserObject(user: any):User {
         let birthday: string = user.birthday;
         user.birthday = new Date(birthday);
         return user;
+    }
+
+    getUsers(query: Map<string, string>): Observable<User[]> {
+        let queryString: string = '';
+        let badPropertyException = {
+            property: ''
+        };
+        try {
+            query.forEach(
+                (value: string, property: string) => {
+                    if (UserService.ALL_PROPERTIES.indexOf(property) === -1) {
+                        badPropertyException.property = property;
+                        throw badPropertyException;
+                    }
+                    queryString += property + '=' + value;
+                }
+            );
+        } catch (error) {
+            if(error == badPropertyException) {
+                let errorMessage = 'Tried to query users by wrong field: '+badPropertyException.property+'!';
+                return Observable.throw(errorMessage);
+            }
+        }
+
+        return this.api.get('users?' + queryString).map((res:any) => {
+            let users: User[] = [];
+            for(let user of res) {
+                if(UserService.checkIfUserObject(user)) {
+                    users.push(UserService.createUserObject(user));
+                }
+            }
+            return users;
+        });
     }
 }

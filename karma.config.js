@@ -61,7 +61,9 @@ module.exports = function(config) {
 
             // Optional
             pageTitle: 'Unit Tests',
-            subPageTitle: __dirname
+            subPageTitle: __dirname,
+            groupSuites: true,
+            useCompactStyle: true
         },
         port: 9876,
         colors: true,
