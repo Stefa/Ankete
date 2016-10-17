@@ -161,7 +161,7 @@ describe('UserService', () => {
     });
 
     describe('getUsers', () => {
-        it('gets the users by specified properties', inject(
+        it('gets the users by specified property', inject(
             [ApiService, UserService],
             fakeAsync(
                 (apiService: MockApiService, userService: UserService) => {
@@ -224,6 +224,75 @@ describe('UserService', () => {
                     tick();
 
                     expect(apiService.get).toHaveBeenCalledWith('users?name=Leonardo');
+                    expect(user1).toEqual(expectedUser1);
+                    expect(user2).toEqual(expectedUser2);
+                }
+            )
+        ));
+
+        it('gets the users by specified properties', inject(
+            [ApiService, UserService],
+            fakeAsync(
+                (apiService: MockApiService, userService: UserService) => {
+                    let birthdayString1 = "1452-04-15T16:00:00.000Z";
+                    let birthdayString2 = "1173-03-25T21:00:00.000Z";
+                    let birthday1 = new Date(birthdayString1);
+                    let birthday2 = new Date(birthdayString2);
+                    let userResponse1: any = {
+                        name: "Leonardo",
+                        surname: "da Vinci",
+                        type: "administrator",
+                        username: "Leo",
+                        password: "turtlePower",
+                        birthday: birthdayString1,
+                        phone: "161803398",
+                        email: "gmail@leo.com",
+                        id: 1
+                    };
+                    let userResponse2: any = {
+                        name: "Leonardo",
+                        surname: "Bonacci",
+                        type: "administrator",
+                        username: "Fibonacci",
+                        password: "a84cu5",
+                        birthday: birthdayString2,
+                        phone: "113591525",
+                        email: "yahoo@fibonacci.com",
+                        id: 2
+                    };
+
+                    let expectedUser1: User = {
+                        name: "Leonardo",
+                        surname: "da Vinci",
+                        type: "administrator",
+                        username: "Leo",
+                        password: "turtlePower",
+                        birthday: birthday1,
+                        phone: "161803398",
+                        email: "gmail@leo.com",
+                        id: 1
+                    };
+
+                    let expectedUser2: User = {
+                        name: "Leonardo",
+                        surname: "Bonacci",
+                        type: "administrator",
+                        username: "Fibonacci",
+                        password: "a84cu5",
+                        birthday: birthday2,
+                        phone: "113591525",
+                        email: "yahoo@fibonacci.com",
+                        id: 2
+                    };
+
+                    let user1: User, user2: User;
+                    let query: Map<string, string> = new Map(<[string,string][]>[['name', 'Leonardo'], ['type', 'administrator']]);
+                    apiService.setResponse([userResponse1, userResponse2]);
+                    apiService.init();
+                    userService.getUsers(query).subscribe((res: User[]) => [user1, user2] = res);
+                    tick();
+
+                    expect(apiService.get).toHaveBeenCalledWith('users?name=Leonardo&type=administrator');
                     expect(user1).toEqual(expectedUser1);
                     expect(user2).toEqual(expectedUser2);
                 }

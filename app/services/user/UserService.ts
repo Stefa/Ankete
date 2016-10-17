@@ -60,15 +60,17 @@ export class UserService {
             property: ''
         };
         try {
+            let queryArray = [];
             query.forEach(
                 (value: string, property: string) => {
                     if (UserService.ALL_PROPERTIES.indexOf(property) === -1) {
                         badPropertyException.property = property;
                         throw badPropertyException;
                     }
-                    queryString += property + '=' + value;
+                    queryArray.push(property + '=' + value);
                 }
             );
+            queryString = queryArray.join('&');
         } catch (error) {
             if(error == badPropertyException) {
                 let errorMessage = 'Tried to query users by wrong field: '+badPropertyException.property+'!';

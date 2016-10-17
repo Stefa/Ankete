@@ -22,6 +22,10 @@ module.exports = function(config) {
             'node_modules/zone.js/dist/async-test.js',
             'node_modules/zone.js/dist/fake-async-test.js',
 
+            'node_modules/jquery/dist/jquery.min.js',
+            'node_modules/semantic-ui-css/semantic.min.css',
+            'node_modules/semantic-ui-css/semantic.min.js',
+
             // RxJs.
             { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },
             { pattern: 'node_modules/rxjs/**/*.js.map', included: false, watched: false },
@@ -41,6 +45,7 @@ module.exports = function(config) {
             // (these paths need to be rewritten, see proxies section)
             {pattern: 'app/**/*.html', included: false, watched: true},
             {pattern: 'app/**/*.css', included: false, watched: true},
+            {pattern: 'app/**/*.png', included: false, watched: true},
 
             // paths to support debugging with source maps in dev tools
             {pattern: 'app/**/*.ts', included: false, watched: false},
