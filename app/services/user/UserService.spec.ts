@@ -4,7 +4,7 @@ import 'rxjs/add/operator/map';
 import {ApiService} from "../api/ApiService";
 import {MockApiService} from "../api/MockApiService";
 import { UserService } from './UserService';
-import {User} from "../../data/User";
+import {User, userTypes} from "../../data/User";
 
 describe('UserService', () => {
     beforeEach(() => {
@@ -28,7 +28,7 @@ describe('UserService', () => {
                 let userResponse: any = {
                     name: "Leonardo",
                     surname: "da Vinci",
-                    type: "administrator",
+                    type: userTypes.administrator,
                     username: "Leo",
                     password: "turtlePower",
                     birthday: birthdayString,
@@ -40,7 +40,7 @@ describe('UserService', () => {
                 let expectedUser: User = {
                     name: "Leonardo",
                     surname: "da Vinci",
-                    type: "administrator",
+                    type: userTypes.administrator,
                     username: "Leo",
                     password: "turtlePower",
                     birthday: birthday,
@@ -68,7 +68,7 @@ describe('UserService', () => {
                     // surname is missing
                     let userResponse: any = {
                         name: "Leonardo",
-                        type: "administrator",
+                        type: userTypes.administrator,
                         username: "Leo",
                         password: "turtlePower",
                         birthday: birthdayString,
@@ -104,7 +104,7 @@ describe('UserService', () => {
                     let userResponse: any = {
                         name: "Leonardo",
                         surname: "da Vinci",
-                        type: "administrator",
+                        type: userTypes.administrator,
                         username: "Leo",
                         password: "turtlePower",
                         birthday: birthdayString,
@@ -172,7 +172,7 @@ describe('UserService', () => {
                     let userResponse1: any = {
                         name: "Leonardo",
                         surname: "da Vinci",
-                        type: "administrator",
+                        type: userTypes.administrator,
                         username: "Leo",
                         password: "turtlePower",
                         birthday: birthdayString1,
@@ -183,7 +183,7 @@ describe('UserService', () => {
                     let userResponse2: any = {
                         name: "Leonardo",
                         surname: "Bonacci",
-                        type: "administrator",
+                        type: userTypes.administrator,
                         username: "Fibonacci",
                         password: "a84cu5",
                         birthday: birthdayString2,
@@ -195,7 +195,7 @@ describe('UserService', () => {
                     let expectedUser1: User = {
                         name: "Leonardo",
                         surname: "da Vinci",
-                        type: "administrator",
+                        type: userTypes.administrator,
                         username: "Leo",
                         password: "turtlePower",
                         birthday: birthday1,
@@ -207,7 +207,7 @@ describe('UserService', () => {
                     let expectedUser2: User = {
                         name: "Leonardo",
                         surname: "Bonacci",
-                        type: "administrator",
+                        type: userTypes.administrator,
                         username: "Fibonacci",
                         password: "a84cu5",
                         birthday: birthday2,
@@ -241,7 +241,7 @@ describe('UserService', () => {
                     let userResponse1: any = {
                         name: "Leonardo",
                         surname: "da Vinci",
-                        type: "administrator",
+                        type: userTypes.administrator,
                         username: "Leo",
                         password: "turtlePower",
                         birthday: birthdayString1,
@@ -252,7 +252,7 @@ describe('UserService', () => {
                     let userResponse2: any = {
                         name: "Leonardo",
                         surname: "Bonacci",
-                        type: "administrator",
+                        type: userTypes.administrator,
                         username: "Fibonacci",
                         password: "a84cu5",
                         birthday: birthdayString2,
@@ -264,7 +264,7 @@ describe('UserService', () => {
                     let expectedUser1: User = {
                         name: "Leonardo",
                         surname: "da Vinci",
-                        type: "administrator",
+                        type: userTypes.administrator,
                         username: "Leo",
                         password: "turtlePower",
                         birthday: birthday1,
@@ -276,7 +276,7 @@ describe('UserService', () => {
                     let expectedUser2: User = {
                         name: "Leonardo",
                         surname: "Bonacci",
-                        type: "administrator",
+                        type: userTypes.administrator,
                         username: "Fibonacci",
                         password: "a84cu5",
                         birthday: birthday2,
@@ -310,7 +310,7 @@ describe('UserService', () => {
                     let userResponse: any = {
                         name: "Leonardo",
                         surname: "da Vinci",
-                        type: "administrator",
+                        type: userTypes.administrator,
                         username: "Leo",
                         password: "turtlePower",
                         birthday: birthdayString,

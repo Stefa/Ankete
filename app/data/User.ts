@@ -9,3 +9,18 @@ export interface User {
     phone: string,
     email: string
 }
+
+export const userTypes = {
+    participant: 'participant',
+    clerk: 'clerk',
+    author: 'author',
+    administrator: 'administrator'
+};
+
+export enum UserPermissions {
+    anonymous = 0,
+    participant,
+    clerk,
+    author,
+    administrator
+}

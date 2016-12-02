@@ -9,14 +9,12 @@ import {ApiService} from "../../services/api/ApiService";
 import {HttpModule} from "@angular/http";
 import {DebugElement} from "@angular/core";
 import {Router} from "@angular/router";
+import {MockRouter} from "../../test/mock.router";
 
 
 describe('LoginFrom', () => {
-    class MockRouter {
-        navigationDone: Promise<boolean> = new Promise(((resolve, reject) => {resolve(true);}));
-        navigate = jasmine.createSpy('navigate').and.returnValue(this.navigationDone);
-    }
     const mockRouter = new MockRouter();
+
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [FormsModule, ReactiveFormsModule, HttpModule],
@@ -174,16 +172,19 @@ describe('LoginFrom', () => {
     });
 
     describe('LoginForm: before display', () => {
-        it('checks if the user is logged in before displaying itself', () => {
-            spyOn(AuthService, 'isLoggedIn').and.returnValue(true);
-            let fixture = TestBed.createComponent(LoginForm);
-            fixture.detectChanges();
-            expect(AuthService.isLoggedIn).toHaveBeenCalled();
-        });
+        it('checks if the user is logged in before displaying itself', inject(
+            [AuthService],
+            (authService: AuthService) => {
+                spyOn(authService, 'isLoggedIn').and.returnValue(true);
+                let fixture = TestBed.createComponent(LoginForm);
+                fixture.detectChanges();
+                expect(authService.isLoggedIn).toHaveBeenCalled();
+            }
+        ));
         it('redirects the user to the home page if user is already logged in',
-            inject([Router], fakeAsync(
-                (router: MockRouter) => {
-                    spyOn(AuthService, 'isLoggedIn').and.returnValue(true);
+            inject([Router, AuthService], fakeAsync(
+                (router: MockRouter, authService: AuthService) => {
+                    spyOn(authService, 'isLoggedIn').and.returnValue(true);
                     expect(router.navigate).toHaveBeenCalledWith(['']);
                 }
             ))

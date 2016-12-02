@@ -5,21 +5,11 @@ import {ApiService} from "../api/ApiService";
 import {HttpModule} from "@angular/http";
 import {User} from "../../data/User";
 import {Observable} from 'rxjs/Rx';
+import { leonardoUserObject } from '../../test/users';
 
 describe('AuthService', () => {
     let username = 'Leo';
     let password = 'turtlePower';
-    let user: User = {
-        name: "Leonardo",
-        surname: "da Vinci",
-        type: "administrator",
-        username: username,
-        password: password,
-        birthday: new Date("1452-04-15T16:00:00.000Z"),
-        phone: "161803398",
-        email: "gmail@leo.com",
-        id: 1
-    };
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -32,13 +22,15 @@ describe('AuthService', () => {
         })
     });
 
+    afterEach(() => localStorage.clear());
+
     describe('login', () => {
         it('logs the user in when the credentials are correct', inject([UserService, AuthService], fakeAsync(
             (userService: UserService, authService: AuthService) => {
                 let query = new Map(<[string,string][]>[['username', username], ['password', password]]);
                 let loginSuccessful: boolean;
 
-                spyOn(userService, 'getUsers').and.returnValue(Observable.of([user]));
+                spyOn(userService, 'getUsers').and.returnValue(Observable.of([leonardoUserObject]));
                 spyOn(localStorage, 'setItem');
                 authService.login(username, password).subscribe(
                     (res: boolean) => loginSuccessful = res
@@ -46,7 +38,7 @@ describe('AuthService', () => {
                 tick();
 
                 expect(userService.getUsers).toHaveBeenCalledWith(query);
-                expect(localStorage.setItem).toHaveBeenCalledWith("user", JSON.stringify(user));
+                expect(localStorage.setItem).toHaveBeenCalledWith("user", JSON.stringify(leonardoUserObject));
                 expect(loginSuccessful).toBe(true);
             }
         )));
@@ -75,8 +67,8 @@ describe('AuthService', () => {
     describe('isLoggedIn', () => {
         it('returns true if user is logged in', inject([AuthService], (authService: AuthService) => {
             let loggedIn: boolean;
-            spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(user));
-            loggedIn = AuthService.isLoggedIn();
+            spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(leonardoUserObject));
+            loggedIn = authService.isLoggedIn();
 
             expect(localStorage.getItem).toHaveBeenCalledWith('user');
             expect(loggedIn).toBe(true);
@@ -85,7 +77,7 @@ describe('AuthService', () => {
         it('returns false if user is not logged in', inject([AuthService], (authService: AuthService) => {
             let loggedIn: boolean;
             spyOn(localStorage, 'getItem').and.returnValue(null);
-            loggedIn = AuthService.isLoggedIn();
+            loggedIn = authService.isLoggedIn();
 
             expect(localStorage.getItem).toHaveBeenCalledWith('user');
             expect(loggedIn).toBe(false);
@@ -95,20 +87,72 @@ describe('AuthService', () => {
     describe('getLoggedInUser', () => {
         it('returns the logged in user', inject([AuthService],(authService: AuthService) => {
             let loggedInUser: User;
-            spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(user));
-            loggedInUser = AuthService.getLoggedInUser();
+            spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(leonardoUserObject));
+            loggedInUser = authService.getLoggedInUser();
 
             expect(localStorage.getItem).toHaveBeenCalledWith('user');
-            expect(loggedInUser).toEqual(user);
+            expect(loggedInUser).toEqual(leonardoUserObject);
         }));
 
         it('returns null user is not logged in', inject([AuthService],(authService: AuthService) => {
             let loggedInUser: User;
             spyOn(localStorage, 'getItem').and.returnValue(null);
-            loggedInUser = AuthService.getLoggedInUser();
+            loggedInUser = authService.getLoggedInUser();
 
             expect(localStorage.getItem).toHaveBeenCalledWith('user');
             expect(loggedInUser).toEqual(null);
         }));
+    });
+
+    describe('logout', () => {
+        it('logs the user out', inject([AuthService], (authService: AuthService) => {
+            spyOn(localStorage, 'removeItem');
+            authService.logout();
+
+            expect(localStorage.removeItem).toHaveBeenCalledWith("user");
+        }))
+    });
+
+    describe('getCurrentUser', () => {
+        let currentUser: User;
+        function watchCurrentUser(authService: AuthService) {
+            authService.getCurrentUser().subscribe((user: User) => {
+                currentUser = user;
+            })
+        }
+
+        it('gets the update to the current user when someone logs in', inject(
+            [AuthService, UserService],
+            fakeAsync(
+                (authService: AuthService, userService: UserService) => {
+                    watchCurrentUser(authService);
+                    expect(currentUser).toBe(null);
+                    spyOn(userService, 'getUsers').and.returnValue(Observable.of([leonardoUserObject]));
+
+                    authService.login(username, password).subscribe();
+                    tick();
+                    expect(currentUser).toEqual(leonardoUserObject);
+                }
+            )
+        ));
+
+        it('gets the update to the current user when someone logs out', inject(
+            [AuthService, UserService],
+            fakeAsync(
+                (authService: AuthService, userService: UserService) => {
+                    watchCurrentUser(authService);
+                    spyOn(userService, 'getUsers').and.returnValue(Observable.of([leonardoUserObject]));
+
+                    authService.login(username, password).subscribe();
+                    tick();
+                    expect(currentUser).toEqual(leonardoUserObject);
+
+                    authService.logout();
+                    tick();
+                    expect(currentUser).toEqual(null);
+                }
+            )
+        ));
+
     });
 });

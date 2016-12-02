@@ -1,10 +1,18 @@
 import {Injectable} from "@angular/core";
 import {UserService} from "../user/UserService";
 import {User} from "../../data/User";
+import {Observable} from "rxjs";
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class AuthService {
-    constructor(public userService: UserService) {}
+    public currentUser: Observable<User>;
+    private currentUserSubject: BehaviorSubject<User>;
+
+    constructor(public userService: UserService) {
+        this.currentUserSubject = new BehaviorSubject(this.getLoggedInUser());
+        this.currentUser = this.currentUserSubject.asObservable();
+    }
 
     login(username: string, password: string) {
         let user: User;
@@ -13,22 +21,36 @@ export class AuthService {
             if(res.length > 0){
                 user = res[0];
                 localStorage.setItem('user', JSON.stringify(user));
+                this.updateCurrentUser();
                 return true;
             }
             return false;
         });
     }
 
-    static isLoggedIn() {
-        let user:User = AuthService.getLoggedInUser();
+    isLoggedIn() {
+        let user:User = this.getLoggedInUser();
         return user !== null;
     }
 
-    static getLoggedInUser() {
+    getLoggedInUser() {
         let user:any = JSON.parse(localStorage.getItem('user'));
         if(user !== null && UserService.checkIfUserObject(user)) {
             return UserService.createUserObject(user);
         }
         return user;
+    }
+
+    getCurrentUser() {
+        return this.currentUser;
+    }
+
+    logout() {
+        localStorage.removeItem('user');
+        this.updateCurrentUser();
+    }
+
+    private updateCurrentUser() {
+        this.currentUserSubject.next(this.getLoggedInUser());
     }
 }

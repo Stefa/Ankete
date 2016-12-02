@@ -1,0 +1,13 @@
+<div class="ui fixed inverted menu">
+    <div class="ui container">
+        <a routerLink="/" routerLinkActive="active" class="ui header item">
+            <img src="/assets/images/logo.png" class="logo">
+            Ankete
+        </a>
+        <button
+                *ngIf="currentUserPermission > userPermissions.anonymous"
+                class="ui right floated header item logout"
+                (click)="logout()"
+        > Odjava </button>
+    </div>
+</div>
