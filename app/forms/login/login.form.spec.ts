@@ -1,11 +1,11 @@
 import {TestBed, fakeAsync, tick, inject, async} from "@angular/core/testing";
 import {FormsModule, ReactiveFormsModule, FormGroup} from "@angular/forms";
-import {LoginForm} from "./LoginForm";
+import {LoginForm} from "./login.form";
 import {By} from "@angular/platform-browser";
-import {AuthService} from "../../services/authentication/AuthService";
+import {AuthService} from "../../services/authentication/auth.service";
 import {Observable} from 'rxjs/Rx';
-import {UserService} from "../../services/user/UserService";
-import {ApiService} from "../../services/api/ApiService";
+import {UserService} from "../../services/user/user.service";
+import {ApiService} from "../../services/api/api.service";
 import {HttpModule} from "@angular/http";
 import {DebugElement} from "@angular/core";
 import {Router} from "@angular/router";

@@ -1,4 +1,4 @@
-import {User, userTypes} from '../data/User';
+import {User, userTypes} from '../data/user.data';
 
 function createUserFromResponse(userResponse) {
     let userObject = Object.assign({}, userResponse);
@@ -6,19 +6,33 @@ function createUserFromResponse(userResponse) {
     return userObject;
 }
 
-let birthdayString1 = "1452-04-15T16:00:00.000Z";
 let leonardoUserResponse: any = {
     name: "Leonardo",
     surname: "da Vinci",
     type: userTypes.administrator,
     username: "Leo",
     password: "turtlePower",
-    birthday: birthdayString1,
+    birthday: "1452-04-15T16:00:00.000Z",
     phone: "161803398",
     email: "gmail@leo.com",
     id: 1
 };
 let leonardoUserObject: User = createUserFromResponse(leonardoUserResponse);
 
+let fibonacciUserResponse: any = {
+    name: "Leonardo",
+    surname: "Bonacci",
+    type: userTypes.administrator,
+    username: "Fibonacci",
+    password: "a84cu5",
+    birthday: "1173-03-25T21:00:00.000Z",
+    phone: "113591525",
+    email: "yahoo@fibonacci.com",
+    id: 2
+};
+let fibonacciUserObject: User = createUserFromResponse(fibonacciUserResponse);
+
 export {leonardoUserObject}
 export {leonardoUserResponse}
+export {fibonacciUserObject}
+export {fibonacciUserResponse}

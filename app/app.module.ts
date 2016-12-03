@@ -1,11 +1,11 @@
 import { NgModule }      from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent }   from './containers/app/app.component';
-import { ApiService } from './services/api/ApiService';
+import { ApiService } from './services/api/api.service';
 import {HttpModule} from "@angular/http";
-import {UserService} from "./services/user/UserService";
-import {AuthService} from "./services/authentication/AuthService";
-import {LoginForm} from "./forms/login/LoginForm";
+import {UserService} from "./services/user/user.service";
+import {AuthService} from "./services/authentication/auth.service";
+import {LoginForm} from "./forms/login/login.form";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {AppRoutingModule} from "./app-routing.module";
 import { HomeComponent } from './containers/home/home.component';

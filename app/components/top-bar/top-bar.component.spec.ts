@@ -2,9 +2,9 @@ import {async, TestBed, ComponentFixture, fakeAsync, inject, tick} from "@angula
 import {TopBarComponent} from "./top-bar.component";
 import {By} from "@angular/platform-browser";
 import {MockRouterLinkDirective} from "../../test/mock.router-link";
-import {AuthService} from "../../services/authentication/AuthService";
-import {UserService} from "../../services/user/UserService";
-import {ApiService} from "../../services/api/ApiService";
+import {AuthService} from "../../services/authentication/auth.service";
+import {UserService} from "../../services/user/user.service";
+import {ApiService} from "../../services/api/api.service";
 import {HttpModule} from "@angular/http";
 import {Router} from "@angular/router";
 import {MockRouter} from "../../test/mock.router";

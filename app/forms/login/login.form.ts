@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, AbstractControl, FormControl} from '@angular/forms';
-import {AuthService} from "../../services/authentication/AuthService";
+import {AuthService} from "../../services/authentication/auth.service";
 import {Router} from "@angular/router";
 
 @Component({
     moduleId: module.id,
     selector: 'login-form',
-    templateUrl: 'login-form.html'
+    templateUrl: 'login.form.html'
 })
 export class LoginForm implements OnInit{
     loginFormGroup: FormGroup;

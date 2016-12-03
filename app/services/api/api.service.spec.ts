@@ -1,6 +1,6 @@
 import {inject, fakeAsync, TestBed, tick} from "@angular/core/testing";
 import {MockBackend, MockConnection} from "@angular/http/testing";
-import { ApiService } from "./ApiService";
+import { ApiService } from "./api.service";
 import {BaseRequestOptions, Http, ConnectionBackend, ResponseOptions, Response} from "@angular/http";
 
 describe('ApiService', () => {

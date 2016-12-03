@@ -1,9 +1,9 @@
 import {inject, fakeAsync, TestBed, tick} from "@angular/core/testing";
-import {UserService} from "../user/UserService";
-import {AuthService} from "./AuthService";
-import {ApiService} from "../api/ApiService";
+import {UserService} from "../user/user.service";
+import {AuthService} from "./auth.service";
+import {ApiService} from "../api/api.service";
 import {HttpModule} from "@angular/http";
-import {User} from "../../data/User";
+import {User} from "../../data/user.data";
 import {Observable} from 'rxjs/Rx';
 import { leonardoUserObject } from '../../test/users';
 

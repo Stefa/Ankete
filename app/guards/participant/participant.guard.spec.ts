@@ -1,10 +1,10 @@
 import { ParticipantGuard } from './participant.guard';
 import {TestBed, inject} from "@angular/core/testing";
-import {AuthService} from "../../services/authentication/AuthService";
+import {AuthService} from "../../services/authentication/auth.service";
 import {Router} from "@angular/router";
 import {MockRouter} from "../../test/mock.router";
-import {UserService} from "../../services/user/UserService";
-import {ApiService} from "../../services/api/ApiService";
+import {UserService} from "../../services/user/user.service";
+import {ApiService} from "../../services/api/api.service";
 import {HttpModule} from "@angular/http";
 
 describe('ParticipantGuard', () => {

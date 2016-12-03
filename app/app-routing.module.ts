@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-import { LoginForm } from './forms/login/LoginForm';
+import { LoginForm } from './forms/login/login.form';
 import { HomeComponent } from './containers/home/home.component';
 
 import { ParticipantGuard } from './guards/participant/participant.guard';
