@@ -105,6 +105,7 @@ describe('LoginFrom', () => {
 
                     let message = element.querySelector('.ui.error.message.username');
 
+                    // checking weather message is defined would also be ok
                     expect(message.innerHTML).toContain('Unesite korisničko ime');
                     expect(authService.login).not.toHaveBeenCalled();
                 }

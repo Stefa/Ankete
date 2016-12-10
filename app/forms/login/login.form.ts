@@ -34,16 +34,22 @@ export class LoginForm implements OnInit{
 
     submit(submitValues: any) {
         this.formValid = this.loginFormGroup.valid;
-        if(this.loginFormGroup.valid) {
-            this.authService.login(submitValues.username, submitValues.password).subscribe(
-                (res: boolean) => {
-                    this.authenticationError = !res;
-                    if(res) {
-                        this.router.navigate(['']);
-                    }
-                },
-                () => this.authenticationError = true
-            );
+        if(!this.formValid) {
+            return;
         }
+
+        this.authService.login(submitValues.username, submitValues.password).subscribe(
+            (res: boolean) => {
+                this.authenticationError = !res;
+                this.formValid = res;
+                if(res) {
+                    this.router.navigate(['']);
+                }
+            },
+            () => {
+                this.authenticationError = true;
+                this.formValid = false;
+            }
+        );
     }
 }
