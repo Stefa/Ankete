@@ -24,14 +24,19 @@ export class LoginFormPage {
         inputElement.dispatchEvent(new Event('input'));
     }
 
-    setUsername(username) {
+    setUsername(username: string) {
         this.setInput(this.usernameInput, username);
     }
-    setPassword(password) {
+    setPassword(password: string) {
         this.setInput(this.passwordInput, password);
     }
     submitForm() {
         this.form.dispatchEvent(new Event('submit'));
+    }
+    login(username: string, password: string) {
+        this.setUsername(username);
+        this.setPassword(password);
+        this.submitForm();
     }
     getErrors() {
         this.formErrorElement = this.loginFormElement.querySelector('.ui.error.message.login-form');

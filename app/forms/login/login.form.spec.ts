@@ -52,6 +52,26 @@ describe('LoginFrom', () => {
         });
     });
 
+    describe('LoginForm: before display', () => {
+        it('checks if the user is logged in before displaying itself', inject(
+            [AuthService],
+            (authService: AuthService) => {
+                spyOn(authService, 'isLoggedIn').and.returnValue(true);
+                let fixture = TestBed.createComponent(LoginForm);
+                fixture.detectChanges();
+                expect(authService.isLoggedIn).toHaveBeenCalled();
+            }
+        ));
+        it('redirects the user to the home page if user is already logged in',
+            inject([Router, AuthService], fakeAsync(
+                (router: MockRouter, authService: AuthService) => {
+                    spyOn(authService, 'isLoggedIn').and.returnValue(true);
+                    expect(router.navigate).toHaveBeenCalledWith(['']);
+                }
+            ))
+        );
+    });
+
     describe('LoginForm: behaviour', () => {
         let fixture, loginFormPage;
 
@@ -64,9 +84,7 @@ describe('LoginFrom', () => {
         function submitForm(authService: AuthService, authResponse: boolean, username: string, password: string) {
             spyOn(authService, 'login').and.returnValue(Observable.of(authResponse));
 
-            loginFormPage.setUsername(username);
-            loginFormPage.setPassword(password);
-            loginFormPage.submitForm();
+            loginFormPage.login(username, password);
         }
 
         it('sends the request to AuthService::login() on submit if all the fields are filled',
@@ -111,26 +129,6 @@ describe('LoginFrom', () => {
                 submitForm(authService, true, 'Leo', 'turtlePower');
                 expect(router.navigate).toHaveBeenCalledWith(['']);
             })
-        );
-    });
-
-    describe('LoginForm: before display', () => {
-        it('checks if the user is logged in before displaying itself', inject(
-            [AuthService],
-            (authService: AuthService) => {
-                spyOn(authService, 'isLoggedIn').and.returnValue(true);
-                let fixture = TestBed.createComponent(LoginForm);
-                fixture.detectChanges();
-                expect(authService.isLoggedIn).toHaveBeenCalled();
-            }
-        ));
-        it('redirects the user to the home page if user is already logged in',
-            inject([Router, AuthService], fakeAsync(
-                (router: MockRouter, authService: AuthService) => {
-                    spyOn(authService, 'isLoggedIn').and.returnValue(true);
-                    expect(router.navigate).toHaveBeenCalledWith(['']);
-                }
-            ))
         );
     });
 });

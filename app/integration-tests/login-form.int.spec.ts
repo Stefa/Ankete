@@ -14,10 +14,12 @@ import {MockBackend, MockConnection} from "@angular/http/testing";
 import {Component} from "@angular/core";
 import {Router} from "@angular/router";
 import {LoginFormPage} from "../forms/login/login.form.page";
+import {By} from "@angular/platform-browser";
+import {TopBarComponent} from "../components/top-bar/top-bar.component";
 
 @Component({
     selector: 'root-cmp',
-    template: `<router-outlet></router-outlet>`
+    template: `<top-bar></top-bar><router-outlet></router-outlet>`
 })
 class RootCmp {}
 
@@ -33,10 +35,9 @@ describe('LoginFromIntegration', () => {
 
     function goToLogin(router: Router) {
         rootFixture = TestBed.createComponent(RootCmp);
-        advance();
 
         router.initialNavigation();
-        advance();
+        tick();
     }
 
     beforeEach(async(() => {
@@ -52,7 +53,7 @@ describe('LoginFromIntegration', () => {
                     { path: 'login', component: LoginForm }
                 ])
             ],
-            declarations: [LoginForm, HomeComponent, RootCmp],
+            declarations: [LoginForm, HomeComponent, TopBarComponent, RootCmp],
             providers: [
                 AuthService, UserService, ApiService,
                 MockBackend, BaseRequestOptions,
@@ -84,12 +85,8 @@ describe('LoginFromIntegration', () => {
                 connection.mockRespond(new Response(response));
             });
 
-            let loginFormPage = new LoginFormPage(rootFixture.debugElement.children[1]);
-            loginFormPage.setUsername('Leo');
-            loginFormPage.setPassword('turtlePower');
-
-            advance();
-            loginFormPage.submitForm();
+            let loginFormPage = new LoginFormPage(rootFixture.debugElement.children[2]);
+            loginFormPage.login('Leo', 'turtlePower');
 
             tick();
             expect(location.path()).toEqual('/');
@@ -105,19 +102,37 @@ describe('LoginFromIntegration', () => {
                 connection.mockRespond(new Response(response));
             });
 
-            let loginFormDebugElement = rootFixture.debugElement.children[1];
+            let loginFormDebugElement = rootFixture.debugElement.children[2];
 
             let loginFormPage = new LoginFormPage(loginFormDebugElement);
-            loginFormPage.setUsername('Leo');
-            loginFormPage.setPassword('7uRt13P0vEr');
-
-            advance();
-            loginFormPage.submitForm();
+            loginFormPage.login('Leo', '7uRt13P0vEr');
 
             advance();
             expect(location.path()).toEqual('/login');
             loginFormPage.getErrors();
             expect(loginFormPage.formErrorElement.innerHTML).toContain('Pogrešno korisničko ime ili šifra!');
+        }))
+    );
+
+    it('will go to login page after user has logged out',
+        inject([MockBackend, Location, Router], fakeAsync((backand: MockBackend, location: Location, router: Router) => {
+            goToLogin(router);
+
+            backand.connections.subscribe((connection: MockConnection) => {
+                let response: ResponseOptions = new ResponseOptions({body: JSON.stringify([leonardoUserObject])});
+                connection.mockRespond(new Response(response));
+            });
+
+            let loginFormPage = new LoginFormPage(rootFixture.debugElement.children[2]);
+            loginFormPage.login('Leo', 'turtlePower');
+            advance();
+
+            let logoutButton = rootFixture.debugElement.children[0].query(By.css('.logout'));
+            expect(logoutButton).not.toBeNull();
+
+            logoutButton.triggerEventHandler('click', null);
+            advance();
+            expect(location.path()).toEqual('/login');
         }))
     );
 });

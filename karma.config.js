@@ -25,6 +25,10 @@ module.exports = function(config) {
             'node_modules/jquery/dist/jquery.min.js',
             'node_modules/semantic-ui-css/semantic.min.css',
             'node_modules/semantic-ui-css/semantic.min.js',
+            {
+                pattern: 'node_modules/semantic-ui-css/themes/default/assets/fonts/icons.woff2',
+                included: false, watched: false, served: true, nocache: false
+            },
 
             // RxJs.
             { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },
@@ -49,13 +53,18 @@ module.exports = function(config) {
 
             // paths to support debugging with source maps in dev tools
             {pattern: 'app/**/*.ts', included: false, watched: false},
-            {pattern: 'app/**/*.js.map', included: false, watched: false}
+            {pattern: 'app/**/*.js.map', included: false, watched: false},
+
+            // assets
+            {pattern: 'assets/images/*.png', included: false, watched: false, served: true, nocache: false}
+
         ],
 
         // proxied base paths
         proxies: {
             // required for component assests fetched by Angular's compiler
-            "/app/": "/base/app/"
+            "/app/": "/base/app/",
+            "/assets/": "/base/assets/"
         },
 
         reporters: ['nyan', 'html'],
