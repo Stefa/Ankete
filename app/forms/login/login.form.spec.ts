@@ -1,4 +1,4 @@
-import {TestBed, fakeAsync, tick, inject, async} from "@angular/core/testing";
+import {TestBed, fakeAsync, inject, async} from "@angular/core/testing";
 import {FormsModule, ReactiveFormsModule, FormGroup} from "@angular/forms";
 import {LoginForm} from "./login.form";
 import {By} from "@angular/platform-browser";
@@ -10,6 +10,7 @@ import {HttpModule} from "@angular/http";
 import {DebugElement} from "@angular/core";
 import {Router} from "@angular/router";
 import {MockRouter} from "../../test/mock.router";
+import {LoginFormPage} from "./login.form.page";
 
 
 describe('LoginFrom', () => {
@@ -26,15 +27,6 @@ describe('LoginFrom', () => {
         })
             .compileComponents();
     }));
-
-    function setInput(inputElemtn, value) {
-        inputElemtn.value = value;
-        inputElemtn.dispatchEvent(new Event('input'));
-    }
-
-    function submitForm(form) {
-        form.dispatchEvent(new Event('submit'));
-    }
 
     describe('LoginForm: initial state', () => {
         let fixture;
@@ -61,114 +53,64 @@ describe('LoginFrom', () => {
     });
 
     describe('LoginForm: behaviour', () => {
-        let fixture, element, usernameInput, passwordInput, form;
+        let fixture, loginFormPage;
 
         beforeEach(() => {
             fixture = TestBed.createComponent(LoginForm);
-            element = fixture.nativeElement;
-            usernameInput = fixture.debugElement.query(By.css('#username')).nativeElement;
-            passwordInput = fixture.debugElement.query(By.css('#password')).nativeElement;
-            form = fixture.debugElement.query(By.css('form')).nativeElement;
+            loginFormPage = new LoginFormPage(fixture.debugElement);
             fixture.detectChanges();
         });
 
+        function submitForm(authService: AuthService, authResponse: boolean, username: string, password: string) {
+            spyOn(authService, 'login').and.returnValue(Observable.of(authResponse));
+
+            loginFormPage.setUsername(username);
+            loginFormPage.setPassword(password);
+            loginFormPage.submitForm();
+        }
+
         it('sends the request to AuthService::login() on submit if all the fields are filled',
-            inject([AuthService], fakeAsync(
-                (authService: AuthService) => {
-                    spyOn(authService, 'login').and.returnValue(Observable.of(true));
+            inject([AuthService], (authService: AuthService) => {
+                submitForm(authService, true, 'Leo', 'turtlePower');
 
-                    setInput(usernameInput, 'Leo');
-                    setInput(passwordInput, 'turtlePower');
-
-                    tick();
-                    fixture.detectChanges();
-
-                    submitForm(form);
-                    tick();
-
-                    expect(authService.login).toHaveBeenCalledWith('Leo', 'turtlePower');
-                }
-            ))
+                expect(authService.login).toHaveBeenCalledWith('Leo', 'turtlePower');
+            })
         );
 
         it('displays error message when username is missing',
-            inject([AuthService], fakeAsync(
-                (authService: AuthService) => {
-                    spyOn(authService, 'login').and.returnValue(Observable.of(true));
-                    setInput(passwordInput, 'turtlePower');
+            inject([AuthService], (authService: AuthService) => {
+                submitForm(authService, true, '', 'turtlePower');
+                loginFormPage.getErrors();
 
-                    tick();
-                    fixture.detectChanges();
-
-                    submitForm(form);
-                    tick();
-
-                    let message = element.querySelector('.ui.error.message.username');
-
-                    // checking weather message is defined would also be ok
-                    expect(message.innerHTML).toContain('Unesite korisničko ime');
-                    expect(authService.login).not.toHaveBeenCalled();
-                }
-            ))
+                // checking weather message is defined would also be ok
+                expect(loginFormPage.usernameErrorElement.innerHTML).toContain('Unesite korisničko ime');
+                expect(authService.login).not.toHaveBeenCalled();
+            })
         );
 
         it('displays error message when password is missing',
-            inject([AuthService], fakeAsync(
-                (authService: AuthService) => {
-                    spyOn(authService, 'login').and.returnValue(Observable.of(true));
-                    setInput(usernameInput, 'Leo');
+            inject([AuthService], (authService: AuthService) => {
+                submitForm(authService, true, 'Leo', '');
+                loginFormPage.getErrors();
 
-                    tick();
-                    fixture.detectChanges();
-
-                    submitForm(form);
-                    tick();
-
-                    let message = element.querySelector('.ui.error.message.password');
-
-                    expect(message.innerHTML).toContain('Unesite šifru');
-                    expect(authService.login).not.toHaveBeenCalled();
-                }
-            ))
+                expect(loginFormPage.passwordErrorElement.innerHTML).toContain('Unesite šifru');
+                expect(authService.login).not.toHaveBeenCalled();
+            })
         );
         it('displays the error message on login failure',
-            inject([AuthService], fakeAsync(
-                (authService: AuthService) => {
-                    spyOn(authService, 'login').and.returnValue(Observable.of(false));
+            inject([AuthService], (authService: AuthService) => {
+                submitForm(authService, false, 'Leo', 'cowabunga');
+                fixture.detectChanges();
+                loginFormPage.getErrors();
 
-                    setInput(usernameInput, 'Leo');
-                    setInput(passwordInput, 'cowabunga');
-
-                    tick();
-                    fixture.detectChanges();
-
-                    submitForm(form);
-                    tick();
-                    fixture.detectChanges();
-
-                    let message = element.querySelector('.ui.error.message.login-form');
-
-                    expect(message.innerHTML).toContain('Pogrešno korisničko ime ili šifra!');
-                }
-            ))
+                expect(loginFormPage.formErrorElement.innerHTML).toContain('Pogrešno korisničko ime ili šifra!');
+            })
         );
         it('redirects the user to the home page on successful login',
-            inject([AuthService, Router], fakeAsync(
-                (authService: AuthService, router: MockRouter) => {
-                    spyOn(authService, 'login').and.returnValue(Observable.of(true));
-                    setInput(usernameInput, 'Leo');
-                    setInput(passwordInput, 'turtlePower');
-
-                    tick();
-                    fixture.detectChanges();
-
-                    submitForm(form);
-                    tick();
-                    fixture.detectChanges();
-
-                    expect(router.navigate).toHaveBeenCalledWith(['']);
-                }
-            ))
+            inject([AuthService, Router], (authService: AuthService, router: MockRouter) => {
+                submitForm(authService, true, 'Leo', 'turtlePower');
+                expect(router.navigate).toHaveBeenCalledWith(['']);
+            })
         );
     });
 
