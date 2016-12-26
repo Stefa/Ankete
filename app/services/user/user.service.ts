@@ -9,14 +9,12 @@ export class UserService {
     static ALL_PROPERTIES = ['id', 'type', 'name', 'surname', 'username', 'password', 'birthday', 'phone', 'email'];
     static REQUIRED_PROPERTIES = ['id', 'type', 'name', 'surname', 'email'];
 
-    constructor(public api: ApiService) {
-
-    }
+    constructor(public api: ApiService) {}
 
     getUser(id: number): Observable<User> {
         return this.api.get('users/'+id).map((res:any) => {
             if(UserService.checkIfUserObject(res)) {
-                return UserService.createUserObject(res);
+                return UserService.createUserObjectFromResponse(res);
             }
 
             throw new Error('User structure is not valid!');
@@ -48,10 +46,12 @@ export class UserService {
         return true;
     }
 
-    static createUserObject(user: any):User {
-        let birthday: string = user.birthday;
-        user.birthday = new Date(birthday);
-        return user;
+    static createUserObjectFromResponse(user: any):User {
+        return Object.assign(
+            {},
+            user,
+            {birthday: new Date(user.birthday)}
+        );
     }
 
     getUsers(query: Map<string, string>): Observable<User[]> {
@@ -82,7 +82,7 @@ export class UserService {
             let users: User[] = [];
             for(let user of res) {
                 if(UserService.checkIfUserObject(user)) {
-                    users.push(UserService.createUserObject(user));
+                    users.push(UserService.createUserObjectFromResponse(user));
                 }
             }
             return users;

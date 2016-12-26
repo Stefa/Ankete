@@ -36,7 +36,7 @@ export class AuthService {
     getLoggedInUser() {
         let user:any = JSON.parse(localStorage.getItem('user'));
         if(user !== null && UserService.checkIfUserObject(user)) {
-            return UserService.createUserObject(user);
+            return UserService.createUserObjectFromResponse(user);
         }
         return user;
     }

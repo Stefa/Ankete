@@ -67,8 +67,7 @@ describe('UserService', () => {
             fakeAsync(
                 (apiService: MockApiService, userService: UserService) => {
                     let userId = 1;
-                    let userResponse = Object.assign({}, leonardoUserResponse);
-                    userResponse.weapon_of_choice = 'Katana';
+                    let userResponse = Object.assign({weapon_of_choice: 'Katana'}, leonardoUserResponse);
 
                     let user: any;
                     let errorMessage: any;

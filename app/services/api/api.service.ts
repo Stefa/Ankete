@@ -9,14 +9,30 @@ export class ApiService{
     constructor(public http: Http) {
     }
 
-    get(path: string): Observable<Response> {
-        let requestPath = ApiService.BASE_URL + path;
+    get(path: string): Observable<any> {
+        let requestPath = this.createRequestUri(path);
         let res: Observable<Response> = this.http.request(requestPath);
-        return res.map((res: any) => res.json()).catch((error: any) => {
-            let apiError: any = {};
-            apiError.message = error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-            apiError.status = error.status;
-            return Observable.throw(apiError);
-        });
+        return res.map(this.handleJsonResponse).catch(this.handleErrorResponse);
+    }
+
+    post(path: string, body: any): Observable<any> {
+        let requestPath = this.createRequestUri(path);
+        let res: Observable<Response> = this.http.post(requestPath, JSON.stringify(body));
+        return res.map(this.handleJsonResponse).catch(this.handleErrorResponse);
+    }
+
+    private createRequestUri(path: string) {
+        return ApiService.BASE_URL + path;
+    }
+
+    private handleJsonResponse(res: any){
+        return res.json();
+    }
+
+    private handleErrorResponse(error: any) {
+        let apiError: any = {};
+        apiError.message = error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+        apiError.status = error.status;
+        return Observable.throw(apiError);
     }
 }
