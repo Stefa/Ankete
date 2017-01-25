@@ -3,8 +3,8 @@ import {leonardoUserObject} from "./users";
 
 let questionObject = {
     type: questionTypes.choose_one,
-    text: 'How many ninja turtles can you name?',
-    answers: ['1', '2', '3', '4']
+    text: 'How is your favourite turtle?',
+    answers: ['Donatello', 'Leonardo', 'Michelangelo', 'Raphael']
 };
 
 let newChooseOneQuestion: Question = Object.assign(
@@ -35,8 +35,8 @@ let questionApiResponse = Object.assign(
 
 let newNumericQuestion = {
     type: questionTypes.numeric,
-    text: 'Continue the sequence: 0, 1, 1, 2, 3, 5, ?',
-    answers: ['7th number', '8th number', '9th number'],
+    text: 'What is the number of artwork that you can remember by:',
+    answers: ['Donatello', 'Leonardo', 'Michelangelo', 'Raphael'],
     author: leonardoUserObject
 };
 

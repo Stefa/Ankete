@@ -132,7 +132,7 @@ describe('ApiService', () => {
                 backend.connections.subscribe((connection: MockConnection) => {
                     expect(connection.request.url).toBe(postUrl);
                     expect(connection.request.method).toBe(RequestMethod.Post);
-                    expect(connection.request.getBody()).toEqual(requestBodyString);
+                    expect(JSON.stringify(JSON.parse(connection.request.getBody()))).toEqual(requestBodyString);
                     let responseBody = `{ 
                         "type": 4, 
                         "text": "Continue the sequence: 0, 1, 1, 2, 3, 5, ?", 

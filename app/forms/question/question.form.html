@@ -1,0 +1,53 @@
+<form
+        [formGroup]="questionFormGroup"
+        (ngSubmit)="submit(questionFormGroup.value)"
+        class="ui form"
+        [class.error]="!formValid"
+>
+    <div class="ui clearing segment">
+        <!-- Type field -->
+        <div class="field">
+            <label for="question-type"> Tip: </label>
+            <select id="question-type" class="ui dropdown" name="type" [formControl]="typeControl">
+                <option value="">Tip</option>
+                <option *ngFor="let typeOption of typeOptions" [value]="typeOption.value">
+                    {{typeOption.name}}
+                </option>
+            </select>
+            <div
+                    *ngIf="typeControl.hasError('required')"
+                    class="ui mini error message question-type"
+            > Izaberite tip pitanja. </div>
+        </div>
+
+        <!-- Text field -->
+        <div class="field">
+            <label for="question-text"> Tekst: </label>
+            <input id="question-text" type="text" name="text" placeholder="Tekst" [formControl]="textControl">
+            <div
+                    *ngIf="textControl.hasError('required')"
+                    class="ui mini error message question-text"
+            > Unesite tekst pitanja. </div>
+        </div>
+
+        <!-- Answers field -->
+        <div class="field" formArrayName="answers">
+            <label> Odgovori: </label>
+            <div *ngFor="let answer of answersControl.controls; let i=index">
+                <input class="question-answer" [formControlName]="i">
+            </div>
+            <button class="circular ui icon right floated button add-question-answer" (click)="addAnswer($event)">
+                <i class="icon plus"></i>
+            </button>
+        </div>
+
+        <!-- Buttons -->
+        <div class="three ui buttons">
+            <button id="question-cancel" type="button" class="ui large grey button" (click)="cancel($event)">
+                Odustani
+            </button>
+            <button id="question-save" type="submit" class="ui large teal submit button">Kreiraj</button>
+        </div>
+    </div>
+
+</form>

@@ -5,53 +5,54 @@
             <div class="content">
                 Ankete
             </div>
-            <form
-                    [formGroup]="loginFormGroup"
-                    (ngSubmit)="submit(loginFormGroup.value)"
-                    class="ui large form"
-                    [class.error]="!formValid"
-            >
-                <div class="ui stacked segment">
-                    <div class="field">
-                        <div class="ui left icon input">
-                            <i class="user icon"></i>
-                            <input
-                                    id="username"
-                                    type="text"
-                                    name="username"
-                                    placeholder="Username"
-                                    [formControl]="usernameControl"
-                            >
-                        </div>
-                        <div
-                                *ngIf="usernameControl.hasError('required')"
-                                class="ui error message username"
-                        >Unesite korisničko ime!</div>
-                    </div>
-                    <div class="field">
-                        <div class="ui left icon input">
-                            <i class="lock icon"></i>
-                            <input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    placeholder="Password"
-                                    [formControl]="passwordControl"
-                            >
-                        </div>
-                        <div
-                                *ngIf="passwordControl.hasError('required')"
-                                class="ui error message password"
-                        >Unesite šifru!</div>
+        </h2>
+
+        <form
+                [formGroup]="loginFormGroup"
+                (ngSubmit)="submit(loginFormGroup.value)"
+                class="ui large form"
+                [class.error]="!formValid"
+        >
+            <div class="ui stacked segment">
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="user icon"></i>
+                        <input
+                                id="username"
+                                type="text"
+                                name="username"
+                                placeholder="Username"
+                                [formControl]="usernameControl"
+                        >
                     </div>
                     <div
-                            *ngIf="authenticationError"
-                            class="ui error message login-form"
-                    >Pogrešno korisničko ime ili šifra!</div>
-                    <button type="submit" class="ui fluid large teal submit button">Login</button>
+                            *ngIf="usernameControl.hasError('required')"
+                            class="ui error message username"
+                    >Unesite korisničko ime!</div>
                 </div>
-            </form>
-        </h2>
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="lock icon"></i>
+                        <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                [formControl]="passwordControl"
+                        >
+                    </div>
+                    <div
+                            *ngIf="passwordControl.hasError('required')"
+                            class="ui error message password"
+                    >Unesite šifru!</div>
+                </div>
+                <div
+                        *ngIf="authenticationError"
+                        class="ui error message login-form"
+                >Pogrešno korisničko ime ili šifra!</div>
+                <button type="submit" class="ui fluid large teal submit button">Login</button>
+            </div>
+        </form>
 
     </div>
 </div>

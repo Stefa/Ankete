@@ -15,3 +15,13 @@ export enum questionTypes {
     choose_one,
     choose_multiple
 }
+
+let questionTypeTitles = new Map(<[number,string][]>[
+    [questionTypes.numeric, 'Numerički'],
+    [questionTypes.text, 'Tekstualni'],
+    [questionTypes.long_text, 'Dugačak tekst'],
+    [questionTypes.choose_one, 'Izbor jednog odgovora'],
+    [questionTypes.choose_multiple, 'Izbor više odgovora']
+]);
+
+export {questionTypeTitles}

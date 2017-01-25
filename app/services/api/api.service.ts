@@ -17,7 +17,7 @@ export class ApiService{
 
     post(path: string, body: any): Observable<any> {
         let requestPath = this.createRequestUri(path);
-        let res: Observable<Response> = this.http.post(requestPath, JSON.stringify(body));
+        let res: Observable<Response> = this.http.post(requestPath, body);
         return res.map(this.handleJsonResponse).catch(this.handleErrorResponse);
     }
 

@@ -10,6 +10,10 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {AppRoutingModule} from "./app-routing.module";
 import { HomeComponent } from './containers/home/home.component';
 import { TopBarComponent } from './components/top-bar/top-bar.component';
+import {QuestionForm} from "./forms/question/question.form";
+import {TestComponent} from "./containers/test/test.component";
+import {QuestionService} from "./services/question/question.service";
+import {TestForm} from "./forms/test/test.form";
 
 @NgModule({
     imports:      [
@@ -19,10 +23,10 @@ import { TopBarComponent } from './components/top-bar/top-bar.component';
         ReactiveFormsModule,
         AppRoutingModule
     ],
-    declarations: [ AppComponent, LoginForm, HomeComponent, TopBarComponent ],
+    declarations: [ AppComponent, LoginForm, HomeComponent, TopBarComponent, QuestionForm, TestComponent, TestForm ],
     bootstrap:    [ AppComponent ],
     providers: [
-        ApiService, UserService, AuthService
+        ApiService, UserService, AuthService, QuestionService
     ]
 })
 export class AppModule { }
