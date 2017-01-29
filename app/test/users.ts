@@ -32,7 +32,20 @@ let fibonacciUserResponse: any = {
 };
 let fibonacciUserObject: User = createUserFromResponse(fibonacciUserResponse);
 
+let externalUser: User = {
+    id: 3,
+    name: "External",
+    surname: "User",
+    type: userTypes.external,
+    birthday: new Date("1919-04-15T22:00:00.000Z"),
+    phone: "1234567",
+    email: "fake@random.com"
+};
+
 export {leonardoUserObject}
 export {leonardoUserResponse}
+
 export {fibonacciUserObject}
 export {fibonacciUserResponse}
+
+export {externalUser}

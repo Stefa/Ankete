@@ -1,12 +1,14 @@
 import {fakeAsync, inject, tick, TestBed} from "@angular/core/testing";
-import 'rxjs/add/operator/map';
+import {Observable} from 'rxjs/Rx';
 
 import {ApiService} from "../api/api.service";
 import {MockApiService} from "../api/mock-api.service";
 import { UserService } from './user.service';
 import {User} from "../../data/user.data";
 
-import { leonardoUserObject, leonardoUserResponse, fibonacciUserResponse, fibonacciUserObject } from '../../test/users';
+import {
+leonardoUserObject, leonardoUserResponse, fibonacciUserResponse, fibonacciUserObject, externalUser
+} from '../../test/users';
 
 describe('UserService', () => {
     beforeEach(() => {
@@ -176,4 +178,174 @@ describe('UserService', () => {
         ));
     });
 
+    describe('createUser', () => {
+        it('will send the post request to the api if user data is correct',
+            inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
+                let newUser: User = Object.assign({}, leonardoUserObject);
+                delete newUser.id;
+                let createdUser: User;
+
+                spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
+                apiService.setResponse(leonardoUserResponse);
+                apiService.init();
+                userService.createUser(newUser).subscribe(
+                    user => {},
+                    error => {}
+                );
+                tick();
+                expect(apiService.post).toHaveBeenCalledWith('users', newUser);
+            }))
+        );
+
+        it('will send the user object without id property to the api',
+            inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
+                let newUser: User = Object.assign({}, leonardoUserObject);
+                let expectedRequestUser: User = Object.assign({}, newUser);
+                delete expectedRequestUser.id;
+                let createdUser: User;
+
+                spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
+                apiService.setResponse(leonardoUserResponse);
+                apiService.init();
+                userService.createUser(newUser).subscribe(
+                    user => {},
+                    error => {}
+                );
+                tick();
+                expect(apiService.post).toHaveBeenCalledWith('users', expectedRequestUser);
+            }))
+        );
+
+        it('will return Observable of User object when api returns created user',
+            inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
+                let newUser: User = Object.assign({}, leonardoUserObject);
+                delete newUser.id;
+                let createdUser: User;
+
+                spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
+                apiService.setResponse(leonardoUserResponse);
+                apiService.init();
+                userService.createUser(newUser).subscribe(
+                    user => createdUser = user,
+                    error => {}
+                );
+                tick();
+                expect(createdUser).toEqual(leonardoUserObject);
+            }))
+        );
+
+        it('will throw an error when user type is not "external" and username is not set',
+            inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
+                let errorMessage: string;
+                let newUser: User = Object.assign({}, leonardoUserObject);
+                delete newUser.id;
+                delete newUser.username;
+                let createdUser: User = null;
+
+                spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
+                apiService.setResponse(null);
+                apiService.init();
+                userService.createUser(newUser).subscribe(
+                    user => createdUser = user,
+                    error => errorMessage = error
+                );
+                tick();
+                expect(createdUser).toEqual(null);
+                expect(errorMessage).toBe('Korisnik mora imati definisano korisničko ime.')
+                expect(apiService.post).not.toHaveBeenCalled();
+            }))
+        );
+
+        it('will throw an error when user type is not "external" and password is not set',
+            inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
+                let errorMessage: string;
+                let newUser: User = Object.assign({}, leonardoUserObject);
+                delete newUser.id;
+                delete newUser.password;
+                let createdUser: User = null;
+
+                spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
+                apiService.setResponse(null);
+                apiService.init();
+                userService.createUser(newUser).subscribe(
+                    user => createdUser = user,
+                    error => errorMessage = error
+                );
+                tick();
+                expect(createdUser).toEqual(null);
+                expect(errorMessage).toBe('Korisnik mora imati definisanu lozinku.')
+                expect(apiService.post).not.toHaveBeenCalled();
+            }))
+        );
+
+        it('will ignore username and password if user type is "external"',
+            inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
+                let newUser: User = Object.assign({}, externalUser);
+                delete newUser.id;
+                let expectedRequestUser = Object.assign({}, newUser);
+                newUser.username = 'uselessUsername';
+                newUser.password = '12345';
+
+                spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
+                apiService.setResponse(externalUser);
+                apiService.init();
+                userService.createUser(newUser).subscribe(
+                    user => {},
+                    error => {}
+                );
+                tick();
+                expect(apiService.post).toHaveBeenCalledWith('users', expectedRequestUser);
+            }))
+        );
+
+        it('will throw an error if username already exists',
+            inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
+                let newUser: User = Object.assign({}, leonardoUserObject);
+                delete newUser.id;
+                let createdUser: User = null;
+                let errorMessage: string = "";
+
+                spyOn(userService, 'getUsers').and.returnValue(Observable.of([leonardoUserObject]));
+                let usernameQuery: Map<string, string> = new Map(<[string,string][]>[['username', 'Leo']]);
+
+                apiService.setResponse(null);
+                apiService.init();
+                userService.createUser(newUser).subscribe(
+                    user => createdUser = user,
+                    error => errorMessage = error
+                );
+                tick();
+
+                expect(userService.getUsers).toHaveBeenCalledWith(usernameQuery);
+                expect(apiService.post).not.toHaveBeenCalled();
+                expect(createdUser).toEqual(null);
+                expect(errorMessage).toBe("Korisnik sa datim korisničkim imenom već postoji.")
+            }))
+        );
+
+        it('will throw an error if email already exists',
+            inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
+                let newUser: User = Object.assign({}, externalUser);
+                delete newUser.id;
+                let createdUser: User = null;
+                let errorMessage: string = "";
+
+                spyOn(userService, 'getUsers').and.returnValue(Observable.of([externalUser]));
+                let usernameQuery: Map<string, string> = new Map(<[string,string][]>[['email', 'fake@random.com']]);
+
+                apiService.setResponse(null);
+                apiService.init();
+                userService.createUser(newUser).subscribe(
+                    user => createdUser = user,
+                    error => errorMessage = error
+                );
+                tick();
+
+                expect(userService.getUsers).toHaveBeenCalledWith(usernameQuery);
+                expect(apiService.post).not.toHaveBeenCalled();
+                expect(createdUser).toEqual(null);
+                expect(errorMessage).toBe("Korisnik sa datiom e-mail adresom već postoji.")
+            }))
+        );
+    });
 });

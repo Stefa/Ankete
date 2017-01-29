@@ -1,12 +1,12 @@
 export interface User {
-    id: number,
+    id?: number,
     type: string,
     name: string,
     surname: string,
-    username: string,
-    password: string,
-    birthday: Date,
-    phone: string,
+    username?: string,
+    password?: string,
+    birthday?: Date,
+    phone?: string,
     email: string
 }
 
@@ -14,7 +14,8 @@ export const userTypes = {
     participant: 'participant',
     clerk: 'clerk',
     author: 'author',
-    administrator: 'administrator'
+    administrator: 'administrator',
+    external: 'external'
 };
 
 export enum UserPermissions {
