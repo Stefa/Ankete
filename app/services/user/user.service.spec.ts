@@ -317,7 +317,6 @@ describe('UserService', () => {
                 tick();
 
                 expect(userService.getUsers).toHaveBeenCalledWith(usernameQuery);
-                expect(apiService.post).not.toHaveBeenCalled();
                 expect(createdUser).toEqual(null);
                 expect(errorMessage).toBe("Korisnik sa datim korisničkim imenom već postoji.")
             }))
@@ -342,7 +341,6 @@ describe('UserService', () => {
                 tick();
 
                 expect(userService.getUsers).toHaveBeenCalledWith(usernameQuery);
-                expect(apiService.post).not.toHaveBeenCalled();
                 expect(createdUser).toEqual(null);
                 expect(errorMessage).toBe("Korisnik sa datiom e-mail adresom već postoji.")
             }))

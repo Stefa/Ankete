@@ -93,60 +93,74 @@ export class UserService {
 
     createUser(user: User): Observable<User> {
         let newUser: User = Object.assign({}, user);
+
+        let {valid, message} = this.validateUserProperties(user);
+        if(!valid) return Observable.throw(message);
+
+        this.unsetUselessPropertiesForNewUser(newUser);
+
+        let createUser$ = this.api.post('users', newUser).map((res:any) => {
+            if(UserService.checkIfUserObject(res)) {
+                return UserService.createUserObjectFromResponse(res);
+            }
+
+            throw new Error('Bad api post response while creating new user.');
+        });
+
+        let createUserIfUniqueEmail$ = this.createUserIfUniqueEmail(user, createUser$);
+        return this.createUserIfUniqueUsername(user, createUserIfUniqueEmail$);
+    }
+
+    private unsetUselessPropertiesForNewUser(newUser: User) {
         delete newUser.id;
 
-        if(newUser.type !== userTypes.external && !newUser.hasOwnProperty('username')) {
-            let errorMessage = 'Korisnik mora imati definisano korisničko ime.';
-            return Observable.throw(errorMessage);
-        }
-
-        if(newUser.type !== userTypes.external && !newUser.hasOwnProperty('password')) {
-            let errorMessage = 'Korisnik mora imati definisanu lozinku.';
-            return Observable.throw(errorMessage);
-        }
-
-        if(newUser.type == userTypes.external) {
+        if (newUser.type == userTypes.external) {
             delete newUser.username;
             delete newUser.password;
         }
+    }
 
-        if(newUser.username != null) {
-            let query = new Map(<[string,string][]>[['username', newUser.username]]);
-            return this.getUsers(query).switchMap((users) => {
-                if(users.length>0) {
-                    return Observable.throw("Korisnik sa datim korisničkim imenom već postoji.")
-                }
+    private isDuplicateUser(check$ :Observable<User[]>, error$:Observable<User>, continue$:Observable<User>): Observable<User> {
+        return check$.switchMap(
+            users => users.length>0 ? error$ : continue$
+        );
+    }
 
-                let emailQuery = new Map(<[string, string][]>[['email', newUser.email]]);
-                return this.getUsers(emailQuery).switchMap((users) => {
-                    if(users.length>0) {
-                        return Observable.throw("Korisnik sa datiom e-mail adresom već postoji.")
-                    }
+    private validateUserProperties(user: User): {valid: boolean, message: string} {
+        let valid = {valid: true, message: ''};
+        let invalid = {valid: false, message: ''};
 
-                    return this.api.post('users', newUser).map((res:any) => {
-                        if(UserService.checkIfUserObject(res)) {
-                            return UserService.createUserObjectFromResponse(res);
-                        }
+        if(user.type == userTypes.external) return valid;
 
-                        throw new Error('Bad api post response while creating new user.');
-                    });
-                });
-            });
-        } else {
-            let emailQuery = new Map(<[string, string][]>[['email', newUser.email]]);
-            return this.getUsers(emailQuery).switchMap((users) => {
-                if(users.length>0) {
-                    return Observable.throw("Korisnik sa datiom e-mail adresom već postoji.")
-                }
-
-                return this.api.post('users', newUser).map((res:any) => {
-                    if(UserService.checkIfUserObject(res)) {
-                        return UserService.createUserObjectFromResponse(res);
-                    }
-
-                    throw new Error('Bad api post response while creating new user.');
-                });
-            });
+        if(!user.hasOwnProperty('username')) {
+            invalid.message = 'Korisnik mora imati definisano korisničko ime.';
+            return invalid;
         }
+
+        if(!user.hasOwnProperty('password')) {
+            invalid.message = 'Korisnik mora imati definisanu lozinku.';
+            return invalid;
+        }
+
+        return valid;
+    }
+
+    private createUserIfUniqueEmail(user: User, createUser$:Observable<User>) :Observable<User>{
+        let emailQuery = new Map(<[string, string][]>[['email', user.email]]);
+        let checkEmail$ = this.getUsers(emailQuery);
+        let emailError$ = Observable.throw("Korisnik sa datiom e-mail adresom već postoji.");
+
+        return this.isDuplicateUser(checkEmail$, emailError$, createUser$);
+    }
+
+    private createUserIfUniqueUsername(user: User, createUser$:Observable<User>) :Observable<User>{
+        let checkUsername$ = Observable.of([]);
+        if(user.username != null) {
+            let query = new Map(<[string, string][]>[['username', user.username]]);
+            checkUsername$ = this.getUsers(query);
+        }
+        let usernameError$ = Observable.throw("Korisnik sa datim korisničkim imenom već postoji.");
+
+        return this.isDuplicateUser(checkUsername$, usernameError$, createUser$);
     }
 }
