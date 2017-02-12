@@ -25,7 +25,7 @@ let fibonacciUserResponse: any = {
     type: userTypes.administrator,
     username: "Fibonacci",
     password: "a84cu5",
-    birthday: "1173-03-25T21:00:00.000Z",
+    birthday: "1173-03-25T00:00:00.000Z",
     phone: "113591525",
     email: "yahoo@fibonacci.com",
     id: 2
@@ -42,6 +42,16 @@ let externalUser: User = {
     email: "fake@random.com"
 };
 
+
+let formAdditionalFields: {passwordConfirm: string, day: any, month: any, year: any} = {
+    passwordConfirm: fibonacciUserObject.password,
+    day: fibonacciUserObject.birthday.getDate(),
+    month: fibonacciUserObject.birthday.getMonth(),
+    year: fibonacciUserObject.birthday.getFullYear()
+};
+let formInputUser = Object.assign(formAdditionalFields, fibonacciUserObject);
+delete formInputUser.id;
+
 export {leonardoUserObject}
 export {leonardoUserResponse}
 
@@ -49,3 +59,5 @@ export {fibonacciUserObject}
 export {fibonacciUserResponse}
 
 export {externalUser}
+
+export {formInputUser}

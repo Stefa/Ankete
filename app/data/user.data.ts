@@ -18,10 +18,19 @@ export const userTypes = {
     external: 'external'
 };
 
+
 export enum UserPermissions {
-    anonymous = 0,
-    participant,
-    clerk,
-    author,
-    administrator
+anonymous = 0,
+participant,
+clerk,
+author,
+administrator
 }
+
+let userTypeTitles = new Map(<[string,string][]>[
+    [userTypes.participant, 'Ispitanik'],
+    [userTypes.clerk, 'Službenik'],
+    [userTypes.author, 'Autor'],
+    [userTypes.administrator, 'Administrator']
+]);
+export {userTypeTitles}

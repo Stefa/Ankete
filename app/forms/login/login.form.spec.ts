@@ -73,7 +73,7 @@ describe('LoginFrom', () => {
     });
 
     describe('LoginForm: behaviour', () => {
-        let fixture, loginFormPage;
+        let fixture, loginFormPage: LoginFormPage;
 
         beforeEach(() => {
             fixture = TestBed.createComponent(LoginForm);

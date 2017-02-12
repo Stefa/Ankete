@@ -44,7 +44,7 @@ describe('QuestionForm', () => {
             let typeSelect = fixture.debugElement.query(By.css('#question-type'));
             expect(typeSelect instanceof DebugElement).toBe(true);
         });
-        it('should have long text option in type field', () => {
+        it('should have all question type options in type field', () => {
             fixture.detectChanges();
             let typeSelectOptions = fixture.debugElement.queryAll(By.css('#question-type option'));
             expect(typeSelectOptions.length).toBe(6);

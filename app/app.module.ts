@@ -14,6 +14,8 @@ import {QuestionForm} from "./forms/question/question.form";
 import {TestComponent} from "./containers/test/test.component";
 import {QuestionService} from "./services/question/question.service";
 import {TestForm} from "./forms/test/test.form";
+import {UserForm} from "./forms/user/user.form";
+import {MyDatePickerModule} from "mydatepicker";
 
 @NgModule({
     imports:      [
@@ -21,9 +23,10 @@ import {TestForm} from "./forms/test/test.form";
         HttpModule,
         FormsModule,
         ReactiveFormsModule,
-        AppRoutingModule
+        AppRoutingModule,
+        MyDatePickerModule
     ],
-    declarations: [ AppComponent, LoginForm, HomeComponent, TopBarComponent, QuestionForm, TestComponent, TestForm ],
+    declarations: [ AppComponent, LoginForm, HomeComponent, TopBarComponent, QuestionForm, TestComponent, TestForm, UserForm ],
     bootstrap:    [ AppComponent ],
     providers: [
         ApiService, UserService, AuthService, QuestionService

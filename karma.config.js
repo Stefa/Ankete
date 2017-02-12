@@ -29,6 +29,7 @@ module.exports = function(config) {
                 pattern: 'node_modules/semantic-ui-css/themes/default/assets/fonts/icons.woff2',
                 included: false, watched: false, served: true, nocache: false
             },
+            'node_modules/moment/moment.js',
 
             // RxJs.
             { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },

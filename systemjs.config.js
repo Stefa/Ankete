@@ -25,7 +25,9 @@
 
       // other libraries
       'rxjs':                       'npm:rxjs',
-      'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api'
+      'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api',
+      'mydatepicker': 'npm:mydatepicker/bundles/mydatepicker.umd.js',
+      'moment': 'npm:moment'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
@@ -34,6 +36,9 @@
         defaultExtension: 'js'
       },
       rxjs: {
+        defaultExtension: 'js'
+      },
+      'moment': {
         defaultExtension: 'js'
       },
       'angular2-in-memory-web-api': {

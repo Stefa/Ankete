@@ -1,9 +1,7 @@
 import {DebugElement} from "@angular/core";
-import {By} from "@angular/platform-browser";
+import {Page} from "../../test/page";
 
-export class QuestionFormPage {
-    questionFormElement;
-    questionFormDebugElement;
+export class QuestionFormPage extends Page{
 
     typeInput;
     textInput;
@@ -17,27 +15,16 @@ export class QuestionFormPage {
     form;
 
     constructor(questionFormDebugElement: DebugElement) {
-        this.questionFormDebugElement = questionFormDebugElement;
-        this.questionFormElement = questionFormDebugElement.nativeElement;
-        this.typeInput = questionFormDebugElement.query(By.css('#question-type')).nativeElement;
-        this.textInput = questionFormDebugElement.query(By.css('#question-text')).nativeElement;
-        this.cancelButton = questionFormDebugElement.query(By.css('#question-cancel'));
-        this.form = questionFormDebugElement.query(By.css('form')).nativeElement;
+        super(questionFormDebugElement);
+        this.typeInput = this.getElementByCss('#question-type');
+        this.textInput = this.getElementByCss('#question-text');
+        this.cancelButton = this.getDebugElementByCss('#question-cancel');
+        this.form = this.getElementByCss('form');
     }
 
     getAnswerInputs() {
-        this.answerInputs = this.questionFormDebugElement.queryAll(By.css('.question-answer'));
-        this.addAnswerButton = this.questionFormDebugElement.query(By.css('.add-question-answer'));
-    }
-
-    private setInput(inputElement, value) {
-        inputElement.value = value;
-        inputElement.dispatchEvent(new Event('input'));
-    }
-
-    private setSelect(selectElement, value) {
-        selectElement.value = value;
-        selectElement.dispatchEvent(new Event('change'));
+        this.answerInputs = this.getAllDebugElementsByCss('.question-answer');
+        this.addAnswerButton = this.getDebugElementByCss('.add-question-answer');
     }
 
     setText(text: string) {
@@ -50,7 +37,7 @@ export class QuestionFormPage {
 
     addAnswers(numberOfAnswers: number = 1) {
         while(numberOfAnswers-- > 0)
-            this.addAnswerButton.nativeElement.dispatchEvent(new Event('click'));
+            this.click(this.addAnswerButton);
     }
 
     setAnswers(values: string[]) {
@@ -65,11 +52,11 @@ export class QuestionFormPage {
     }
 
     cancelForm() {
-        this.cancelButton.triggerEventHandler('click', null);
+        this.click(this.cancelButton);
     }
 
     getErrors() {
-        this.typeErrorElement = this.questionFormElement.querySelector('.ui.error.message.question-type');
-        this.textErrorElement = this.questionFormElement.querySelector('.ui.error.message.question-text');
+        this.typeErrorElement = this.getElementFromHtml('.ui.error.message.question-type');
+        this.textErrorElement = this.getElementFromHtml('.ui.error.message.question-text');
     }
 }
