@@ -60,6 +60,16 @@ export class UserForm implements OnInit {
             email: ['', [Validators.required, Validators.pattern(emailRegexp)]],
         }, {validator: Validators.compose([this.passwordMatchValidator, this.birthdayValidator])});
 
+        this.initFormControls();
+
+        this.formValid = true;
+
+        userTypeTitles.forEach((value, key) => {
+            this.typeOptions.push({value: key, name: value});
+        });
+    }
+
+    private initFormControls() {
         this.typeControl = this.userFormGroup.controls['type'];
         this.nameControl = this.userFormGroup.controls['name'];
         this.surnameControl = this.userFormGroup.controls['surname'];
@@ -74,12 +84,6 @@ export class UserForm implements OnInit {
 
         this.phoneControl = this.userFormGroup.controls['phone'];
         this.emailControl = this.userFormGroup.controls['email'];
-
-        this.formValid = true;
-
-        userTypeTitles.forEach((value, key) => {
-            this.typeOptions.push({value: key, name: value});
-        });
     }
 
     submit(submitValues: any) {
@@ -89,6 +93,13 @@ export class UserForm implements OnInit {
             return;
         }
 
+        let newUser = this.createUserObjectFromSubmittedValue(submitValues);
+
+        this.userService.createUser(newUser)
+            .subscribe(createdUser => this.onUserCreated.emit(createdUser));
+    }
+
+    private createUserObjectFromSubmittedValue(submitValues: any) {
         let birthday = submitValues.birthday;
         let birthdayDate = new Date(Date.UTC(birthday.year, birthday.month, birthday.day));
 
@@ -102,12 +113,10 @@ export class UserForm implements OnInit {
             phone: submitValues.phone,
             email: submitValues.email
         };
-
-        this.userService.createUser(newUser)
-            .subscribe(createdUser => this.onUserCreated.emit(createdUser));
+        return newUser;
     }
 
-    cancel(event) {
+    cancel() {
         this.onCancel.emit();
     }
 
