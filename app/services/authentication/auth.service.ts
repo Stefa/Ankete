@@ -16,7 +16,11 @@ export class AuthService {
 
     login(username: string, password: string) {
         let user: User;
-        let query = new Map(<[string,string][]>[['username', username], ['password', password]]);
+        let query = new Map<string, string>();
+        query
+            .set('username', username)
+            .set('password', password);
+
         return this.userService.getUsers(query).map((res: User[]) => {
             if(res.length > 0){
                 user = res[0];

@@ -27,7 +27,6 @@ describe('AuthService', () => {
     describe('Login', () => {
         it('should log the user in when the credentials are correct', inject([UserService, AuthService], fakeAsync(
             (userService: UserService, authService: AuthService) => {
-                let query = new Map(<[string,string][]>[['username', username], ['password', password]]);
                 let loginSuccessful: boolean;
 
                 spyOn(userService, 'getUsers').and.returnValue(Observable.of([leonardoUserObject]));
@@ -37,7 +36,9 @@ describe('AuthService', () => {
                 );
                 tick();
 
-                expect(userService.getUsers).toHaveBeenCalledWith(query);
+                let getUsersArgument = (<any>userService.getUsers).calls.mostRecent().args[0];
+                expect(getUsersArgument.get('username')).toBe(username);
+                expect(getUsersArgument.get('password')).toBe(password);
                 expect(localStorage.setItem).toHaveBeenCalledWith("user", JSON.stringify(leonardoUserObject));
                 expect(loginSuccessful).toBe(true);
             }
@@ -47,7 +48,6 @@ describe('AuthService', () => {
             (userService: UserService, authService: AuthService) => {
                 let username = 'Leo';
                 let password = 'rewopEltrut';
-                let query = new Map(<[string,string][]>[['username', username], ['password', password]]);
                 let loginSuccessful: boolean;
 
                 spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
@@ -57,7 +57,9 @@ describe('AuthService', () => {
                 );
                 tick();
 
-                expect(userService.getUsers).toHaveBeenCalledWith(query);
+                let getUsersArgument = (<any>userService.getUsers).calls.mostRecent().args[0];
+                expect(getUsersArgument.get('username')).toBe(username);
+                expect(getUsersArgument.get('password')).toBe(password);
                 expect(localStorage.setItem).not.toHaveBeenCalled();
                 expect(loginSuccessful).toBe(false);
             }

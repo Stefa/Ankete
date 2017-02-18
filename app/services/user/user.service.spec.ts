@@ -306,7 +306,6 @@ describe('UserService', () => {
                 let errorMessage: string = "";
 
                 spyOn(userService, 'getUsers').and.returnValue(Observable.of([leonardoUserObject]));
-                let usernameQuery: Map<string, string> = new Map(<[string,string][]>[['username', 'Leo']]);
 
                 apiService.setResponse(null);
                 apiService.init();
@@ -316,7 +315,8 @@ describe('UserService', () => {
                 );
                 tick();
 
-                expect(userService.getUsers).toHaveBeenCalledWith(usernameQuery);
+                let getUsersArgument = (<any>userService.getUsers).calls.mostRecent().args[0];
+                expect(getUsersArgument.get('username')).toBe('Leo');
                 expect(createdUser).toEqual(null);
                 expect(errorMessage).toBe("Korisnik sa datim korisničkim imenom već postoji.")
             }))
@@ -330,7 +330,6 @@ describe('UserService', () => {
                 let errorMessage: string = "";
 
                 spyOn(userService, 'getUsers').and.returnValue(Observable.of([externalUser]));
-                let usernameQuery: Map<string, string> = new Map(<[string,string][]>[['email', 'fake@random.com']]);
 
                 apiService.setResponse(null);
                 apiService.init();
@@ -340,7 +339,8 @@ describe('UserService', () => {
                 );
                 tick();
 
-                expect(userService.getUsers).toHaveBeenCalledWith(usernameQuery);
+                let getUsersArgument = (<any>userService.getUsers).calls.mostRecent().args[0];
+                expect(getUsersArgument.get('email')).toBe('fake@random.com');
                 expect(createdUser).toEqual(null);
                 expect(errorMessage).toBe("Korisnik sa datiom e-mail adresom već postoji.")
             }))

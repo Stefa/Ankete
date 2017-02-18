@@ -146,7 +146,8 @@ export class UserService {
     }
 
     private createUserIfUniqueEmail(user: User, createUser$:Observable<User>) :Observable<User>{
-        let emailQuery = new Map(<[string, string][]>[['email', user.email]]);
+        let emailQuery = new Map<string, string>();
+        emailQuery.set('email', user.email);
         let checkEmail$ = this.getUsers(emailQuery);
         let emailError$ = Observable.throw("Korisnik sa datiom e-mail adresom već postoji.");
 
@@ -156,8 +157,9 @@ export class UserService {
     private createUserIfUniqueUsername(user: User, createUser$:Observable<User>) :Observable<User>{
         let checkUsername$ = Observable.of([]);
         if(user.username != null) {
-            let query = new Map(<[string, string][]>[['username', user.username]]);
-            checkUsername$ = this.getUsers(query);
+            let usernameQuery = new Map<string, string>();
+            usernameQuery.set('username', user.username);
+            checkUsername$ = this.getUsers(usernameQuery);
         }
         let usernameError$ = Observable.throw("Korisnik sa datim korisničkim imenom već postoji.");
 
