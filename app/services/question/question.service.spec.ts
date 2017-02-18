@@ -32,7 +32,7 @@ describe('QuestionService', () => {
             expect(apiService.post).not.toHaveBeenCalled();
         }
 
-        it('will send the right question data to api provided the valid question object', inject(
+        it('should send the right question data to api provided the valid question object', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 apiService.setResponse(questionPostResponse);
@@ -43,7 +43,7 @@ describe('QuestionService', () => {
             }
         ));
 
-        it('will return question object with populated id field', inject(
+        it('should return question object with populated id field', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let createdQuestion: Question;
@@ -56,7 +56,7 @@ describe('QuestionService', () => {
             }
         ));
 
-        it('will throw an error if the text is not set', inject(
+        it('should throw an error if the text is not set', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let questionWithEmptyText = Object.assign({}, newChooseOneQuestion);
@@ -67,7 +67,7 @@ describe('QuestionService', () => {
             }
         ));
 
-        it('will throw an error if type is numeric and answers property is empty', inject(
+        it('should throw an error if type is numeric and answers property is empty', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let numericQuestionWithNoAnswers = Object.assign({}, newNumericQuestion);
@@ -78,7 +78,7 @@ describe('QuestionService', () => {
             }
         ));
 
-        it('will throw an error if type is text and answers property is empty', inject(
+        it('should throw an error if type is text and answers property is empty', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let textQuestionWithNoAnswers = Object.assign({}, newTextQuestion);
@@ -89,7 +89,7 @@ describe('QuestionService', () => {
             }
         ));
 
-        it('will throw an error if type is choose_one and length of answers property is less than two', inject(
+        it('should throw an error if type is choose_one and length of answers property is less than two', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let chooseOneQuestionWithOneAnswers = Object.assign({}, newChooseOneQuestion);
@@ -100,7 +100,7 @@ describe('QuestionService', () => {
             }
         ));
 
-        it('will throw an error if type is choose_multiple and length of answers property is less than two', inject(
+        it('should throw an error if type is choose_multiple and length of answers property is less than two', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let chooseMultipleQuestionWithOneAnswers = Object.assign({}, newChooseMultipleQuestion);
@@ -111,7 +111,7 @@ describe('QuestionService', () => {
             }
         ));
 
-        it('will throw an error if user is not set', inject(
+        it('should throw an error if user is not set', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let chooseOneQuestionWithoutAuthor = Object.assign({}, newChooseOneQuestion);
@@ -122,7 +122,4 @@ describe('QuestionService', () => {
             }
         ));
     });
-
-
-
 });

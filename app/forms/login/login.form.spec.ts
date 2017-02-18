@@ -53,7 +53,7 @@ describe('LoginFrom', () => {
     });
 
     describe('LoginForm: before display', () => {
-        it('checks if the user is logged in before displaying itself', inject(
+        it('should check if the user is logged in before displaying itself', inject(
             [AuthService],
             (authService: AuthService) => {
                 spyOn(authService, 'isLoggedIn').and.returnValue(true);
@@ -62,7 +62,7 @@ describe('LoginFrom', () => {
                 expect(authService.isLoggedIn).toHaveBeenCalled();
             }
         ));
-        it('redirects the user to the home page if user is already logged in',
+        it('should redirect the user to the home page if user is already logged in',
             inject([Router, AuthService], fakeAsync(
                 (router: MockRouter, authService: AuthService) => {
                     spyOn(authService, 'isLoggedIn').and.returnValue(true);
@@ -87,7 +87,7 @@ describe('LoginFrom', () => {
             loginFormPage.login(username, password);
         }
 
-        it('sends the request to AuthService::login() on submit if all the fields are filled',
+        it('should send the request to AuthService::login() on submit if all the fields are filled',
             inject([AuthService], (authService: AuthService) => {
                 submitForm(authService, true, 'Leo', 'turtlePower');
 
@@ -95,7 +95,7 @@ describe('LoginFrom', () => {
             })
         );
 
-        it('displays error message when username is missing',
+        it('should display error message when username is missing',
             inject([AuthService], (authService: AuthService) => {
                 submitForm(authService, true, '', 'turtlePower');
                 loginFormPage.getErrors();
@@ -106,7 +106,7 @@ describe('LoginFrom', () => {
             })
         );
 
-        it('displays error message when password is missing',
+        it('should display error message when password is missing',
             inject([AuthService], (authService: AuthService) => {
                 submitForm(authService, true, 'Leo', '');
                 loginFormPage.getErrors();
@@ -115,7 +115,7 @@ describe('LoginFrom', () => {
                 expect(authService.login).not.toHaveBeenCalled();
             })
         );
-        it('displays the error message on login failure',
+        it('should display the error message on login failure',
             inject([AuthService], (authService: AuthService) => {
                 submitForm(authService, false, 'Leo', 'cowabunga');
                 fixture.detectChanges();
@@ -124,7 +124,7 @@ describe('LoginFrom', () => {
                 expect(loginFormPage.formErrorElement.innerHTML).toContain('Pogrešno korisničko ime ili šifra!');
             })
         );
-        it('redirects the user to the home page on successful login',
+        it('should redirect the user to the home page on successful login',
             inject([AuthService, Router], (authService: AuthService, router: MockRouter) => {
                 submitForm(authService, true, 'Leo', 'turtlePower');
                 expect(router.navigate).toHaveBeenCalledWith(['']);

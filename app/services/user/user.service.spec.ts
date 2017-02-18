@@ -24,7 +24,7 @@ describe('UserService', () => {
     });
 
     describe('getUser', () => {
-        it('gets a user from the api', inject([ApiService, UserService], fakeAsync(
+        it('should get a user from the api', inject([ApiService, UserService], fakeAsync(
             (apiService: MockApiService, userService: UserService) => {
                 let userId = 1;
                 let user: User;
@@ -37,7 +37,7 @@ describe('UserService', () => {
             }
         )));
 
-        it('throws error when user does not have any of required properties', inject(
+        it('should throw error when user does not have any of required properties', inject(
             [ApiService, UserService],
             fakeAsync(
                 (apiService: MockApiService, userService: UserService) => {
@@ -64,7 +64,7 @@ describe('UserService', () => {
             )
         ));
 
-        it('throws error when user has an invalid property', inject(
+        it('should throw error when user has an invalid property', inject(
             [ApiService, UserService],
             fakeAsync(
                 (apiService: MockApiService, userService: UserService) => {
@@ -88,7 +88,7 @@ describe('UserService', () => {
             )
         ));
 
-        it('throws error when user is not found', inject(
+        it('should throw error when user is not found', inject(
             [ApiService, UserService],
             fakeAsync(
                 (apiService: MockApiService, userService: UserService) => {
@@ -118,7 +118,7 @@ describe('UserService', () => {
     });
 
     describe('getUsers', () => {
-        it('gets the users by specified property', inject(
+        it('should get the users by specified property', inject(
             [ApiService, UserService],
             fakeAsync(
                 (apiService: MockApiService, userService: UserService) => {
@@ -136,7 +136,7 @@ describe('UserService', () => {
             )
         ));
 
-        it('gets the users by specified properties', inject(
+        it('should get the users by specified properties', inject(
             [ApiService, UserService],
             fakeAsync(
                 (apiService: MockApiService, userService: UserService) => {
@@ -154,7 +154,7 @@ describe('UserService', () => {
             )
         ));
 
-        it('throws an error if the query parameter has invalid user property', inject(
+        it('should throw an error if the query parameter has invalid user property', inject(
             [ApiService, UserService],
             fakeAsync(
                 (apiService: MockApiService, userService: UserService) => {
@@ -179,7 +179,7 @@ describe('UserService', () => {
     });
 
     describe('createUser', () => {
-        it('will send the post request to the api if user data is correct',
+        it('should send the post request to the api if user data is correct',
             inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
                 let newUser: User = Object.assign({}, leonardoUserObject);
                 delete newUser.id;
@@ -197,7 +197,7 @@ describe('UserService', () => {
             }))
         );
 
-        it('will send the user object without id property to the api',
+        it('should send the user object without id property to the api',
             inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
                 let newUser: User = Object.assign({}, leonardoUserObject);
                 let expectedRequestUser: User = Object.assign({}, newUser);
@@ -216,7 +216,7 @@ describe('UserService', () => {
             }))
         );
 
-        it('will return Observable of User object when api returns created user',
+        it('should return Observable of User object when api returns created user',
             inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
                 let newUser: User = Object.assign({}, leonardoUserObject);
                 delete newUser.id;
@@ -234,7 +234,7 @@ describe('UserService', () => {
             }))
         );
 
-        it('will throw an error when user type is not "external" and username is not set',
+        it('should throw an error when user type is not "external" and username is not set',
             inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
                 let errorMessage: string;
                 let newUser: User = Object.assign({}, leonardoUserObject);
@@ -256,7 +256,7 @@ describe('UserService', () => {
             }))
         );
 
-        it('will throw an error when user type is not "external" and password is not set',
+        it('should throw an error when user type is not "external" and password is not set',
             inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
                 let errorMessage: string;
                 let newUser: User = Object.assign({}, leonardoUserObject);
@@ -278,7 +278,7 @@ describe('UserService', () => {
             }))
         );
 
-        it('will ignore username and password if user type is "external"',
+        it('should ignore username and password if user type is "external"',
             inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
                 let newUser: User = Object.assign({}, externalUser);
                 delete newUser.id;
@@ -298,7 +298,7 @@ describe('UserService', () => {
             }))
         );
 
-        it('will throw an error if username already exists',
+        it('should throw an error if username already exists',
             inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
                 let newUser: User = Object.assign({}, leonardoUserObject);
                 delete newUser.id;
@@ -322,7 +322,7 @@ describe('UserService', () => {
             }))
         );
 
-        it('will throw an error if email already exists',
+        it('should throw an error if email already exists',
             inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
                 let newUser: User = Object.assign({}, externalUser);
                 delete newUser.id;

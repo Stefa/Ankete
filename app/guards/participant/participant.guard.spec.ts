@@ -28,21 +28,21 @@ describe('ParticipantGuard', () => {
 
     });
 
-    it('returns true if the user is logged in', inject([AuthService, Router],
+    it('should return true if the user is logged in', inject([AuthService, Router],
         (authService: AuthService, router: MockRouter) => {
             initGuard(authService, router, true);
             expect(pass).toBe(true);
         }
     ));
 
-    it('returns false if the user is not logged in', inject([AuthService, Router],
+    it('should return false if the user is not logged in', inject([AuthService, Router],
         (authService: AuthService, router: MockRouter) => {
             initGuard(authService, router, false);
             expect(pass).toBe(false);
         }
     ));
 
-    it('redirects to /login if the user is not logged in', inject([AuthService, Router],
+    it('should redirect to /login if the user is not logged in', inject([AuthService, Router],
         (authService: AuthService, router: MockRouter) => {
             initGuard(authService, router, false);
             expect(router.navigate).toHaveBeenCalledWith(['/login']);

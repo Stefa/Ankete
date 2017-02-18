@@ -73,7 +73,7 @@ describe('LoginFromIntegration', () => {
 
     afterEach(() => localStorage.clear());
 
-    it('will go to home page when logged in with correct user',
+    it('should go to home page when logged in with correct user',
         inject([MockBackend, Location, Router], fakeAsync((backand: MockBackend, location: Location, router: Router) => {
             goToLogin(router);
             expect(location.path()).toBe('/login');
@@ -93,7 +93,7 @@ describe('LoginFromIntegration', () => {
         }))
     );
 
-    it('will stay at login page and show the error message if login was tried with wrong credentials',
+    it('should stay at login page and show the error message if login was tried with wrong credentials',
         inject([MockBackend, Location, Router], fakeAsync((backand: MockBackend, location: Location, router: Router) => {
             goToLogin(router);
 
@@ -114,7 +114,7 @@ describe('LoginFromIntegration', () => {
         }))
     );
 
-    it('will go to login page after user has logged out',
+    it('should go to login page after user has logged out',
         inject([MockBackend, Location, Router], fakeAsync((backand: MockBackend, location: Location, router: Router) => {
             goToLogin(router);
 

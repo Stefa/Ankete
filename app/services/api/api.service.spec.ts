@@ -33,9 +33,9 @@ describe('ApiService', () => {
         });
     });
 
-    describe('get action', () => {
+    describe('Get action', () => {
 
-        it('gets object from the api',
+        it('should get object from the api',
             inject([ApiService, MockBackend], fakeAsync((service: ApiService, backand: MockBackend) => {
                 let getResponse: any = {};
                 let getUrl = apiUrl+'/users/1';
@@ -53,7 +53,7 @@ describe('ApiService', () => {
             }))
         );
 
-        it('gets array of objects from the api', inject(
+        it('should get array of objects from the api', inject(
             [ApiService, MockBackend],
             fakeAsync((service: ApiService, backand: MockBackend) => {
                 let getResponse: any = {};
@@ -74,7 +74,7 @@ describe('ApiService', () => {
             })
         ));
 
-        it('handles http errors by throwing status code and presentable message', inject(
+        it('should handle http errors by throwing status code and presentable message', inject(
             [ApiService, MockBackend],
             fakeAsync((service: ApiService, backend: MockBackend) => {
                 let getResponse: any;
@@ -92,7 +92,7 @@ describe('ApiService', () => {
             })
         ));
 
-        it('handles errors when server is not responding by throwing presentable message', inject(
+        it('should handle errors when server is not responding by throwing presentable message', inject(
             [ApiService, MockBackend],
             fakeAsync((service: ApiService, backend: MockBackend) => {
                 let getResponse: any;
@@ -111,8 +111,8 @@ describe('ApiService', () => {
         ));
     });
 
-    describe('post action', () => {
-        it('sends serialized object to the right api url with post request', inject(
+    describe('Post action', () => {
+        it('should send serialized object to the right api url with post request', inject(
             [ApiService, MockBackend],
             fakeAsync((service: ApiService, backend: MockBackend) => {
                 let newObject: any = {
@@ -159,7 +159,7 @@ describe('ApiService', () => {
             })
         ));
 
-        it('handles http errors by returning the status code and message', inject(
+        it('should handle http errors by returning the status code and message', inject(
             [ApiService, MockBackend],
             fakeAsync((service: ApiService, backend: MockBackend) => {
                 let postResponse: any;

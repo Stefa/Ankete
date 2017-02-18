@@ -36,25 +36,22 @@ describe('TopBar', () => {
             });
     }));
 
-    describe('home page link', () => {
+    describe('Home page link', () => {
         beforeEach(() => {
-            // trigger initial data binding
             fixture.detectChanges();
 
-            // find DebugElements with an attached RouterLinkStubDirective
             linkDes = fixture.debugElement.queryAll(By.directive(MockRouterLinkDirective));
 
-            // get the attached link directive instances using the DebugElement injectors
             links = linkDes.map(de => de.injector.get(MockRouterLinkDirective) as MockRouterLinkDirective);
         });
 
-        it('shows the home page link', () => {
+        it('should show the home page link', () => {
             expect(links.length).toBe(1, 'should have 3 links');
             expect(links[0].linkParams).toBe('/', '1st link should go to Home page');
         });
     });
 
-    describe('logout button', () => {
+    describe('Logout button', () => {
         let logoutButton;
         function initTopBar(authService, user) {
             spyOn(authService, 'getCurrentUser').and.returnValue(Observable.of(user));
@@ -63,17 +60,21 @@ describe('TopBar', () => {
             fixture.detectChanges();
             logoutButton = fixture.debugElement.query(By.css('.logout'));
         }
-        it('is not shown when user is not logged in', inject([AuthService], fakeAsync((authService: AuthService) => {
-            initTopBar(authService, null);
-            expect(logoutButton).toBeNull();
-        })));
+        it('should not show the logout button when user is not logged in',
+            inject([AuthService], fakeAsync((authService: AuthService) => {
+                initTopBar(authService, null);
+                expect(logoutButton).toBeNull();
+            }))
+        );
 
-        it('is shown when user is logged in', inject([AuthService], fakeAsync((authService: AuthService) => {
-            initTopBar(authService, leonardoUserObject);
-            expect(logoutButton).not.toBeNull();
-        })));
+        it('should show the logout button when user is logged in',
+            inject([AuthService], fakeAsync((authService: AuthService) => {
+                initTopBar(authService, leonardoUserObject);
+                expect(logoutButton).not.toBeNull();
+            }))
+        );
 
-        it('logs the user out when clicked', inject([AuthService, Router],
+        it('should log the user out when logout button is clicked', inject([AuthService, Router],
             fakeAsync((authService: AuthService, router: MockRouter) => {
                 initTopBar(authService, leonardoUserObject);
                 spyOn(authService, 'logout');

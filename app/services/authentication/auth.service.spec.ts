@@ -24,8 +24,8 @@ describe('AuthService', () => {
 
     afterEach(() => localStorage.clear());
 
-    describe('login', () => {
-        it('logs the user in when the credentials are correct', inject([UserService, AuthService], fakeAsync(
+    describe('Login', () => {
+        it('should log the user in when the credentials are correct', inject([UserService, AuthService], fakeAsync(
             (userService: UserService, authService: AuthService) => {
                 let query = new Map(<[string,string][]>[['username', username], ['password', password]]);
                 let loginSuccessful: boolean;
@@ -43,7 +43,7 @@ describe('AuthService', () => {
             }
         )));
 
-        it('does not login the user when the credentials are not correct', inject([UserService, AuthService], fakeAsync(
+        it('should not login the user when the credentials are not correct', inject([UserService, AuthService], fakeAsync(
             (userService: UserService, authService: AuthService) => {
                 let username = 'Leo';
                 let password = 'rewopEltrut';
@@ -65,7 +65,7 @@ describe('AuthService', () => {
     });
 
     describe('isLoggedIn', () => {
-        it('returns true if user is logged in', inject([AuthService], (authService: AuthService) => {
+        it('should return true if user is logged in', inject([AuthService], (authService: AuthService) => {
             let loggedIn: boolean;
             spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(leonardoUserObject));
             loggedIn = authService.isLoggedIn();
@@ -74,7 +74,7 @@ describe('AuthService', () => {
             expect(loggedIn).toBe(true);
         }));
 
-        it('returns false if user is not logged in', inject([AuthService], (authService: AuthService) => {
+        it('should return false if user is not logged in', inject([AuthService], (authService: AuthService) => {
             let loggedIn: boolean;
             spyOn(localStorage, 'getItem').and.returnValue(null);
             loggedIn = authService.isLoggedIn();
@@ -85,7 +85,7 @@ describe('AuthService', () => {
     });
 
     describe('getLoggedInUser', () => {
-        it('returns the logged in user', inject([AuthService],(authService: AuthService) => {
+        it('should return the logged in user', inject([AuthService],(authService: AuthService) => {
             let loggedInUser: User;
             spyOn(localStorage, 'getItem').and.returnValue(JSON.stringify(leonardoUserObject));
             loggedInUser = authService.getLoggedInUser();
@@ -94,7 +94,7 @@ describe('AuthService', () => {
             expect(loggedInUser).toEqual(leonardoUserObject);
         }));
 
-        it('returns null user is not logged in', inject([AuthService],(authService: AuthService) => {
+        it('should return null if user is not logged in', inject([AuthService],(authService: AuthService) => {
             let loggedInUser: User;
             spyOn(localStorage, 'getItem').and.returnValue(null);
             loggedInUser = authService.getLoggedInUser();
@@ -105,7 +105,7 @@ describe('AuthService', () => {
     });
 
     describe('logout', () => {
-        it('logs the user out', inject([AuthService], (authService: AuthService) => {
+        it('should log the user out', inject([AuthService], (authService: AuthService) => {
             spyOn(localStorage, 'removeItem');
             authService.logout();
 
@@ -121,7 +121,7 @@ describe('AuthService', () => {
             })
         }
 
-        it('gets the update to the current user when someone logs in', inject(
+        it('should get the update to the current user when someone logs in', inject(
             [AuthService, UserService],
             fakeAsync(
                 (authService: AuthService, userService: UserService) => {
@@ -136,7 +136,7 @@ describe('AuthService', () => {
             )
         ));
 
-        it('gets the update to the current user when someone logs out', inject(
+        it('should get the update to the current user when someone logs out', inject(
             [AuthService, UserService],
             fakeAsync(
                 (authService: AuthService, userService: UserService) => {
