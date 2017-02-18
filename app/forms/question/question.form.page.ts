@@ -16,9 +16,9 @@ export class QuestionFormPage extends Page{
 
     constructor(questionFormDebugElement: DebugElement) {
         super(questionFormDebugElement);
-        this.typeInput = this.getElementByCss('#question-type');
-        this.textInput = this.getElementByCss('#question-text');
-        this.cancelButton = this.getDebugElementByCss('#question-cancel');
+        this.typeInput = this.getElementByCss('.question-type');
+        this.textInput = this.getElementByCss('.question-text');
+        this.cancelButton = this.getDebugElementByCss('.question-cancel');
         this.form = this.getElementByCss('form');
     }
 

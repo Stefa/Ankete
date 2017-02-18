@@ -41,12 +41,12 @@ describe('QuestionForm', () => {
             expect(component.questionFormGroup instanceof FormGroup).toBe(true);
         });
         it('should have a type field', () => {
-            let typeSelect = fixture.debugElement.query(By.css('#question-type'));
+            let typeSelect = fixture.debugElement.query(By.css('.question-type'));
             expect(typeSelect instanceof DebugElement).toBe(true);
         });
         it('should have all question type options in type field', () => {
             fixture.detectChanges();
-            let typeSelectOptions = fixture.debugElement.queryAll(By.css('#question-type option'));
+            let typeSelectOptions = fixture.debugElement.queryAll(By.css('.question-type option'));
             expect(typeSelectOptions.length).toBe(6);
             typeSelectOptions.shift();
             for(let option of typeSelectOptions) {
@@ -56,7 +56,7 @@ describe('QuestionForm', () => {
             }
         });
         it('should have a text field', () => {
-            let textInput = fixture.debugElement.query(By.css('#question-text'));
+            let textInput = fixture.debugElement.query(By.css('.question-text'));
             expect(textInput instanceof DebugElement).toBe(true);
         });
         it('should show answers field', () => {
@@ -70,12 +70,12 @@ describe('QuestionForm', () => {
         });
 
         it('should show cancel button', () => {
-            let cancelButton = fixture.debugElement.query(By.css('#question-cancel'));
+            let cancelButton = fixture.debugElement.query(By.css('.question-cancel'));
             expect(cancelButton instanceof DebugElement).toBe(true);
         });
 
         it('should show save button', () => {
-            let saveButton = fixture.debugElement.query(By.css('#question-save'));
+            let saveButton = fixture.debugElement.query(By.css('.question-save'));
             expect(saveButton instanceof DebugElement).toBe(true);
         });
 

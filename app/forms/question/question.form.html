@@ -7,8 +7,8 @@
     <div class="ui clearing segment">
         <!-- Type field -->
         <div class="field">
-            <label for="question-type"> Tip: </label>
-            <select id="question-type" class="ui dropdown" name="type" [formControl]="typeControl">
+            <label> Tip: </label>
+            <select class="ui dropdown question-type" name="type" [formControl]="typeControl">
                 <option value="">Tip</option>
                 <option *ngFor="let typeOption of typeOptions" [value]="typeOption.value">
                     {{typeOption.name}}
@@ -22,8 +22,8 @@
 
         <!-- Text field -->
         <div class="field">
-            <label for="question-text"> Tekst: </label>
-            <input id="question-text" type="text" name="text" placeholder="Tekst" [formControl]="textControl">
+            <label> Tekst: </label>
+            <input class="question-text" type="text" name="text" placeholder="Tekst" [formControl]="textControl">
             <div
                     *ngIf="textControl.hasError('required')"
                     class="ui mini error message question-text"
@@ -43,10 +43,10 @@
 
         <!-- Buttons -->
         <div class="three ui buttons">
-            <button id="question-cancel" type="button" class="ui large grey button" (click)="cancel($event)">
+            <button type="button" class="ui large grey button question-cancel" (click)="cancel($event)">
                 Odustani
             </button>
-            <button id="question-save" type="submit" class="ui large teal submit button">Kreiraj</button>
+            <button type="submit" class="ui large teal submit button question-save">Kreiraj</button>
         </div>
     </div>
 
