@@ -59,7 +59,7 @@ describe('UserService', () => {
                     );
                     tick();
                     expect(user).not.toBeDefined();
-                    expect(errorMessage).toBe('User structure is not valid!');
+                    expect(errorMessage).toBe('Objekat korisnika nije validan.');
                 }
             )
         ));
@@ -83,7 +83,7 @@ describe('UserService', () => {
                     );
                     tick();
                     expect(user).not.toBeDefined();
-                    expect(errorMessage).toBe('User structure is not valid!');
+                    expect(errorMessage).toBe('Objekat korisnika nije validan.');
                 }
             )
         ));
@@ -111,7 +111,7 @@ describe('UserService', () => {
                     );
                     tick();
                     expect(user).not.toBeDefined();
-                    expect(errorMessage).toBe('Requested user does not exist!');
+                    expect(errorMessage).toBe('Trašeni korisnik ne postoji.');
                 }
             )
         ));
@@ -172,7 +172,7 @@ describe('UserService', () => {
 
                     expect(apiService.get).not.toHaveBeenCalled();
                     expect(user).not.toBeDefined();
-                    expect(errorMessage).toBe('Tried to query users by wrong field: age!');
+                    expect(errorMessage).toBe('Pokušano pretraživanje korisnika po pogrešnom polju: age.');
                 }
             )
         ));

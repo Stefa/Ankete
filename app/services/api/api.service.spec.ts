@@ -106,7 +106,7 @@ describe('ApiService', () => {
 
                 expect(getResponse).not.toBeDefined();
                 expect(getError.status).toBe(0);
-                expect(getError.message).toBe('Server error')
+                expect(getError.message).toBe('Došlo je do greške na serveru.')
             })
         ));
     });

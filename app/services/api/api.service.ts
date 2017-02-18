@@ -31,7 +31,7 @@ export class ApiService{
 
     private handleErrorResponse(error: any) {
         let apiError: any = {};
-        apiError.message = error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+        apiError.message = error.status ? `${error.status} - ${error.statusText}` : 'Došlo je do greške na serveru.';
         apiError.status = error.status;
         return Observable.throw(apiError);
     }

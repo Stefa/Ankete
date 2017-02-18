@@ -17,11 +17,11 @@ export class UserService {
                 return UserService.createUserObjectFromResponse(res);
             }
 
-            throw new Error('User structure is not valid!');
+            throw new Error('Objekat korisnika nije validan.');
         }).catch((error: any) => {
             let errorMessage: string = error.message;
             if(error.hasOwnProperty('status') && error.status === 404) {
-                errorMessage = 'Requested user does not exist!'
+                errorMessage = 'Trašeni korisnik ne postoji.'
             }
             if(errorMessage.startsWith('Error: ')) {
                 errorMessage = errorMessage.substring(8);
@@ -75,7 +75,7 @@ export class UserService {
             queryString = queryArray.join('&');
         } catch (error) {
             if(error == badPropertyException) {
-                let errorMessage = 'Tried to query users by wrong field: '+badPropertyException.property+'!';
+                let errorMessage = 'Pokušano pretraživanje korisnika po pogrešnom polju: '+badPropertyException.property+'.';
                 return Observable.throw(errorMessage);
             }
         }
@@ -104,7 +104,7 @@ export class UserService {
                 return UserService.createUserObjectFromResponse(res);
             }
 
-            throw new Error('Bad api post response while creating new user.');
+            throw new Error('Dobijen je pogrešan odgovor sa servera pri kreiranju korisnika.');
         });
 
         let createUserIfUniqueEmail$ = this.createUserIfUniqueEmail(user, createUser$);
