@@ -7,7 +7,7 @@ import { UserService } from './user.service';
 import {User} from "../../data/user.data";
 
 import {
-leonardoUserObject, leonardoUserResponse, fibonacciUserResponse, fibonacciUserObject, externalUser
+leonardoUserObject, leonardoUserResponse, fibonacciUserResponse, fibonacciUserObject
 } from '../../test/users';
 
 describe('UserService', () => {
@@ -234,70 +234,6 @@ describe('UserService', () => {
             }))
         );
 
-        it('should throw an error when user type is not "external" and username is not set',
-            inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
-                let errorMessage: string;
-                let newUser: User = Object.assign({}, leonardoUserObject);
-                delete newUser.id;
-                delete newUser.username;
-                let createdUser: User = null;
-
-                spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
-                apiService.setResponse(null);
-                apiService.init();
-                userService.createUser(newUser).subscribe(
-                    user => createdUser = user,
-                    error => errorMessage = error
-                );
-                tick();
-                expect(createdUser).toEqual(null);
-                expect(errorMessage).toBe('Korisnik mora imati definisano korisničko ime.')
-                expect(apiService.post).not.toHaveBeenCalled();
-            }))
-        );
-
-        it('should throw an error when user type is not "external" and password is not set',
-            inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
-                let errorMessage: string;
-                let newUser: User = Object.assign({}, leonardoUserObject);
-                delete newUser.id;
-                delete newUser.password;
-                let createdUser: User = null;
-
-                spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
-                apiService.setResponse(null);
-                apiService.init();
-                userService.createUser(newUser).subscribe(
-                    user => createdUser = user,
-                    error => errorMessage = error
-                );
-                tick();
-                expect(createdUser).toEqual(null);
-                expect(errorMessage).toBe('Korisnik mora imati definisanu lozinku.')
-                expect(apiService.post).not.toHaveBeenCalled();
-            }))
-        );
-
-        it('should ignore username and password if user type is "external"',
-            inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
-                let newUser: User = Object.assign({}, externalUser);
-                delete newUser.id;
-                let expectedRequestUser = Object.assign({}, newUser);
-                newUser.username = 'uselessUsername';
-                newUser.password = '12345';
-
-                spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
-                apiService.setResponse(externalUser);
-                apiService.init();
-                userService.createUser(newUser).subscribe(
-                    user => {},
-                    error => {}
-                );
-                tick();
-                expect(apiService.post).toHaveBeenCalledWith('users', expectedRequestUser);
-            }))
-        );
-
         it('should throw an error if username already exists',
             inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
                 let newUser: User = Object.assign({}, leonardoUserObject);
@@ -305,7 +241,7 @@ describe('UserService', () => {
                 let createdUser: User = null;
                 let errorMessage: string = "";
 
-                spyOn(userService, 'getUsers').and.returnValue(Observable.of([leonardoUserObject]));
+                spyOn(userService, 'getUsers').and.returnValues(Observable.of([]), Observable.of([leonardoUserObject]));
 
                 apiService.setResponse(null);
                 apiService.init();
@@ -324,12 +260,12 @@ describe('UserService', () => {
 
         it('should throw an error if email already exists',
             inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
-                let newUser: User = Object.assign({}, externalUser);
+                let newUser: User = Object.assign({}, leonardoUserObject);
                 delete newUser.id;
                 let createdUser: User = null;
                 let errorMessage: string = "";
 
-                spyOn(userService, 'getUsers').and.returnValue(Observable.of([externalUser]));
+                spyOn(userService, 'getUsers').and.returnValues(Observable.of([leonardoUserObject]), Observable.of([]));
 
                 apiService.setResponse(null);
                 apiService.init();
@@ -339,8 +275,8 @@ describe('UserService', () => {
                 );
                 tick();
 
-                let getUsersArgument = (<any>userService.getUsers).calls.mostRecent().args[0];
-                expect(getUsersArgument.get('email')).toBe('fake@random.com');
+                let getUsersArgument = (<any>userService.getUsers).calls.first().args[0];
+                expect(getUsersArgument.get('email')).toBe('gmail@leo.com');
                 expect(createdUser).toEqual(null);
                 expect(errorMessage).toBe("Korisnik sa datiom e-mail adresom već postoji.")
             }))

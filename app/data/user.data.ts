@@ -3,10 +3,10 @@ export interface User {
     type: string,
     name: string,
     surname: string,
-    username?: string,
-    password?: string,
-    birthday?: Date,
-    phone?: string,
+    username: string,
+    password: string,
+    birthday: Date,
+    phone: string,
     email: string
 }
 
@@ -14,8 +14,7 @@ export const userTypes = {
     participant: 'participant',
     clerk: 'clerk',
     author: 'author',
-    administrator: 'administrator',
-    external: 'external'
+    administrator: 'administrator'
 };
 
 

@@ -94,11 +94,7 @@ export class UserService {
     createUser(user: User): Observable<User> {
         let newUser: User = Object.assign({}, user);
 
-        let {valid, message} = this.validateUserProperties(user);
-        if(!valid) return Observable.throw(message);
-
         this.unsetUselessPropertiesForNewUser(newUser);
-
         let createUser$ = this.api.post('users', newUser).map((res:any) => {
             if(UserService.checkIfUserObject(res)) {
                 return UserService.createUserObjectFromResponse(res);
@@ -113,36 +109,12 @@ export class UserService {
 
     private unsetUselessPropertiesForNewUser(newUser: User) {
         delete newUser.id;
-
-        if (newUser.type == userTypes.external) {
-            delete newUser.username;
-            delete newUser.password;
-        }
     }
 
     private isDuplicateUser(check$ :Observable<User[]>, error$:Observable<User>, continue$:Observable<User>): Observable<User> {
         return check$.switchMap(
             users => users.length>0 ? error$ : continue$
         );
-    }
-
-    private validateUserProperties(user: User): {valid: boolean, message: string} {
-        let valid = {valid: true, message: ''};
-        let invalid = {valid: false, message: ''};
-
-        if(user.type == userTypes.external) return valid;
-
-        if(!user.hasOwnProperty('username')) {
-            invalid.message = 'Korisnik mora imati definisano korisničko ime.';
-            return invalid;
-        }
-
-        if(!user.hasOwnProperty('password')) {
-            invalid.message = 'Korisnik mora imati definisanu lozinku.';
-            return invalid;
-        }
-
-        return valid;
     }
 
     private createUserIfUniqueEmail(user: User, createUser$:Observable<User>) :Observable<User>{
@@ -155,12 +127,9 @@ export class UserService {
     }
 
     private createUserIfUniqueUsername(user: User, createUser$:Observable<User>) :Observable<User>{
-        let checkUsername$ = Observable.of([]);
-        if(user.username != null) {
-            let usernameQuery = new Map<string, string>();
-            usernameQuery.set('username', user.username);
-            checkUsername$ = this.getUsers(usernameQuery);
-        }
+        let usernameQuery = new Map<string, string>();
+        usernameQuery.set('username', user.username);
+        let checkUsername$ = this.getUsers(usernameQuery);
         let usernameError$ = Observable.throw("Korisnik sa datim korisničkim imenom već postoji.");
 
         return this.isDuplicateUser(checkUsername$, usernameError$, createUser$);

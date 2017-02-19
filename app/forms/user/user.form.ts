@@ -99,7 +99,7 @@ export class UserForm implements OnInit {
             .subscribe(createdUser => this.onUserCreated.emit(createdUser));
     }
 
-    private createUserObjectFromSubmittedValue(submitValues: any) {
+    private createUserObjectFromSubmittedValue(submitValues: any): User {
         let birthday = submitValues.birthday;
         let birthdayDate = new Date(Date.UTC(birthday.year, birthday.month, birthday.day));
 
