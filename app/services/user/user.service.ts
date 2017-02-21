@@ -3,17 +3,16 @@ import {ApiService} from "../api/api.service";
 import {User, userTypes} from "../../data/user.data";
 
 import {Observable} from 'rxjs/Rx';
+import {UserDataValidator} from "../../data-validators/user/user.data-validator";
 
 @Injectable()
 export class UserService {
-    static ALL_PROPERTIES = ['id', 'type', 'name', 'surname', 'username', 'password', 'birthday', 'phone', 'email'];
-    static REQUIRED_PROPERTIES = ['id', 'type', 'name', 'surname', 'email'];
-
     constructor(public api: ApiService) {}
 
     getUser(id: number): Observable<User> {
         return this.api.get('users/'+id).map((res:any) => {
-            if(UserService.checkIfUserObject(res)) {
+            let userValidator = new UserDataValidator(res);
+            if(userValidator.checkIfUserApiResponseIsValid()) {
                 return UserService.createUserObjectFromResponse(res);
             }
 
@@ -28,24 +27,6 @@ export class UserService {
             }
             return Observable.throw(errorMessage);
         });
-    }
-
-    static checkIfUserObject(user: any) {
-        if(user == null) return false;
-
-        for (let property of UserService.REQUIRED_PROPERTIES) {
-            if(!user.hasOwnProperty(property)) {
-                return false;
-            }
-        }
-
-        for (let property in user) {
-            if(!user.hasOwnProperty(property)) continue;
-            if(UserService.ALL_PROPERTIES.indexOf(property) === -1) {
-                return false;
-            }
-        }
-        return true;
     }
 
     static createUserObjectFromResponse(user: any):User {
@@ -65,7 +46,7 @@ export class UserService {
             let queryArray = [];
             query.forEach(
                 (value: string, property: string) => {
-                    if (UserService.ALL_PROPERTIES.indexOf(property) === -1) {
+                    if (UserDataValidator.isValidUserProperty(property)) {
                         badPropertyException.property = property;
                         throw badPropertyException;
                     }
@@ -83,7 +64,8 @@ export class UserService {
         return this.api.get('users?' + queryString).map((res:any) => {
             let users: User[] = [];
             for(let user of res) {
-                if(UserService.checkIfUserObject(user)) {
+                let userValidator = new UserDataValidator(user);
+                if(userValidator.checkIfUserApiResponseIsValid()) {
                     users.push(UserService.createUserObjectFromResponse(user));
                 }
             }
@@ -93,45 +75,54 @@ export class UserService {
 
     createUser(user: User): Observable<User> {
         let newUser: User = Object.assign({}, user);
+        let userValidator = new UserDataValidator(user);
+        if(!userValidator.checkIfUserObjectHasRequiredFields()) {
+            return Observable.throw("Korisnik nema definisana sva obavezna polja.");
+        }
 
         this.unsetUselessPropertiesForNewUser(newUser);
-        let createUser$ = this.api.post('users', newUser).map((res:any) => {
-            if(UserService.checkIfUserObject(res)) {
-                return UserService.createUserObjectFromResponse(res);
-            }
-
-            throw new Error('Dobijen je pogrešan odgovor sa servera pri kreiranju korisnika.');
-        });
-
-        let createUserIfUniqueEmail$ = this.createUserIfUniqueEmail(user, createUser$);
-        return this.createUserIfUniqueUsername(user, createUserIfUniqueEmail$);
+        return this.createUserIfUnique(newUser);
     }
 
     private unsetUselessPropertiesForNewUser(newUser: User) {
         delete newUser.id;
     }
 
-    private isDuplicateUser(check$ :Observable<User[]>, error$:Observable<User>, continue$:Observable<User>): Observable<User> {
-        return check$.switchMap(
-            users => users.length>0 ? error$ : continue$
-        );
+    private createUserIfUnique(user):Observable<User> {
+        let createUser$ = this.api.post('users', user).map((res:any) => {
+            let userValidator = new UserDataValidator(res);
+            if(userValidator.checkIfUserApiResponseIsValid()) {
+                return UserService.createUserObjectFromResponse(res);
+            }
+
+            throw new Error('Dobijen je pogrešan odgovor sa servera pri kreiranju korisnika.');
+        });
+
+        let createUserIfUniqueEmail$ = this.continueIfUniqueEmail(user, createUser$);
+        return this.continueIfUniqueUsername(user, createUserIfUniqueEmail$);
     }
 
-    private createUserIfUniqueEmail(user: User, createUser$:Observable<User>) :Observable<User>{
+    private continueIfUniqueEmail(user: User, continue$:Observable<User>) :Observable<User>{
         let emailQuery = new Map<string, string>();
         emailQuery.set('email', user.email);
         let checkEmail$ = this.getUsers(emailQuery);
         let emailError$ = Observable.throw("Korisnik sa datiom e-mail adresom već postoji.");
 
-        return this.isDuplicateUser(checkEmail$, emailError$, createUser$);
+        return this.continueIfNoUsers(checkEmail$, emailError$, continue$);
     }
 
-    private createUserIfUniqueUsername(user: User, createUser$:Observable<User>) :Observable<User>{
+    private continueIfUniqueUsername(user: User, continue$:Observable<User>) :Observable<User>{
         let usernameQuery = new Map<string, string>();
         usernameQuery.set('username', user.username);
         let checkUsername$ = this.getUsers(usernameQuery);
         let usernameError$ = Observable.throw("Korisnik sa datim korisničkim imenom već postoji.");
 
-        return this.isDuplicateUser(checkUsername$, usernameError$, createUser$);
+        return this.continueIfNoUsers(checkUsername$, usernameError$, continue$);
+    }
+
+    private continueIfNoUsers(check$ :Observable<User[]>, error$:Observable<User>, continue$:Observable<User>): Observable<User> {
+        return check$.switchMap(
+            users => users.length>0 ? error$ : continue$
+        );
     }
 }

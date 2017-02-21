@@ -1,9 +1,7 @@
 import {DebugElement} from "@angular/core";
-import {By} from "@angular/platform-browser";
+import {Page} from "../../test/page";
 
-export class LoginFormPage {
-    loginFormElement;
-
+export class LoginFormPage  extends Page{
     usernameInput;
     passwordInput;
     form;
@@ -13,15 +11,10 @@ export class LoginFormPage {
     passwordErrorElement;
 
     constructor(loginFormDebugElement: DebugElement) {
-        this.loginFormElement = loginFormDebugElement.nativeElement;
-        this.usernameInput = loginFormDebugElement.query(By.css('#username')).nativeElement;
-        this.passwordInput = loginFormDebugElement.query(By.css('#password')).nativeElement;
-        this.form = loginFormDebugElement.query(By.css('form')).nativeElement;
-    }
-
-    private setInput(inputElement, value) {
-        inputElement.value = value;
-        inputElement.dispatchEvent(new Event('input'));
+        super(loginFormDebugElement);
+        this.usernameInput = this.getElementByCss('#username');
+        this.passwordInput = this.getElementByCss('#password');
+        this.form = this.getElementByCss('form');
     }
 
     setUsername(username: string) {
@@ -39,8 +32,8 @@ export class LoginFormPage {
         this.submitForm();
     }
     getErrors() {
-        this.formErrorElement = this.loginFormElement.querySelector('.ui.error.message.login-form');
-        this.usernameErrorElement = this.loginFormElement.querySelector('.ui.error.message.username');
-        this.passwordErrorElement = this.loginFormElement.querySelector('.ui.error.message.password');
+        this.formErrorElement = this.getElementFromHtml('.ui.error.message.login-form');
+        this.usernameErrorElement = this.getElementFromHtml('.ui.error.message.username');
+        this.passwordErrorElement = this.getElementFromHtml('.ui.error.message.password');
     }
 }

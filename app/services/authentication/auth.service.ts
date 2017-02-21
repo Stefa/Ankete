@@ -3,6 +3,7 @@ import {UserService} from "../user/user.service";
 import {User} from "../../data/user.data";
 import {Observable} from "rxjs";
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import {UserDataValidator} from "../../data-validators/user/user.data-validator";
 
 @Injectable()
 export class AuthService {
@@ -39,7 +40,8 @@ export class AuthService {
 
     getLoggedInUser(): User {
         let user:any = JSON.parse(localStorage.getItem('user'));
-        if(user !== null && UserService.checkIfUserObject(user)) {
+        let userValidator = new UserDataValidator(user);
+        if(user !== null && userValidator.checkIfUserObjectHasAllFields()) {
             return UserService.createUserObjectFromResponse(user);
         }
         return user;
