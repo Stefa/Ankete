@@ -8,89 +8,63 @@
         <!-- Type field -->
         <div class="field">
             <label> Tip: </label>
-            <select class="ui dropdown user-type" name="type" [formControl]="typeControl">
+            <select class="ui dropdown user-type" name="type" formControlName="type">
                 <option value="">Tip</option>
                 <option *ngFor="let typeOption of typeOptions" [value]="typeOption.value">
                     {{typeOption.name}}
                 </option>
             </select>
-            <div
-                    *ngIf="typeControl.hasError('required')"
-                    class="ui mini error message user-type"
-            > Izaberite tip korisnika. </div>
+            <form-error *ngFor="let error of formErrors.type" [error]="error"></form-error>
         </div>
 
         <!-- Name field -->
         <div class="field">
             <label> Ime: </label>
-            <input class="user-name" type="text" name="name" placeholder="Ime" [formControl]="nameControl">
-            <div
-                    *ngIf="nameControl.hasError('required')"
-                    class="ui mini error message user-name"
-            > Unesite ime korisnika. </div>
+            <input class="user-name" type="text" name="name" placeholder="Ime" formControlName="name">
+            <form-error *ngFor="let error of formErrors.name" [error]="error"></form-error>
         </div>
 
         <!-- Surname field -->
         <div class="field">
             <label> Prezime: </label>
-            <input class="user-surname" type="text" name="surname" placeholder="Prezime" [formControl]="surnameControl">
-            <div
-                    *ngIf="surnameControl.hasError('required')"
-                    class="ui mini error message user-surname"
-            > Unesite prezime korisnika. </div>
+            <input class="user-surname" type="text" name="surname" placeholder="Prezime" formControlName="surname">
+            <form-error *ngFor="let error of formErrors.surname" [error]="error"></form-error>
         </div>
 
         <!-- Username field -->
         <div class="field">
             <label> Korisničko ime: </label>
-            <input class="user-username" type="text" name="username" placeholder="Korisničko ime" [formControl]="usernameControl">
-            <div
-                    *ngIf="usernameControl.hasError('required')"
-                    class="ui mini error message user-username"
-            > Unesite korisničko ime. </div>
+            <input class="user-username" type="text" name="username" placeholder="Korisničko ime" formControlName="username">
+            <form-error *ngFor="let error of formErrors.username" [error]="error"></form-error>
         </div>
 
         <!-- Password field -->
         <div class="field">
             <label> Lozinka: </label>
-            <input class="user-password" type="password" name="password" placeholder="Lozinka" [formControl]="passwordControl">
-            <div
-                    *ngIf="passwordControl.hasError('required')"
-                    class="ui mini error message user-password"
-            > Unesite lozinku korisnika. </div>
-            <div
-                    *ngIf="passwordControl.hasError('minlength')"
-                    class="ui mini error message user-password-length"
-            > Minimalna dužina lozinke mora biti pet karaktera. </div>
+            <input class="user-password" type="password" name="password" placeholder="Lozinka" formControlName="password">
+            <form-error *ngFor="let error of formErrors.password" [error]="error"></form-error>
         </div>
 
         <!-- Password Confirm field -->
         <div class="field">
             <label> Potvrda lozinke: </label>
             <input class="user-password-confirm" type="password" name="password-confirm"
-                   placeholder="Potvrda lozinke" [formControl]="passwordConfirmControl">
-            <div
-                    *ngIf="passwordConfirmControl.hasError('required')"
-                    class="ui mini error message user-password-confirm"
-            > Unesite potvrdu lozinke. </div>
-            <div
-                    *ngIf="userFormGroup.hasError('passwordMismatch')"
-                    class="ui mini error message user-password-mismatch"
-            > Lozinka i potvrda lozinke se ne slažu. </div>
+                   placeholder="Potvrda lozinke" formControlName="passwordConfirm">
+            <form-error *ngFor="let error of formErrors.passwordConfirm" [error]="error"></form-error>
         </div>
 
         <!-- Birthday field -->
-        <div class="field">
+        <div class="field" formGroupName="birthday">
             <label> Datum rođenja: </label>
             <div class="ui left right action input">
                 <input
                         type="number" min="1" max="31" step="1" maxlength="2"
                         placeholder="Dan"
-                        [formControl]="dayControl"
+                        formControlName="day"
                         name="day"
                         class="user-birthday-day"
                 >
-                <select class="ui dropdown user-birthday-month" name="month" [formControl]="monthControl">
+                <select class="ui dropdown user-birthday-month" name="month" formControlName="month">
                     <option *ngFor="let month of monthLabels; let i = index" [value]="i">
                         {{month}}
                     </option>
@@ -98,33 +72,19 @@
                 <input
                         type="number" maxlength="4" min="1900" [max]="currentYear"
                         placeholder="Godina"
-                        [formControl]="yearControl"
+                        formControlName="year"
                         name="year"
                         class="user-birthday-year"
                 >
             </div>
-            <div
-                    *ngIf="userFormGroup.hasError('birthdayRequired')"
-                    class="ui mini error message user-birthday"
-            > Unesite datum rođenja korisnika. </div>
-            <div
-                    *ngIf="userFormGroup.hasError('birthdayInvalid')"
-                    class="ui mini error message user-birthday-invalid"
-            > Datum rođenja nije validan. </div>
+            <form-error *ngFor="let error of formErrors.birthday" [error]="error"></form-error>
         </div>
 
         <!-- Phone field -->
         <div class="field">
             <label> Telefon: </label>
-            <input class="user-phone" type="text" name="phone" placeholder="Telefon" [formControl]="phoneControl">
-            <div
-                    *ngIf="phoneControl.hasError('required')"
-                    class="ui mini error message user-phone"
-            > Unesite kontakt telefon korisnika. </div>
-            <div
-                    *ngIf="phoneControl.hasError('pattern')"
-                    class="ui mini error message user-phone-invalid"
-            > Kontakt telefon nije validan. </div>
+            <input class="user-phone" type="text" name="phone" placeholder="Telefon" formControlName="phone">
+            <form-error *ngFor="let error of formErrors.phone" [error]="error"></form-error>
         </div>
 
         <!-- Email field -->
@@ -135,16 +95,9 @@
                     type="text"
                     name="email"
                     placeholder="Elektronska pošta"
-                    [formControl]="emailControl"
+                    formControlName="email"
             >
-            <div
-                    *ngIf="emailControl.hasError('required')"
-                    class="ui mini error message user-email"
-            > Unesite email adresu korisnika. </div>
-            <div
-                    *ngIf="emailControl.hasError('pattern')"
-                    class="ui mini error message user-email-invalid"
-            > Email adresa nije validna. </div>
+            <form-error *ngFor="let error of formErrors.email" [error]="error"></form-error>
         </div>
 
         <!-- Buttons -->

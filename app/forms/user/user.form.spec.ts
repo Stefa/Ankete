@@ -11,14 +11,16 @@ import {userTypeTitles, userTypes, User} from "../../data/user.data";
 import {UserFormPage} from "./user.form.page";
 import {formInputUser, fibonacciUserObject} from "../../test/users";
 import {Observable} from 'rxjs/Rx';
+import {FormErrorComponent} from "../../components/form-error/form-error.component";
+import {UserFormValidator} from "../../form-validators/user/user.form-validator";
 
 describe('UserForm', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [FormsModule, ReactiveFormsModule, HttpModule],
-            declarations: [UserForm],
+            declarations: [UserForm, FormErrorComponent],
             providers: [
-                UserService, ApiService, AuthService
+                UserService, ApiService, AuthService, UserFormValidator
             ]
         })
             .compileComponents();

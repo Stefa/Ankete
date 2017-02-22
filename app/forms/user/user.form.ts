@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn} from "
 import {UserService} from "../../services/user/user.service";
 import {User, userTypeTitles} from "../../data/user.data";
 import * as moment from 'moment/moment';
+import {UserFormValidator} from "../../form-validators/user/user.form-validator";
 
 @Component({
     moduleId: module.id,
@@ -16,20 +17,9 @@ export class UserForm implements OnInit {
 
     userFormGroup: FormGroup;
 
-    typeControl: AbstractControl;
-    nameControl: AbstractControl;
-    surnameControl: AbstractControl;
-    usernameControl: AbstractControl;
-    passwordControl: AbstractControl;
-    passwordConfirmControl: AbstractControl;
-    birthdayControl: FormGroup;
-    dayControl: AbstractControl;
-    monthControl: AbstractControl;
-    yearControl: AbstractControl;
-    phoneControl: AbstractControl;
-    emailControl: AbstractControl;
-
     formValid: boolean;
+
+    formErrors: any;
 
     typeOptions: Array<{value:string, name: string}> = [];
     readonly currentYear = moment().year();
@@ -39,9 +29,26 @@ export class UserForm implements OnInit {
         "Septembar", "Oktobar", "Novembar", "Decembar"
     ];
 
-    constructor(private formBuilder: FormBuilder, private userService: UserService) { }
+    constructor(
+        private formBuilder: FormBuilder,
+        private userService: UserService,
+        private userFormValidator: UserFormValidator
+    ) { }
 
     ngOnInit() {
+        this.createFormGroup();
+        this.formValid = true;
+
+        userTypeTitles.forEach((value, key) => {
+            this.typeOptions.push({value: key, name: value});
+        });
+
+        this.validateForm();
+
+        this.userFormGroup.valueChanges.subscribe(_ => this.validateForm());
+    }
+
+    private createFormGroup() {
         const emailRegexp = "^[a-z0-9!#$%&'*+\\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$";
         const phoneRegexp = "^\\+?[0-9\\(\\) -]*$";
         this.userFormGroup = this.formBuilder.group({
@@ -59,44 +66,30 @@ export class UserForm implements OnInit {
             phone: ['', [Validators.required, Validators.pattern(phoneRegexp)]],
             email: ['', [Validators.required, Validators.pattern(emailRegexp)]],
         }, {validator: Validators.compose([this.passwordMatchValidator, this.birthdayValidator])});
-
-        this.initFormControls();
-
-        this.formValid = true;
-
-        userTypeTitles.forEach((value, key) => {
-            this.typeOptions.push({value: key, name: value});
-        });
     }
 
-    private initFormControls() {
-        this.typeControl = this.userFormGroup.controls['type'];
-        this.nameControl = this.userFormGroup.controls['name'];
-        this.surnameControl = this.userFormGroup.controls['surname'];
-        this.usernameControl = this.userFormGroup.controls['username'];
-        this.passwordControl = this.userFormGroup.controls['password'];
-        this.passwordConfirmControl = this.userFormGroup.controls['passwordConfirm'];
-
-        this.birthdayControl = <FormGroup>this.userFormGroup.controls['birthday'];
-        this.dayControl = this.birthdayControl.controls['day'];
-        this.monthControl = this.birthdayControl.controls['month'];
-        this.yearControl = this.birthdayControl.controls['year'];
-
-        this.phoneControl = this.userFormGroup.controls['phone'];
-        this.emailControl = this.userFormGroup.controls['email'];
+    validateForm() {
+        this.formErrors = this.userFormValidator.validateForm(this.userFormGroup);
     }
 
     submit(submitValues: any) {
         this.formValid = this.userFormGroup.valid;
 
-        if(!this.formValid) {
-            return;
-        }
+        this.markControlsAsDirty();
+        this.validateForm();
+
+        if(!this.formValid) return;
 
         let newUser = this.createUserObjectFromSubmittedValue(submitValues);
 
         this.userService.createUser(newUser)
             .subscribe(createdUser => this.onUserCreated.emit(createdUser));
+    }
+
+    private markControlsAsDirty() {
+        for (let controlName in this.userFormGroup.controls) {
+            this.userFormGroup.get(controlName).markAsDirty();
+        }
     }
 
     private createUserObjectFromSubmittedValue(submitValues: any): User {
