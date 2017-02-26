@@ -12,11 +12,12 @@ import {AuthService} from "../../services/authentication/auth.service";
 import {leonardoUserObject} from "../../test/users";
 import {Observable} from 'rxjs/Rx';
 import {UserService} from "../../services/user/user.service";
+import {DragulaModule} from "ng2-dragula";
 
 describe('QuestionForm', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            imports: [FormsModule, ReactiveFormsModule, HttpModule],
+            imports: [FormsModule, ReactiveFormsModule, HttpModule, DragulaModule],
             declarations: [QuestionForm],
             providers: [
                 QuestionService, ApiService, AuthService, UserService
@@ -32,6 +33,11 @@ describe('QuestionForm', () => {
             fixture = TestBed.createComponent(QuestionForm);
             component = fixture.componentInstance;
             fixture.detectChanges();
+        });
+
+        afterEach(() => {
+            fixture = null;
+            component = null;
         });
 
         it('should have a defined component', () => {
@@ -59,14 +65,40 @@ describe('QuestionForm', () => {
             let textInput = fixture.debugElement.query(By.css('.question-text'));
             expect(textInput instanceof DebugElement).toBe(true);
         });
-        it('should show answers field', () => {
+        it('should not show answer field and Add answer button if type is not selected', () => {
             fixture.detectChanges();
             let answerInput = fixture.debugElement.query(By.css('.question-answer'));
-            expect(answerInput instanceof DebugElement).toBe(true);
+            expect(answerInput == null).toBe(true);
+            let addAnswerButton = fixture.debugElement.query(By.css('.add-question-answer'));
+            expect(addAnswerButton == null).toBe(true);
         });
-        it('should show Add answer button', () => {
-            let typeSelect = fixture.debugElement.query(By.css('.add-question-answer'));
-            expect(typeSelect instanceof DebugElement).toBe(true);
+
+        it('should show answers field when type is numeric, text, choose_one or choose_multiple', () => {
+            fixture.detectChanges();
+            let questionTypesWithAnswers = [
+                questionTypes.numeric,
+                questionTypes.text,
+                questionTypes.choose_one,
+                questionTypes.choose_multiple
+            ];
+            questionTypesWithAnswers.forEach((type) => {
+                fixture.componentInstance.typeControl.setValue(type);
+                fixture.detectChanges();
+                let answerInput = fixture.debugElement.query(By.css('.question-answer'));
+                expect(answerInput instanceof DebugElement).toBe(true);
+                let addAnswerButton = fixture.debugElement.query(By.css('.add-question-answer'));
+                expect(addAnswerButton instanceof DebugElement).toBe(true);
+            });
+        });
+
+        it('should not show answers field when type is long_text', () => {
+            fixture.detectChanges();
+            fixture.componentInstance.typeControl.setValue(questionTypes.long_text);
+            fixture.detectChanges();
+            let answerInput = fixture.debugElement.query(By.css('.question-answer'));
+            expect(answerInput == null).toBe(true);
+            let addAnswerButton = fixture.debugElement.query(By.css('.add-question-answer'));
+            expect(addAnswerButton == null).toBe(true);
         });
 
         it('should show cancel button', () => {
@@ -88,11 +120,9 @@ describe('QuestionForm', () => {
             questionFormPage.setType(newQuestion.type);
             questionFormPage.setText(newQuestion.text);
 
-            questionFormPage.getAnswerInputs();
-            questionFormPage.addAnswers(2);
             fixture.detectChanges();
-            questionFormPage.getAnswerInputs();
-            questionFormPage.setAnswers(newQuestion.answers);
+            questionFormPage.getAnswerInput();
+            newQuestion.answers.forEach(answer => questionFormPage.setAnswer(answer));
             fixture.detectChanges();
 
             questionFormPage.submitForm();
@@ -115,22 +145,20 @@ describe('QuestionForm', () => {
             );
         });
 
-        xit('should show answers field when type is numeric, text, choose_one or choose_multiple', () => {
+        it('should add another answer to the answers list when Add answer button is clicked', () => {
+            questionFormPage.setType(questionTypes.numeric);
             fixture.detectChanges();
-            fixture.nativeElement.typeControl.value = questionTypes.choose_multiple;
-            fixture.detectChanges();
-        });
+            questionFormPage.getAnswerInput();
+            let numberOfAnswers = fixture.componentInstance.answers.length;
 
-        it('should add another answer field when Add answer button is clicked', () => {
-            questionFormPage.getAnswerInputs();
-            let numberOfAnswers = questionFormPage.answerInputs.length;
-
-            questionFormPage.addAnswers(2);
+            questionFormPage.setAnswer('answer 1');
+            questionFormPage.setAnswer('answer 2');
             fixture.detectChanges();
 
-            questionFormPage.getAnswerInputs();
-            let newNumberOfAnswers = questionFormPage.answerInputs.length;
+            let newNumberOfAnswers = fixture.componentInstance.answers.length;
             expect(newNumberOfAnswers).toEqual(numberOfAnswers+2);
+            expect(fixture.componentInstance.answers[0]).toBe('answer 1');
+            expect(fixture.componentInstance.answers[1]).toBe('answer 2');
         });
 
         it('should send request to QuestionService::createQuestion on valid submit', inject([QuestionService, AuthService],
@@ -152,12 +180,31 @@ describe('QuestionForm', () => {
             }
         ));
 
-        it('should display error on submit when text field is not populated', inject([QuestionService, AuthService],
+        it('should send request answer field set to empty array when there are no answers', inject([QuestionService, AuthService],
+            (questionService: QuestionService, authService: AuthService) => {
+                let newQuestion = {
+                    type: questionTypes.numeric,
+                    text: 'Test question?',
+                    answers: [],
+                    author: leonardoUserObject
+                };
+                let expectedQuestion: Question = Object.assign({id: 1}, newQuestion);
+                setSpies(questionService, expectedQuestion, authService);
+
+                submitQuestionForm(newQuestion);
+
+                expect(authService.getLoggedInUser).toHaveBeenCalled();
+                expect(questionService.createQuestion).toHaveBeenCalledWith(newQuestion);
+                expect(createdQuestion).toEqual(expectedQuestion);
+            }
+        ));
+
+        it('should display error on submit when type is not selected', inject([QuestionService, AuthService],
             (questionService: QuestionService, authService: AuthService) => {
                 let newQuestion = {
                     type: "",
                     text: 'Test question?',
-                    answers: ['answer1', 'answer2', 'answer3']
+                    answers: []
                 };
                 setSpies(questionService, null, authService);
 
@@ -171,8 +218,7 @@ describe('QuestionForm', () => {
                 expect(questionFormPage.typeErrorElement.innerHTML).toContain('Izaberite tip pitanja.');
             }
         ));
-
-        it('should display error on submit when type is not selected', inject([QuestionService, AuthService],
+        it('should display error on submit when text field is not populated', inject([QuestionService, AuthService],
             (questionService: QuestionService, authService: AuthService) => {
                 let newQuestion = {
                     type: questionTypes.numeric,

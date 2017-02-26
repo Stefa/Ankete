@@ -27,7 +27,8 @@
       'rxjs':                       'npm:rxjs',
       'angular2-in-memory-web-api': 'npm:angular2-in-memory-web-api',
       'mydatepicker': 'npm:mydatepicker/bundles/mydatepicker.umd.js',
-      'moment': 'npm:moment'
+      'moment': 'npm:moment',
+      'ng2-dragula': 'npm:ng2-dragula/bundles/ng2-dragula.umd.js'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {

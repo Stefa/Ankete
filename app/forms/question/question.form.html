@@ -31,13 +31,21 @@
         </div>
 
         <!-- Answers field -->
-        <div class="field" formArrayName="answers">
+        <div class="field" *ngIf="showAnswers">
             <label> Odgovori: </label>
-            <div *ngFor="let answer of answersControl.controls; let i=index">
-                <input class="question-answer" [formControlName]="i">
+            <div [dragula]='"answers-bag"' [dragulaModel]="answers" class="ui ordered large celled list question-answers">
+                <div *ngFor="let answer of answers" class="item">
+                    <div class="content"><div class="header"> {{answer}} </div> </div>
+                </div>
             </div>
-            <button class="circular ui icon right floated button add-question-answer" (click)="addAnswer($event)">
-                <i class="icon plus"></i>
+            <div class="ui action input">
+                <input class="question-answer" [formControl]="answerControl">
+                <button class="ui icon button add-question-answer" (click)="addAnswer($event)">
+                    <i class="icon plus"></i>
+                </button>
+            </div>
+            <button class="ui icon right floated button shuffle-answers" (click)="shuffleAnswers($event)">
+                <i class="shuffle icon"></i>
             </button>
         </div>
 

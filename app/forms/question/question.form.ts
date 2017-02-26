@@ -1,8 +1,9 @@
 import {Component, OnInit, Output, EventEmitter} from '@angular/core';
-import {FormGroup, AbstractControl, FormBuilder, Validators, FormArray} from "@angular/forms";
+import {FormGroup, AbstractControl, FormBuilder, Validators, FormArray, FormControl} from "@angular/forms";
 import {questionTypeTitles, questionTypes, Question} from '../../data/question.data';
 import {AuthService} from "../../services/authentication/auth.service";
 import {QuestionService} from "../../services/question/question.service";
+import {DragulaService} from "ng2-dragula";
 
 @Component({
     moduleId: module.id,
@@ -17,32 +18,42 @@ export class QuestionForm implements OnInit {
     questionFormGroup: FormGroup;
     typeControl: AbstractControl;
     textControl: AbstractControl;
-    answersControl: FormArray;
+    answerControl: AbstractControl;
     formValid: boolean;
+
+    showAnswers: boolean = false;
+    answers: Array<string> = [];
 
     typeOptions: Array<{value:number, name: string}> = [];
 
     constructor(
         private formBuilder: FormBuilder,
         private authService: AuthService,
-        private questionService: QuestionService
-    ) {}
+        private questionService: QuestionService,
+        private dragulaService: DragulaService
+    ) {
+        dragulaService.setOptions('answers-bag', {
+            removeOnSpill: true,
+            moves: () => {
+                return this.answers.length > 1;
+            }
+        })
+    }
 
     ngOnInit() {
         this.questionFormGroup = this.formBuilder.group({
             type: ['', Validators.required],
             text: ['', Validators.required],
-            answers: this.formBuilder.array([
-                ['']
-            ])
+            answers: ['']
         });
         this.typeControl = this.questionFormGroup.controls['type'];
         this.textControl = this.questionFormGroup.controls['text'];
-        this.answersControl = <FormArray>this.questionFormGroup.controls['answers'];
+        this.answerControl = this.questionFormGroup.controls['answers'];
         this.formValid = true;
         questionTypeTitles.forEach((value, key) => {
             this.typeOptions.push({value: key, name: value});
         });
+        this.typeControl.valueChanges.subscribe(value => this.showAnswers = value && value!= questionTypes.long_text);
     }
 
     submit(submitValues: any) {
@@ -56,7 +67,7 @@ export class QuestionForm implements OnInit {
         let newQuestion: Question = {
             type: parseInt(submitValues.type),
             text: submitValues.text,
-            answers: submitValues.answers,
+            answers: this.answers,
             author: currentUser
         };
         this.questionService.createQuestion(newQuestion)
@@ -64,8 +75,17 @@ export class QuestionForm implements OnInit {
     }
 
     addAnswer(event) {
-        this.answersControl.push(this.formBuilder.control(''));
+        this.answers.push(this.answerControl.value);
+        this.answerControl.reset();
         event.preventDefault();
+    }
+
+    shuffleAnswers(event) {
+        event.preventDefault();
+        for (let i = this.answers.length; i; i--) {
+            let j = Math.floor(Math.random() * i);
+            [this.answers[i - 1], this.answers[j]] = [this.answers[j], this.answers[i - 1]];
+        }
     }
 
     cancel(event) {

@@ -1,4 +1,9 @@
-.add-question-answer {
+.ui.celled.list.question-answers .item {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.shuffle-answers {
     margin-top: 5px;
     margin-bottom: 5px;
 }

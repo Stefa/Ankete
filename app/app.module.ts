@@ -18,6 +18,7 @@ import {UserForm} from "./forms/user/user.form";
 import {MyDatePickerModule} from "mydatepicker";
 import {FormErrorComponent} from "./components/form-error/form-error.component";
 import {UserFormValidator} from "./form-validators/user/user.form-validator";
+import {DragulaModule} from "ng2-dragula";
 
 @NgModule({
     imports:      [
@@ -26,7 +27,8 @@ import {UserFormValidator} from "./form-validators/user/user.form-validator";
         FormsModule,
         ReactiveFormsModule,
         AppRoutingModule,
-        MyDatePickerModule
+        MyDatePickerModule,
+        DragulaModule
     ],
     declarations: [ AppComponent, LoginForm, HomeComponent, TopBarComponent, QuestionForm, TestComponent, TestForm, UserForm, FormErrorComponent ],
     bootstrap:    [ AppComponent ],

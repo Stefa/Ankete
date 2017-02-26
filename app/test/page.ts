@@ -7,7 +7,8 @@ export class Page {
     }
 
     protected getElementByCss(cssSelector: string) {
-        return this.topDebugElement.query(By.css(cssSelector)).nativeElement;
+        let debugElement = this.getDebugElementByCss(cssSelector);
+        return debugElement != null ? debugElement.nativeElement : null;
     }
 
     protected getElementFromHtml(cssSelector: string) {

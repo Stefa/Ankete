@@ -5,7 +5,7 @@ export class QuestionFormPage extends Page{
 
     typeInput;
     textInput;
-    answerInputs;
+    answerInput;
     addAnswerButton;
     cancelButton;
 
@@ -22,8 +22,8 @@ export class QuestionFormPage extends Page{
         this.form = this.getElementByCss('form');
     }
 
-    getAnswerInputs() {
-        this.answerInputs = this.getAllDebugElementsByCss('.question-answer');
+    getAnswerInput() {
+        this.answerInput = this.getElementByCss('.question-answer');
         this.addAnswerButton = this.getDebugElementByCss('.add-question-answer');
     }
 
@@ -35,16 +35,9 @@ export class QuestionFormPage extends Page{
         this.setSelect(this.typeInput, value);
     }
 
-    addAnswers(numberOfAnswers: number = 1) {
-        while(numberOfAnswers-- > 0)
-            this.click(this.addAnswerButton);
-    }
-
-    setAnswers(values: string[]) {
-        this.answerInputs.forEach((answerElement:DebugElement, index: number) => {
-            let answerText = index < values.length ? values[index] : '';
-            this.setInput(answerElement.nativeElement, answerText);
-        });
+    setAnswer(answerText: string) {
+        this.setInput(this.answerInput, answerText);
+        this.click(this.addAnswerButton);
     }
 
     submitForm() {

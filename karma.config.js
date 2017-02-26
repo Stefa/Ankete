@@ -30,6 +30,8 @@ module.exports = function(config) {
                 included: false, watched: false, served: true, nocache: false
             },
             'node_modules/moment/moment.js',
+            'node_modules/dragula/dist/dragula.min.css',
+            { pattern: 'node_modules/ng2-dragula/bundles/ng2-dragula.umd.js', included: false, watched: false },
 
             // RxJs.
             { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },
