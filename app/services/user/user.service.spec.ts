@@ -55,7 +55,7 @@ describe('UserService', () => {
 
                     userService.getUser(userId).subscribe(
                         (res: User) => user = res,
-                        (error: any) => errorMessage = error
+                        (error: any) => errorMessage = error.message
                     );
                     tick();
                     expect(user).not.toBeDefined();
@@ -79,7 +79,7 @@ describe('UserService', () => {
 
                     userService.getUser(userId).subscribe(
                         (res: User) => user = res,
-                        (error: any) => errorMessage = error
+                        (error: any) => errorMessage = error.message
                     );
                     tick();
                     expect(user).not.toBeDefined();
@@ -107,7 +107,7 @@ describe('UserService', () => {
 
                     userService.getUser(userId).subscribe(
                         (res: User) => user = res,
-                        (error: any) => errorMessage = error
+                        (error: any) => errorMessage = error.message
                     );
                     tick();
                     expect(user).not.toBeDefined();
@@ -166,7 +166,7 @@ describe('UserService', () => {
                     apiService.init();
                     userService.getUsers(query).subscribe(
                         (res: User[]) => user = res[0],
-                        (error: any) => errorMessage = error
+                        (error: any) => errorMessage = error.message
                     );
                     tick();
 
@@ -183,7 +183,6 @@ describe('UserService', () => {
             inject([ApiService, UserService], fakeAsync((apiService: MockApiService, userService: UserService) => {
                 let newUser: User = Object.assign({}, leonardoUserObject);
                 delete newUser.id;
-                let createdUser: User;
 
                 spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
                 apiService.setResponse(leonardoUserResponse);
@@ -202,7 +201,6 @@ describe('UserService', () => {
                 let newUser: User = Object.assign({}, leonardoUserObject);
                 let expectedRequestUser: User = Object.assign({}, newUser);
                 delete expectedRequestUser.id;
-                let createdUser: User;
 
                 spyOn(userService, 'getUsers').and.returnValue(Observable.of([]));
                 apiService.setResponse(leonardoUserResponse);
@@ -247,7 +245,7 @@ describe('UserService', () => {
                 apiService.init();
                 userService.createUser(newUser).subscribe(
                     user => createdUser = user,
-                    error => errorMessage = error
+                    error => errorMessage = error.message
                 );
                 tick();
 
@@ -271,7 +269,7 @@ describe('UserService', () => {
                 apiService.init();
                 userService.createUser(newUser).subscribe(
                     user => createdUser = user,
-                    error => errorMessage = error
+                    error => errorMessage = error.message
                 );
                 tick();
 

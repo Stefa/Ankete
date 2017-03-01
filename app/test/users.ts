@@ -1,4 +1,5 @@
 import {User, userTypes} from '../data/user.data';
+import {UserService} from "../services/user/user.service";
 
 function createUserFromResponse(userResponse) {
     let userObject = Object.assign({}, userResponse);

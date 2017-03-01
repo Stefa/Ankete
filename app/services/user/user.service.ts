@@ -25,7 +25,7 @@ export class UserService {
             if(errorMessage.startsWith('Error: ')) {
                 errorMessage = errorMessage.substring(8);
             }
-            return Observable.throw(errorMessage);
+            return Observable.throw(new Error(errorMessage));
         });
     }
 
@@ -57,7 +57,7 @@ export class UserService {
         } catch (error) {
             if(error == badPropertyException) {
                 let errorMessage = 'Pokušano pretraživanje korisnika po pogrešnom polju: '+badPropertyException.property+'.';
-                return Observable.throw(errorMessage);
+                return Observable.throw(new Error(errorMessage));
             }
         }
 
@@ -77,7 +77,7 @@ export class UserService {
         let newUser: User = Object.assign({}, user);
         let userValidator = new UserDataValidator(user);
         if(!userValidator.checkIfUserObjectHasRequiredFields()) {
-            return Observable.throw("Korisnik nema definisana sva obavezna polja.");
+            return Observable.throw(new Error("Korisnik nema definisana sva obavezna polja."));
         }
 
         this.unsetUselessPropertiesForNewUser(newUser);
@@ -106,7 +106,7 @@ export class UserService {
         let emailQuery = new Map<string, string>();
         emailQuery.set('email', user.email);
         let checkEmail$ = this.getUsers(emailQuery);
-        let emailError$ = Observable.throw("Korisnik sa datiom e-mail adresom već postoji.");
+        let emailError$ = Observable.throw(new Error("Korisnik sa datiom e-mail adresom već postoji."));
 
         return this.continueIfNoUsers(checkEmail$, emailError$, continue$);
     }
@@ -115,7 +115,7 @@ export class UserService {
         let usernameQuery = new Map<string, string>();
         usernameQuery.set('username', user.username);
         let checkUsername$ = this.getUsers(usernameQuery);
-        let usernameError$ = Observable.throw("Korisnik sa datim korisničkim imenom već postoji.");
+        let usernameError$ = Observable.throw(new Error("Korisnik sa datim korisničkim imenom već postoji."));
 
         return this.continueIfNoUsers(checkUsername$, usernameError$, continue$);
     }
