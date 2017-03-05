@@ -1,0 +1,66 @@
+<form
+        [formGroup]="surveyFormGroup"
+        (ngSubmit)="submit(surveyFormGroup.value)"
+        class="ui form"
+        [class.error]="!formValid"
+>
+    <div class="ui clearing segment">
+        <!-- Name field -->
+        <div class="field">
+            <label> Naziv: </label>
+            <input class="survey-name" type="text" name="name" placeholder="Naziv" formControlName="name">
+            <form-error *ngFor="let error of formErrors.name" [error]="error"></form-error>
+        </div>
+
+        <!-- Start field -->
+        <div class="field">
+            <label> Početak ankete: </label>
+            <my-date-picker
+                    [options]="myDatePickerOptions"
+                    formControlName="start"
+                    class="survey-start"
+            ></my-date-picker>
+            <form-error *ngFor="let error of formErrors.start" [error]="error"></form-error>
+        </div>
+
+        <!-- End field -->
+        <div class="field">
+            <label> Kraj ankete: </label>
+            <my-date-picker
+                    [options]="myDatePickerOptions"
+                    formControlName="end"
+                    class="survey-end"
+            ></my-date-picker>
+            <form-error *ngFor="let error of formErrors.end" [error]="error"></form-error>
+        </div>
+
+        <!-- Anonymous field -->
+        <div class="ui checkbox">
+            <input type="checkbox" formControlName="anonymous" name="anonymous" class="survey-anonymous">
+            <label> Anonimna: </label>
+        </div>
+
+        <!-- Pages field -->
+        <div class="field">
+            <label> Broj strana: </label>
+            <input
+                    type="number" min="1" step="1"
+                    placeholder="Broj strana"
+                    formControlName="pages"
+                    name="pages"
+                    class="survey-pages"
+            >
+            <form-error *ngFor="let error of formErrors.pages" [error]="error"></form-error>
+        </div>
+
+        <!-- Buttons -->
+        <div class="two ui buttons">
+            <button type="button" class="ui large grey button survey-cancel" (click)="cancel()">
+                Odustani
+            </button>
+            <button type="submit" class="ui large teal submit button survey-save">
+                Kreiraj
+            </button>
+        </div>
+    </div>
+</form>

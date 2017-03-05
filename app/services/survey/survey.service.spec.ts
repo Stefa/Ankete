@@ -24,6 +24,8 @@ describe('SurveyService', () => {
             fakeAsync((apiService: MockApiService, surveyService: SurveyService) => {
                 let newSurvey: Survey = Object.assign({}, newTestSurvey);
                 delete newSurvey.id;
+                let expectedSurveyRequest = Object.assign({userId: newSurvey.author.id}, newSurvey);
+                delete expectedSurveyRequest.author;
                 let newSurveyResponse = Object.assign({}, newTestSurveyResponse);
 
                 apiService.setResponse(newSurveyResponse);
@@ -33,7 +35,7 @@ describe('SurveyService', () => {
                     error => {}
                 );
                 tick();
-                expect(apiService.post).toHaveBeenCalledWith('surveys', newSurvey);
+                expect(apiService.post).toHaveBeenCalledWith('surveys', expectedSurveyRequest);
             })
         ));
 
@@ -41,8 +43,9 @@ describe('SurveyService', () => {
             [ApiService, SurveyService],
             fakeAsync((apiService: MockApiService, surveyService: SurveyService) => {
                 let newSurvey: Survey = Object.assign({}, newTestSurvey);
-                let expectedSurveyRequest = Object.assign({}, newTestSurvey);
+                let expectedSurveyRequest = Object.assign({userId: newSurvey.author.id}, newTestSurvey);
                 delete expectedSurveyRequest.id;
+                delete expectedSurveyRequest.author;
                 let newSurveyResponse = Object.assign({}, newTestSurveyResponse);
 
                 apiService.setResponse(newSurveyResponse);
@@ -63,6 +66,7 @@ describe('SurveyService', () => {
                 delete newSurvey.id;
                 let newSurveyResponse = Object.assign({}, newTestSurveyResponse);
                 let expectedSurvey: Survey = Object.assign({}, newTestSurvey);
+                expectedSurvey.author = {id: newTestSurvey.author.id};
                 let createdSurvey: Survey = null;
 
                 apiService.setResponse(newSurveyResponse);

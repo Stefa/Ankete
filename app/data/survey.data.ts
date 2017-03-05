@@ -9,5 +9,5 @@ export interface Survey {
     anonymous: boolean,
     questions: Question[],
     pages: number,
-    author: User | {id: string}
+    author: User | {id: number}
 }

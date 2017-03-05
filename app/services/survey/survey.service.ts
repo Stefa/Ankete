@@ -10,13 +10,12 @@ export class SurveyService {
     constructor(public api: ApiService) { }
 
     createSurvey(survey: Survey) {
-        let newSurvey: Survey = Object.assign({}, survey);
-        if(!SurveyDataValidator.checkIfSurveyObjectHasRequiredFields(newSurvey)) {
+        if(!SurveyDataValidator.checkIfSurveyObjectHasRequiredFields(survey)) {
             return Observable.throw(new Error("Anketa nema definisana sva obavezna polja."));
         }
-        delete newSurvey.id;
+        let surveyRequest = this.prepareSurveyRequest(survey);
 
-        return this.api.post('surveys', newSurvey).map((res:any) => {
+        return this.api.post('surveys', surveyRequest).map((res:any) => {
             if(SurveyDataValidator.checkIfSurveyApiResponseIsValid(res)) {
                 return SurveyService.createSurveyObjectFromResponse(res);
             }
@@ -25,14 +24,28 @@ export class SurveyService {
         });
     }
 
+    private prepareSurveyRequest(survey: Survey) {
+        let surveyRequest: any = Object.assign({}, survey);
+
+        delete surveyRequest.id;
+
+        surveyRequest.userId = survey.author.id;
+        delete surveyRequest.author;
+
+        return surveyRequest;
+    }
+
     static createSurveyObjectFromResponse(surveyResponse): Survey {
-        return Object.assign(
-            {}, surveyResponse,
+        let createdSurvey = Object.assign(
+            {author: {id: surveyResponse.userId}},
+            surveyResponse,
             {
                 start: new Date(surveyResponse.start),
                 end: new Date(surveyResponse.end)
             }
         );
+        delete createdSurvey.userId;
+        return createdSurvey
     }
 
 }

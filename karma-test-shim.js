@@ -14,6 +14,17 @@ function isJsFile(path) {
 function isSpecFile(path) {
     return path.slice(-8) == '.spec.js';
 }
+// function isSpecFile(path) {
+//     var files = [
+//         'survey.form.spec.js',
+//         'survey.service.spec.js'
+//     ];
+//     for(var i = 0; i<files.length; i++) {
+//         var flength = files[i].length;
+//         if(path.slice(-flength) == files[i]) return true;
+//     }
+//     return false;
+// }
 
 function isAppFile(path) {
     var appPath = '/base/app/';
@@ -35,7 +46,7 @@ System.config({
         '@angular/platform-browser-dynamic/testing': 'npm:@angular/platform-browser-dynamic/bundles/platform-browser-dynamic-testing.umd.js',
         '@angular/http/testing': 'npm:@angular/http/bundles/http-testing.umd.js',
         '@angular/router/testing': 'npm:@angular/router/bundles/router-testing.umd.js',
-        '@angular/forms/testing': 'npm:@angular/forms/bundles/forms-testing.umd.js',
+        '@angular/forms/testing': 'npm:@angular/forms/bundles/forms-testing.umd.js'
     }
 });
 

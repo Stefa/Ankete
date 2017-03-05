@@ -19,6 +19,14 @@ let newTestSurvey: Survey = {
 let newTestSurveyResponse: any = Object.assign({}, newTestSurvey);
 newTestSurveyResponse.start = newTestSurveyResponse.start.toJSON();
 newTestSurveyResponse.end = newTestSurveyResponse.end.toJSON();
+newTestSurveyResponse.author = {id: newTestSurveyResponse.author.id};
+
+let newTestSurveyFormInput: any = Object.assign({}, newTestSurvey);
+newTestSurveyFormInput.start = '15.04.2017';
+newTestSurveyFormInput.end = '30.04.2017';
+delete newTestSurveyFormInput.author;
+delete newTestSurveyFormInput.id;
 
 export { newTestSurvey }
 export { newTestSurveyResponse }
+export { newTestSurveyFormInput }

@@ -19,6 +19,9 @@ import {MyDatePickerModule} from "mydatepicker";
 import {FormErrorComponent} from "./components/form-error/form-error.component";
 import {UserFormValidator} from "./form-validators/user/user.form-validator";
 import {DragulaModule} from "ng2-dragula";
+import {SurveyForm} from "./forms/survey/survey.form";
+import {SurveyService} from "./services/survey/survey.service";
+import {SurveyFormValidator} from "./form-validators/survey/survey.form-validator";
 
 @NgModule({
     imports:      [
@@ -30,10 +33,14 @@ import {DragulaModule} from "ng2-dragula";
         MyDatePickerModule,
         DragulaModule
     ],
-    declarations: [ AppComponent, LoginForm, HomeComponent, TopBarComponent, QuestionForm, TestComponent, TestForm, UserForm, FormErrorComponent ],
+    declarations: [
+        AppComponent, LoginForm, HomeComponent, TopBarComponent,
+        QuestionForm, TestComponent, TestForm, UserForm,
+        FormErrorComponent, SurveyForm
+    ],
     bootstrap:    [ AppComponent ],
     providers: [
-        ApiService, UserService, AuthService, QuestionService, UserFormValidator
+        ApiService, UserService, AuthService, QuestionService, UserFormValidator, SurveyService, SurveyFormValidator
     ]
 })
 export class AppModule { }
