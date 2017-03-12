@@ -1,5 +1,6 @@
 import {Question, questionTypes} from "../data/question.data";
 import {leonardoUserObject} from "./users";
+import {newTestSurvey} from "./surveys";
 
 let questionObject = {
     type: questionTypes.choose_one,
@@ -7,6 +8,7 @@ let questionObject = {
     answers: ['Donatello', 'Leonardo', 'Michelangelo', 'Raphael']
 };
 
+// question without survey
 let newChooseOneQuestion: Question = Object.assign(
     {author: leonardoUserObject},
     questionObject
@@ -25,10 +27,44 @@ let questionPostResponse = Object.assign(
     questionObject
 );
 
-let questionApiResponse = Object.assign(
+let expectedCreateQuestionResponse = Object.assign(
     {
         id: 1,
         author: {id: leonardoUserObject.id}
+    },
+    questionObject
+);
+
+// question with survey
+let newQuestionForSurvey: Question = Object.assign(
+    {
+        author: leonardoUserObject,
+        survey: newTestSurvey,
+    },
+    questionObject
+);
+
+let questionForSurveyPostRequest = Object.assign(
+    {
+        userId: leonardoUserObject.id,
+        surveyId: newTestSurvey.id
+    },
+    questionObject
+);
+
+let questionForSurveyPostResponse = Object.assign(
+    {
+        id: 1,
+        userId: leonardoUserObject.id,
+        surveyId: newTestSurvey.id
+    },
+    questionObject
+);
+let expectedCreateQuestionForSurveyResponse = Object.assign(
+    {
+        id: 1,
+        author: {id: leonardoUserObject.id},
+        survey: {id: newTestSurvey.id}
     },
     questionObject
 );
@@ -57,7 +93,12 @@ let newChooseMultipleQuestion = {
 export {newChooseOneQuestion}
 export {questionPostRequest}
 export {questionPostResponse}
-export {questionApiResponse}
+export {expectedCreateQuestionResponse}
+
+export {newQuestionForSurvey}
+export {questionForSurveyPostRequest}
+export {questionForSurveyPostResponse}
+export {expectedCreateQuestionForSurveyResponse}
 
 export {newNumericQuestion}
 export {newTextQuestion}

@@ -1,4 +1,4 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, OnDestroy, Input} from '@angular/core';
 import {FormGroup, AbstractControl, FormBuilder, Validators, FormArray, FormControl} from "@angular/forms";
 import {questionTypeTitles, questionTypes, Question} from '../../data/question.data';
 import {AuthService} from "../../services/authentication/auth.service";
@@ -11,7 +11,9 @@ import {DragulaService} from "ng2-dragula";
     templateUrl: 'question.form.html',
     styleUrls: ['question.form.css']
 })
-export class QuestionForm implements OnInit {
+export class QuestionForm implements OnInit, OnDestroy {
+    @Input() surveyId: number;
+
     @Output() onQuestionCreated = new EventEmitter<Question>();
     @Output() onCancel = new EventEmitter();
 
@@ -56,6 +58,10 @@ export class QuestionForm implements OnInit {
         this.typeControl.valueChanges.subscribe(value => this.showAnswers = value && value!= questionTypes.long_text);
     }
 
+    ngOnDestroy() {
+        this.dragulaService.destroy('answers-bag');
+    }
+
     submit(submitValues: any) {
         event.preventDefault();
         this.formValid = this.questionFormGroup.valid;
@@ -70,6 +76,11 @@ export class QuestionForm implements OnInit {
             answers: this.answers,
             author: currentUser
         };
+        if(this.surveyId) {
+            newQuestion.survey = {
+                id: this.surveyId
+            };
+        }
         this.questionService.createQuestion(newQuestion)
             .subscribe(createdQuestion => this.onQuestionCreated.emit(createdQuestion));
     }

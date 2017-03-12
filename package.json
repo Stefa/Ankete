@@ -22,6 +22,8 @@
     "@angular/platform-browser-dynamic": "2.4.7",
     "@angular/router": "3.4.7",
     "@angular/upgrade": "2.4.7",
+    "@types/jquery": "^2.0.40",
+    "@types/semantic-ui": "^2.2.1",
     "core-js": "^2.4.1",
     "dragula": "^3.7.2",
     "json-server": "^0.9.5",

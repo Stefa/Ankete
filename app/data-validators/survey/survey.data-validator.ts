@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 @Injectable()
 export class SurveyDataValidator {
 
-    static readonly requiredProperties = ['name', 'start', 'end', 'anonymous', 'questions', 'pages', 'author'];
+    static readonly requiredProperties = ['name', 'start', 'end', 'anonymous', 'pages', 'author'];
     static readonly optionalProperties = ['id'];
     static readonly allProperties = SurveyDataValidator.requiredProperties.concat(SurveyDataValidator.optionalProperties);
 

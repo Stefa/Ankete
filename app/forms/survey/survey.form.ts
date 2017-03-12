@@ -1,15 +1,17 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, OnDestroy, Input} from '@angular/core';
 import {Survey} from "../../data/survey.data";
 import {FormGroup, FormBuilder, Validators, ValidatorFn} from "@angular/forms";
 import {SurveyService} from "../../services/survey/survey.service";
 import {SurveyFormValidator} from "../../form-validators/survey/survey.form-validator";
 import * as moment from 'moment/moment';
 import {AuthService} from "../../services/authentication/auth.service";
+import {Question} from "../../data/question.data";
 
 @Component({
     moduleId: module.id,
     selector: 'survey-form',
-    templateUrl: 'survey.form.html'
+    templateUrl: 'survey.form.html',
+    styleUrls: ['survey.form.css']
 })
 export class SurveyForm implements OnInit {
     @Output() onSurveyCreated = new EventEmitter<Survey>();
@@ -17,9 +19,13 @@ export class SurveyForm implements OnInit {
 
     surveyFormGroup: FormGroup;
     showQuestionForm: boolean = false;
+    questions: Array<Question> = [];
 
     formValid: boolean;
     formErrors: any;
+
+    $surveyFields: JQuery;
+    $buttons: JQuery;
 
     private myDatePickerOptions = {
         dateFormat: 'dd.mm.yyyy',
@@ -55,6 +61,9 @@ export class SurveyForm implements OnInit {
         this.formValid = true;
         this.validateForm();
         this.surveyFormGroup.valueChanges.subscribe(_ => this.validateForm());
+
+        this.$surveyFields = jQuery('.survey-fields');
+        this.$buttons = jQuery('.survey-buttons');
     }
 
     validateForm() {
@@ -95,13 +104,42 @@ export class SurveyForm implements OnInit {
             end: end,
             anonymous: anonymous,
             pages: submitValues.pages,
-            questions: [],
             author: currentUser
         };
     }
 
     cancel() {
         this.onCancel.emit();
+    }
+
+    addQuestionForm(event) {
+        if(this.showQuestionForm) return;
+        this.showQuestionForm = true;
+        this.dimSurveyForm();
+        event.preventDefault();
+    }
+
+    private dimSurveyForm() {
+        this.$surveyFields.dimmer({closable: false});
+        this.$surveyFields.dimmer('show');
+
+        this.$buttons.dimmer({closable: false});
+        this.$buttons.dimmer('show');
+    }
+    private undimSurveyForm() {
+        this.$surveyFields.dimmer('hide');
+        this.$buttons.dimmer('hide');
+    }
+
+    addQuestion(question: Question) {
+        this.questions.push(question);
+        this.showQuestionForm = false;
+        this.undimSurveyForm();
+    }
+
+    cancelQuestion() {
+        this.showQuestionForm = false;
+        this.undimSurveyForm();
     }
 
 }

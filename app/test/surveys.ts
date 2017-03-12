@@ -7,11 +7,6 @@ let newTestSurvey: Survey = {
     start: new Date(2017, 3, 15),
     end: new Date(2017, 3, 30, 23, 59, 59),
     anonymous: false,
-    questions: [
-        newNumericQuestion,
-        newTextQuestion,
-        newChooseMultipleQuestion
-    ],
     pages: 2,
     author: leonardoUserObject,
     id: 1

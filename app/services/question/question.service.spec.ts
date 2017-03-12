@@ -4,8 +4,9 @@ import {ApiService} from "../api/api.service";
 import {MockApiService} from "../api/mock-api.service";
 import {Question} from "../../data/question.data";
 import {
-    newChooseOneQuestion, questionPostRequest, questionPostResponse, questionApiResponse,
-    newNumericQuestion, newTextQuestion, newChooseMultipleQuestion
+    newChooseOneQuestion, questionPostRequest, questionPostResponse, expectedCreateQuestionResponse,
+    newNumericQuestion, newTextQuestion, newChooseMultipleQuestion, newQuestionForSurvey, questionForSurveyPostResponse,
+    questionForSurveyPostRequest, expectedCreateQuestionForSurveyResponse
 } from "../../test/questions";
 
 describe('QuestionService', () => {
@@ -32,7 +33,7 @@ describe('QuestionService', () => {
             expect(apiService.post).not.toHaveBeenCalled();
         }
 
-        it('should send the right question data to api provided the valid question object', inject(
+        it('should send the right question data to api service provided the valid question object', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 apiService.setResponse(questionPostResponse);
@@ -43,7 +44,7 @@ describe('QuestionService', () => {
             }
         ));
 
-        it('should return question object with populated id field', inject(
+        it('should return question object with populated id and author fields', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let createdQuestion: Question;
@@ -52,7 +53,34 @@ describe('QuestionService', () => {
                 apiService.init();
                 questionService.createQuestion(newChooseOneQuestion).subscribe((res: Question) => createdQuestion = res);
 
-                expect(createdQuestion).toEqual(questionApiResponse);
+                expect(createdQuestion).toEqual(expectedCreateQuestionResponse);
+            }
+        ));
+
+        it('should send surveyId field to api service if survey field is provided in question object', inject(
+            [ApiService, QuestionService],
+            (apiService: MockApiService, questionService: QuestionService) => {
+                let questionToCreate = Object.assign({}, newQuestionForSurvey);
+
+                apiService.setResponse(questionForSurveyPostResponse);
+                apiService.init();
+                questionService.createQuestion(questionToCreate).subscribe();
+
+                expect(apiService.post).toHaveBeenCalledWith('questions', questionForSurveyPostRequest);
+            }
+        ));
+
+        it('should return question object with populated survey field if surveyId is present in api response', inject(
+            [ApiService, QuestionService],
+            (apiService: MockApiService, questionService: QuestionService) => {
+                let questionToCreate = Object.assign({}, newQuestionForSurvey);
+                let createdQuestion: Question = null;
+
+                apiService.setResponse(questionForSurveyPostResponse);
+                apiService.init();
+                questionService.createQuestion(questionToCreate).subscribe((res: Question) => createdQuestion = res);
+
+                expect(createdQuestion).toEqual(expectedCreateQuestionForSurveyResponse);
             }
         ));
 

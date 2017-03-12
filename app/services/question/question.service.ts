@@ -19,15 +19,27 @@ export class QuestionService {
 
     private createQuestionFromApiResponse(response: any) {
         let questionPostResponse = Object.assign({}, response);
-        let author: any = {id: questionPostResponse.userId};
+        let additionalFields: any = {};
+        additionalFields.author = {id: questionPostResponse.userId};
         delete questionPostResponse.userId;
 
-        return Object.assign({author: author}, questionPostResponse);
+        if('surveyId' in questionPostResponse) {
+            additionalFields.survey = {id: questionPostResponse.surveyId};
+            delete questionPostResponse.surveyId;
+        }
+
+        return Object.assign(additionalFields, questionPostResponse);
     }
 
     private prepareQuestionForApi(question: Question) {
-        let postQuestion = Object.assign({userId: question.author.id}, question);
+        let postQuestion: any = Object.assign({userId: question.author.id}, question);
         delete postQuestion.author;
+
+        if('survey' in postQuestion) {
+            postQuestion.surveyId = postQuestion.survey.id;
+            delete postQuestion.survey;
+        }
+
         return postQuestion;
     }
 

@@ -17,7 +17,7 @@ function isSpecFile(path) {
 // function isSpecFile(path) {
 //     var files = [
 //         'survey.form.spec.js',
-//         'survey.service.spec.js'
+//         // 'survey.service.spec.js'
 //     ];
 //     for(var i = 0; i<files.length; i++) {
 //         var flength = files[i].length;

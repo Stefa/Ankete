@@ -45,11 +45,6 @@ describe('SurveyDataValidator', () => {
             let valid = SurveyDataValidator.checkIfSurveyObjectHasRequiredFields(testSurvey);
             expect(valid).toBe(false);
         });
-        it('should return false if questions field is missing', () => {
-            delete testSurvey.questions;
-            let valid = SurveyDataValidator.checkIfSurveyObjectHasRequiredFields(testSurvey);
-            expect(valid).toBe(false);
-        });
         it('should return false if pages field is missing', () => {
             delete testSurvey.pages;
             let valid = SurveyDataValidator.checkIfSurveyObjectHasRequiredFields(testSurvey);
@@ -97,11 +92,6 @@ describe('SurveyDataValidator', () => {
         });
         it('should return false if anonymous field is missing', () => {
             delete testSurvey.anonymous;
-            let valid = SurveyDataValidator.checkIfSurveyObjectHasAllFields(testSurvey);
-            expect(valid).toBe(false);
-        });
-        it('should return false if questions field is missing', () => {
-            delete testSurvey.questions;
             let valid = SurveyDataValidator.checkIfSurveyObjectHasAllFields(testSurvey);
             expect(valid).toBe(false);
         });

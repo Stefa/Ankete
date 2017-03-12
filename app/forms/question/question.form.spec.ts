@@ -238,6 +238,34 @@ describe('QuestionForm', () => {
             }
         ));
 
+        it('should send request with surveyId to QuestionService::createQuestion if surveyId was provided as input',
+            inject([QuestionService, AuthService],
+            (questionService: QuestionService, authService: AuthService) => {
+                let surveyId = 1;
+                let newQuestion = {
+                    type: questionTypes.numeric,
+                    text: 'Test question?',
+                    answers: ['answer1', 'answer2', 'answer3'],
+                    author: leonardoUserObject
+                };
+                let expectedQuestion: Question = Object.assign(
+                    {
+                        id: 1,
+                        survey: {id: surveyId}
+                    }, newQuestion);
+                let expectedServiceCall: Question = Object.assign({survey: {id: surveyId}}, newQuestion);
+
+                fixture.componentInstance.surveyId = surveyId;
+                setSpies(questionService, expectedQuestion, authService);
+
+                submitQuestionForm(newQuestion);
+
+                expect(authService.getLoggedInUser).toHaveBeenCalled();
+                expect(questionService.createQuestion).toHaveBeenCalledWith(expectedServiceCall);
+                expect(createdQuestion).toEqual(expectedQuestion);
+            }
+        ));
+
         it('should emmit cancel event when cancel button is clicked', () => {
             let canceled = false;
             fixture.componentInstance.onCancel.subscribe(() => canceled = true);

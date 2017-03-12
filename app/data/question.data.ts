@@ -1,11 +1,13 @@
 import {User} from "./user.data";
+import {Survey} from "./survey.data";
 
 export interface Question {
     id?: number,
     type: questionTypes,
     text: string,
     answers?: string[],
-    author: User | {id: string}
+    author: User | {id: number},
+    survey?: Survey | {id: number}
 }
 
 export enum questionTypes {

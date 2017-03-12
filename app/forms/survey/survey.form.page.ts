@@ -1,5 +1,8 @@
 import {Page} from "../../test/page";
 import {DebugElement} from "@angular/core";
+import {QuestionFormPage} from "../question/question.form.page";
+import {By} from "@angular/platform-browser";
+import {QuestionForm} from "../question/question.form";
 
 export class SurveyFormPage extends Page {
     nameInput;
@@ -7,6 +10,9 @@ export class SurveyFormPage extends Page {
     endInput;
     anonymousInput;
     pagesInput;
+
+    addQuestionButton;
+    questionFormPage: QuestionFormPage;
 
     cancelButton;
 
@@ -27,6 +33,8 @@ export class SurveyFormPage extends Page {
         this.endInput = this.getElementByCss('.survey-end input');
         this.anonymousInput = this.getElementByCss('.survey-anonymous');
         this.pagesInput = this.getElementByCss('.survey-pages');
+
+        this.addQuestionButton = this.getDebugElementByCss('.survey-add-question');
 
         this.cancelButton = this.getDebugElementByCss('.survey-cancel');
         this.form = this.getElementByCss('form');
@@ -55,6 +63,15 @@ export class SurveyFormPage extends Page {
     private setDate(dateInput, date) {
         dateInput.value = date;
         dateInput.dispatchEvent(new Event('keyup'));
+    }
+
+    showQuestionForm() {
+        this.click(this.addQuestionButton);
+    }
+
+    getQuestionFormPage() {
+        let questionFormDebugElement = this.topDebugElement.query(By.directive(QuestionForm));
+        this.questionFormPage = new QuestionFormPage(questionFormDebugElement);
     }
 
     submitForm() {
