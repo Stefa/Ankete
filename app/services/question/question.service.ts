@@ -87,4 +87,11 @@ export class QuestionService {
                 return Observable.throw(new Error(errorMessage));
             });
     }
+
+    deleteQuestion(questionId: number): Observable<boolean> {
+        return this.api
+            .delete('questions/'+questionId)
+            .map(_ => true)
+            .catch(error => Observable.of(false));
+    }
 }

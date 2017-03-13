@@ -199,4 +199,48 @@ describe('QuestionService', () => {
             }
         ));
     });
+
+    describe('deleteQuestion', () => {
+        it('should send the right question path to api service', inject(
+            [ApiService, QuestionService],
+            (apiService: MockApiService, questionService: QuestionService) => {
+                apiService.setResponse({});
+                apiService.init();
+                questionService.deleteQuestion(1).subscribe();
+
+                expect(apiService.delete).toHaveBeenCalledWith('questions/1');
+            }
+        ));
+
+        it('should return true if question was successfully deleted', inject(
+            [ApiService, QuestionService],
+            (apiService: MockApiService, questionService: QuestionService) => {
+                let success: boolean;
+
+                apiService.setResponse({});
+                apiService.init();
+                questionService.deleteQuestion(1).subscribe(deleted => success = deleted);
+
+                expect(success).toBe(true);
+            }
+        ));
+
+        it('should return false if question was not found',  inject(
+            [ApiService, QuestionService],
+            (apiService: MockApiService, questionService: QuestionService) => {
+                let success: boolean;
+                let errorResponse: any = {
+                    status: 404,
+                    message: '404 - Not Found'
+                };
+
+                apiService.setError(errorResponse);
+                apiService.init();
+
+                questionService.deleteQuestion(1).subscribe(deleted => success = deleted);
+
+                expect(success).toBe(false);
+            }
+        ));
+    });
 });

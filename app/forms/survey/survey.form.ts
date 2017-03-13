@@ -22,6 +22,7 @@ export class SurveyForm implements OnInit {
     surveyFormGroup: FormGroup;
     showQuestionForm: boolean = false;
     questions: Array<Question> = [];
+    questionIdsBeforeDelete: Array<number> = [];
 
     formValid: boolean;
     formErrors: any;
@@ -51,7 +52,17 @@ export class SurveyForm implements OnInit {
         private authService: AuthService,
         private questionService: QuestionService,
         private dragulaService: DragulaService
-    ) {}
+    ) {
+        dragulaService.setOptions('questions-bag', {
+            removeOnSpill: true,
+            moves: () => {
+                return this.questions.length > 1;
+            }
+        });
+        dragulaService.remove.subscribe(_ => this.questionIdsBeforeDelete = this.getQuestionIds());
+
+        dragulaService.removeModel.subscribe(_ => this.deleteRemovedQuestions());
+    }
 
     ngOnInit() {
         this.surveyFormGroup = this.formBuilder.group({
@@ -85,6 +96,21 @@ export class SurveyForm implements OnInit {
         return start.isAfter(end) ? {'startAfterEnd': true } : null;
     };
 
+    private deleteRemovedQuestions() {
+        let currentQuestions = this.getQuestionIds();
+        let questionsToDelete = this.questionIdsBeforeDelete.filter(
+            questionId => currentQuestions.indexOf(questionId) == -1
+        );
+        questionsToDelete.forEach(
+            questionId => {
+                let idIndex = this.questionIdsBeforeDelete.indexOf(questionId);
+                this.questionService.deleteQuestion(questionId).subscribe(
+                    deleted => this.questionIdsBeforeDelete.splice(idIndex, 1)
+                )
+            }
+        );
+    }
+
     submit(submitValues: any) {
         this.formValid = this.surveyFormGroup.valid;
         this.validateForm();
@@ -112,7 +138,7 @@ export class SurveyForm implements OnInit {
         let anonymous = !!submitValues.anonymous;
         const e = submitValues.end.date;
         let end = new Date(e.year, e.month-1, e.day, 23, 59, 59);
-        let questionIds = this.questions.map(question => question.id);
+        let questionIds = this.getQuestionIds();
         return {
             name: submitValues.name,
             start: submitValues.start.jsdate,
@@ -122,6 +148,10 @@ export class SurveyForm implements OnInit {
             author: currentUser,
             questions: questionIds
         };
+    }
+
+    private getQuestionIds() {
+        return this.questions.map(question => question.id);
     }
 
     cancel() {

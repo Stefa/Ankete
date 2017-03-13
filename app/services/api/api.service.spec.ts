@@ -229,4 +229,44 @@ describe('ApiService', () => {
             })
         ));
     });
+    
+    describe('Delete action', () => {
+        it('should send delete request to the api', inject(
+            [ApiService, MockBackend],
+            fakeAsync((service: ApiService, backend: MockBackend) => {
+                let deleteUrl: string = apiUrl+'/questions/1';
+                let deleteResponse;
+
+                backend.connections.subscribe((connection: MockConnection) => {
+                    expect(connection.request.url).toBe(deleteUrl);
+                    expect(connection.request.method).toBe(RequestMethod.Delete);
+                    let response: ResponseOptions = new ResponseOptions({body: '{}'});
+                    connection.mockRespond(new Response(response));
+                });
+
+                service.delete('questions/1')
+                    .subscribe(response => deleteResponse = response);
+                tick();
+                expect(deleteResponse).toEqual({});
+            })
+        ));
+
+        it('should handle http errors by returning the status code and message', inject(
+            [ApiService, MockBackend],
+            fakeAsync((service: ApiService, backend: MockBackend) => {
+                let deleteResponse = null;
+                let deleteError = null;
+                mockConnectionError(backend, 404, 'Not Found');
+                service.delete('tests/1').subscribe(
+                    (response) => deleteResponse = response,
+                    (error) => deleteError = error
+                );
+                tick();
+
+                expect(deleteResponse).toBeNull();
+                expect(deleteError.status).toBe(404);
+                expect(deleteError.message).toBe('404 - Not Found')
+            })
+        ));
+    });
 });
