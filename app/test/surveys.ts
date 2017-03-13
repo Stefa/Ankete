@@ -9,12 +9,14 @@ let newTestSurvey: Survey = {
     anonymous: false,
     pages: 2,
     author: leonardoUserObject,
+    questions: [1,2,3],
     id: 1
 };
 let newTestSurveyResponse: any = Object.assign({}, newTestSurvey);
 newTestSurveyResponse.start = newTestSurveyResponse.start.toJSON();
 newTestSurveyResponse.end = newTestSurveyResponse.end.toJSON();
-newTestSurveyResponse.author = {id: newTestSurveyResponse.author.id};
+newTestSurveyResponse.userId = newTestSurveyResponse.author.id;
+delete newTestSurveyResponse.author;
 
 let newTestSurveyFormInput: any = Object.assign({}, newTestSurvey);
 newTestSurveyFormInput.start = '15.04.2017';

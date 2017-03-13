@@ -130,10 +130,31 @@ describe('SurveyForm', () => {
             (surveyService: SurveyService, authService: AuthService) => {
                 let surveyRequest = Object.assign({}, newTestSurvey);
                 delete surveyRequest.id;
+                surveyRequest.questions = [];
                 let surveyResponse = Object.assign({}, newTestSurvey);
 
                 setSpies(surveyService, surveyResponse, authService);
 
+                submitSurveyForm(newSurvey);
+
+                expect(authService.getLoggedInUser).toHaveBeenCalled();
+                expect(surveyService.createSurvey).toHaveBeenCalledWith(surveyRequest);
+                expect(createdSurvey).toEqual(surveyResponse);
+            }
+        ));
+
+        it('should send request with anonymous survey to SurveyService::createSurvey on valid submit', inject([SurveyService, AuthService],
+            (surveyService: SurveyService, authService: AuthService) => {
+                let surveyRequest = Object.assign({}, newTestSurvey);
+                surveyRequest.anonymous = true;
+                delete surveyRequest.id;
+                surveyRequest.questions = [];
+                let surveyResponse = Object.assign({}, newTestSurvey);
+                surveyResponse.anonymous = true;
+
+                setSpies(surveyService, surveyResponse, authService);
+
+                newSurvey.anonymous = true;
                 submitSurveyForm(newSurvey);
 
                 expect(authService.getLoggedInUser).toHaveBeenCalled();
@@ -363,15 +384,25 @@ describe('SurveyForm', () => {
             spyOn(authService, 'getLoggedInUser').and.returnValue(leonardoUserObject);
         }
         
-        xit('should update all the questions with surveyId on successful survey form submit', inject(
+        it('should update all the questions with surveyId on successful survey form submit', inject(
             [SurveyService, AuthService, QuestionService],
             (surveyService: SurveyService, authService: AuthService, questionService: QuestionService) => {
                 let newSurvey = Object.assign({}, newTestSurveyFormInput);
                 let surveyResponse = Object.assign({}, newTestSurvey);
+                let surveyRequest = Object.assign({}, newTestSurvey);
+                delete surveyRequest.id;
+                surveyRequest.questions = [1,2];
 
                 setSpies(surveyService, surveyResponse, authService);
                 spyOn(questionService, 'createQuestion').and.returnValues(
                     Observable.of(createdQuestion1), Observable.of(createdQuestion2)
+                );
+
+                let updatedQuestion1 = Object.assign({survey:{id: 1}}, createdQuestion1);
+                let updatedQuestion2 = Object.assign({survey:{id: 1}}, createdQuestion2);
+
+                spyOn(questionService, 'updateSurveyId').and.returnValues(
+                    Observable.of(updatedQuestion1), Observable.of(updatedQuestion2)
                 );
 
                 addQuestion(newQuestion1);
@@ -380,8 +411,15 @@ describe('SurveyForm', () => {
                 fixture.detectChanges();
 
                 submitSurveyForm(newSurvey);
+                fixture.detectChanges();
 
-                expect(authService.getLoggedInUser).toHaveBeenCalled();
+                expect((<any>questionService.updateSurveyId).calls.argsFor(0)).toEqual([1, 1]);
+                expect((<any>questionService.updateSurveyId).calls.argsFor(1)).toEqual([2, 1]);
+
+                expect(fixture.componentInstance.questions[0]).toEqual(updatedQuestion1);
+                expect(fixture.componentInstance.questions[1]).toEqual(updatedQuestion2);
+
+                expect(surveyService.createSurvey).toHaveBeenCalledWith(surveyRequest);
                 expect(createdSurvey).toEqual(surveyResponse);
             }
         ));

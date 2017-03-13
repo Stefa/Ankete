@@ -20,7 +20,7 @@ export class UserService {
         }).catch((error: any) => {
             let errorMessage: string = error.message;
             if(error.hasOwnProperty('status') && error.status === 404) {
-                errorMessage = 'Trašeni korisnik ne postoji.'
+                errorMessage = 'Traženi korisnik ne postoji.'
             }
             if(errorMessage.startsWith('Error: ')) {
                 errorMessage = errorMessage.substring(8);

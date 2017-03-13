@@ -4,8 +4,11 @@ import {Injectable} from '@angular/core';
 export class SurveyDataValidator {
 
     static readonly requiredProperties = ['name', 'start', 'end', 'anonymous', 'pages', 'author'];
-    static readonly optionalProperties = ['id'];
+    static readonly optionalProperties = ['id', 'questions'];
     static readonly allProperties = SurveyDataValidator.requiredProperties.concat(SurveyDataValidator.optionalProperties);
+
+    static readonly requiredApiProperties = ['id', 'name', 'start', 'end', 'anonymous', 'pages', 'userId'];
+    static readonly allApiProperties = SurveyDataValidator.requiredApiProperties.concat(['questions']);
 
     static checkIfSurveyObjectHasRequiredFields(survey):boolean {
         if(survey == null) return false;
@@ -20,13 +23,12 @@ export class SurveyDataValidator {
 
     static checkIfSurveyApiResponseIsValid(survey): boolean {
         if(survey == null) return false;
-        if(!SurveyDataValidator.checkIfSurveyObjectHasAllFields(survey)) return false;
+        if(!(SurveyDataValidator.requiredApiProperties.every(field => field in survey))) return false;
         if(isNaN(Date.parse(survey.start))) return false;
         if(isNaN(Date.parse(survey.end))) return false;
 
         let objectProperties = Object.keys(survey);
-
-        return SurveyDataValidator.allProperties.sort().join() == objectProperties.sort().join();
+        return objectProperties.every(field => SurveyDataValidator.allApiProperties.indexOf(field)>-1);
     }
 
     static isValidSurveyProperty(property: string) {

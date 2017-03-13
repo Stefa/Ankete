@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {ApiService} from "../api/api.service";
 import {Question, questionTypes} from "../../data/question.data";
-import {Observable} from "rxjs";
+import {Observable} from "rxjs/Rx";
 
 @Injectable()
 export class QuestionService {
@@ -72,4 +72,19 @@ export class QuestionService {
         return true;
     }
 
+    updateSurveyId(questionId: number, surveyId: number): Observable<Question> {
+        return this.api
+            .patch('questions/'+questionId, {surveyId: surveyId})
+            .map(this.createQuestionFromApiResponse)
+            .catch((error: any) => {
+                let errorMessage: string = error.message;
+                if(error.hasOwnProperty('status') && error.status === 404) {
+                    errorMessage = 'Traženo pitanje ne postoji.'
+                }
+                if(errorMessage.startsWith('Error: ')) {
+                    errorMessage = errorMessage.substring(8);
+                }
+                return Observable.throw(new Error(errorMessage));
+            });
+    }
 }

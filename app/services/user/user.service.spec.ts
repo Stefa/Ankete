@@ -111,7 +111,7 @@ describe('UserService', () => {
                     );
                     tick();
                     expect(user).not.toBeDefined();
-                    expect(errorMessage).toBe('Trašeni korisnik ne postoji.');
+                    expect(errorMessage).toBe('Traženi korisnik ne postoji.');
                 }
             )
         ));

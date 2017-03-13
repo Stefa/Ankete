@@ -178,5 +178,55 @@ describe('ApiService', () => {
         ));
     });
 
+    describe('Patch action', () => {
+        it('should send serialized object to the right api url with patch request', inject(
+            [ApiService, MockBackend],
+            fakeAsync((service: ApiService, backend: MockBackend) => {
+                let questionSurveyIdUpdate: any = {
+                    surveyId: 1
+                };
+                let updatedObject = Object.assign({id: 1}, questionSurveyIdUpdate);
+                let patchUrl: string = apiUrl+'/questions/1';
+                let requestBodyString = JSON.stringify(questionSurveyIdUpdate);
 
+                backend.connections.subscribe((connection: MockConnection) => {
+                    expect(connection.request.url).toBe(patchUrl);
+                    expect(connection.request.method).toBe(RequestMethod.Patch);
+                    expect(JSON.stringify(JSON.parse(connection.request.getBody()))).toEqual(requestBodyString);
+                    let responseBody = `{
+                        "surveyId": 1,
+                        "id": 1 
+                    }`;
+                    let response: ResponseOptions = new ResponseOptions({body: responseBody});
+                    connection.mockRespond(new Response(response));
+                });
+
+
+                let patchResponse: any = null;
+
+                service.patch('questions/1', questionSurveyIdUpdate)
+                    .subscribe(response => patchResponse = response);
+                tick();
+                expect(patchResponse).toEqual(updatedObject);
+            })
+        ));
+
+        it('should handle http errors by returning the status code and message', inject(
+            [ApiService, MockBackend],
+            fakeAsync((service: ApiService, backend: MockBackend) => {
+                let patchResponse = null;
+                let patchError = null;
+                mockConnectionError(backend, 404, 'Not Found');
+                service.patch('tests/1', {title: 'New test'}).subscribe(
+                    (response) => patchResponse = response,
+                    (error) => patchError = error
+                );
+                tick();
+
+                expect(patchResponse).toBeNull();
+                expect(patchError.status).toBe(404);
+                expect(patchError.message).toBe('404 - Not Found')
+            })
+        ));
+    });
 });

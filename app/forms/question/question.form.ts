@@ -39,7 +39,7 @@ export class QuestionForm implements OnInit, OnDestroy {
             moves: () => {
                 return this.answers.length > 1;
             }
-        })
+        });
     }
 
     ngOnInit() {

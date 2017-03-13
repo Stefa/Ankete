@@ -6,6 +6,8 @@ import {SurveyFormValidator} from "../../form-validators/survey/survey.form-vali
 import * as moment from 'moment/moment';
 import {AuthService} from "../../services/authentication/auth.service";
 import {Question} from "../../data/question.data";
+import {QuestionService} from "../../services/question/question.service";
+import {DragulaService} from "ng2-dragula";
 
 @Component({
     moduleId: module.id,
@@ -46,8 +48,10 @@ export class SurveyForm implements OnInit {
         private formBuilder: FormBuilder,
         private surveyService: SurveyService,
         private surveyFormValidator: SurveyFormValidator,
-        private authService: AuthService
-    ) { }
+        private authService: AuthService,
+        private questionService: QuestionService,
+        private dragulaService: DragulaService
+    ) {}
 
     ngOnInit() {
         this.surveyFormGroup = this.formBuilder.group({
@@ -85,26 +89,38 @@ export class SurveyForm implements OnInit {
         this.formValid = this.surveyFormGroup.valid;
         this.validateForm();
         if(!this.formValid) return;
-
         let newSurvey = this.createSurveyFromSubmittedValues(submitValues);
-
         this.surveyService.createSurvey(newSurvey).subscribe(
-            createdSurvey => this.onSurveyCreated.emit(createdSurvey)
+            createdSurvey => {
+                this.updateSurveyQuestionsWithSurveyId(createdSurvey.id);
+                this.onSurveyCreated.emit(createdSurvey);
+            }
         )
+    }
+
+    private updateSurveyQuestionsWithSurveyId(surveyId) {
+        for(let i=0; i<this.questions.length; i++) {
+            let questionId = this.questions[i].id;
+            this.questionService.updateSurveyId(questionId, surveyId).subscribe(
+                updatedQuestion => this.questions[i] = updatedQuestion
+            );
+        }
     }
 
     private createSurveyFromSubmittedValues(submitValues: any): Survey {
         let currentUser = this.authService.getLoggedInUser();
-        let anonymous = !!submitValues.anonymousInput;
+        let anonymous = !!submitValues.anonymous;
         const e = submitValues.end.date;
         let end = new Date(e.year, e.month-1, e.day, 23, 59, 59);
+        let questionIds = this.questions.map(question => question.id);
         return {
             name: submitValues.name,
             start: submitValues.start.jsdate,
             end: end,
             anonymous: anonymous,
             pages: submitValues.pages,
-            author: currentUser
+            author: currentUser,
+            questions: questionIds
         };
     }
 

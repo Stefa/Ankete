@@ -144,9 +144,58 @@ describe('QuestionService', () => {
             (apiService: MockApiService, questionService: QuestionService) => {
                 let chooseOneQuestionWithoutAuthor = Object.assign({}, newChooseOneQuestion);
                 chooseOneQuestionWithoutAuthor.author = null;
-                let message = 'Autor pitanja mora biti postavljen!'
+                let message = 'Autor pitanja mora biti postavljen!';
 
                 postInvalidQuestion(apiService, questionService, chooseOneQuestionWithoutAuthor, message);
+            }
+        ));
+    });
+
+    describe('updateSurveyId', () => {
+        it('should send the right update data to api service patch action', inject(
+            [ApiService, QuestionService],
+            (apiService: MockApiService, questionService: QuestionService) => {
+                apiService.setResponse(questionForSurveyPostResponse);
+                apiService.init();
+                questionService.updateSurveyId(1, 1).subscribe();
+
+                expect(apiService.patch).toHaveBeenCalledWith('questions/1', {surveyId: 1});
+            }
+        ));
+
+        it('should return question object with populated survey and author', inject(
+            [ApiService, QuestionService],
+            (apiService: MockApiService, questionService: QuestionService) => {
+                let updatedQuestion: Question;
+                apiService.setResponse(questionForSurveyPostResponse);
+                apiService.init();
+                questionService.updateSurveyId(1, 1).subscribe(question => updatedQuestion = question);
+
+                expect(updatedQuestion).toEqual(expectedCreateQuestionForSurveyResponse);
+            }
+        ));
+
+        it('should throw appropriate error when question for update was not found', inject(
+            [ApiService, QuestionService],
+            (apiService: MockApiService, questionService: QuestionService) => {
+                let updatedQuestion: Question;
+                let errorMessage: any;
+
+                let errorResponse: any = {
+                    status: 404,
+                    message: '404 - Not Found'
+                };
+
+                apiService.setError(errorResponse);
+                apiService.init();
+
+                questionService.updateSurveyId(1, 1).subscribe(
+                    question => updatedQuestion = question,
+                    error => errorMessage = error.message
+                );
+
+                expect(updatedQuestion).toBeUndefined();
+                expect(errorMessage).toBe("Traženo pitanje ne postoji.")
             }
         ));
     });

@@ -3,11 +3,13 @@ import {Observable} from 'rxjs/Rx';
 export class MockApiService {
     get;
     post;
+    patch;
     private fakeObservable;
 
     init() {
         this.get = jasmine.createSpy('get').and.returnValue(this.fakeObservable);
         this.post = jasmine.createSpy('post').and.returnValue(this.fakeObservable);
+        this.patch = jasmine.createSpy('patch').and.returnValue(this.fakeObservable);
     }
 
     setResponse(responseObject: any): void {

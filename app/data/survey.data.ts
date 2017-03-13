@@ -8,5 +8,6 @@ export interface Survey {
     end: Date,
     anonymous: boolean,
     pages: number,
-    author: User | {id: number}
+    author: User | {id: number},
+    questions?: Array<number>
 }
