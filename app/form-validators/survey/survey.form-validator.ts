@@ -11,7 +11,8 @@ export class SurveyFormValidator {
         let formErrors = {
             'name': [],
             'start': [],
-            'end': []
+            'end': [],
+            'pages': []
         };
 
         for (const field in formErrors) {
@@ -46,15 +47,16 @@ export class SurveyFormValidator {
         },
         end: {
             required: {css: "survey-end-required", message: "Unesite datum kraja ankete."}
+        },
+        pages: {
+            pagesNan: {css: "survey-pages-nan", message: "Broj strana nije broj."},
+            muchPages: {css: "user-pages", message: "Broj strana ne može biti veći od broja pitanja."}
         }
     };
 
     formGroupValidationMessages = {
         startAfterEnd: {
             end: {css: "survey-start-after-end", message: "Kraj ankete ne može biti pre početka."}
-        },
-        muchPages: {
-            pages: {css: "user-pages", message: "Broj strana ne može biti veći od broja pitanja."}
         }
     };
 

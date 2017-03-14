@@ -61,12 +61,19 @@
             Pitanja
         </div>
 
-        <div class="survey-questions">
+        <div class="ui survey-questions" *ngIf="questions.length">
             <div [dragula]='"questions-bag"' [dragulaModel]="questions" class="ui ordered large celled list">
                 <div *ngFor="let question of questions" class="item">
                     <div class="content"><div class="header"> {{question.text}} </div> </div>
                 </div>
             </div>
+            <button
+                    *ngIf="questions.length>1"
+                    class="ui icon right floated button shuffle-answers"
+                    (click)="shuffleQuestions($event)"
+            >
+                <i class="shuffle icon"></i>
+            </button>
         </div>
 
         <button

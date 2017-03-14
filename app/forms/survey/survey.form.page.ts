@@ -22,6 +22,7 @@ export class SurveyFormPage extends Page {
     startInvalidErrorElement;
     endInvalidErrorElement;
     startAfterEndErrorElement;
+    tooMuchPagesError;
 
     form;
 
@@ -89,5 +90,6 @@ export class SurveyFormPage extends Page {
         this.startInvalidErrorElement = this.getElementFromHtml('.ui.error.message.survey-start-invalid');
         this.endInvalidErrorElement = this.getElementFromHtml('.ui.error.message.survey-end-invalid');
         this.startAfterEndErrorElement = this.getElementFromHtml('.ui.error.message.survey-start-after-end');
+        this.tooMuchPagesError = this.getElementFromHtml('.ui.error.message.user-pages');
     }
 }

@@ -66,7 +66,6 @@ describe('SurveyDataValidator', () => {
         });
 
         it('should return true provided the valid survey response', () => {
-            console.log(testSurveyResponse);
             let valid = SurveyDataValidator.checkIfSurveyApiResponseIsValid(testSurveyResponse);
             expect(valid).toBe(true);
         });

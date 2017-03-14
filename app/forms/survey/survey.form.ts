@@ -1,6 +1,6 @@
 import {Component, OnInit, Output, EventEmitter, OnDestroy, Input} from '@angular/core';
 import {Survey} from "../../data/survey.data";
-import {FormGroup, FormBuilder, Validators, ValidatorFn} from "@angular/forms";
+import {FormGroup, FormBuilder, Validators, ValidatorFn, FormControl} from "@angular/forms";
 import {SurveyService} from "../../services/survey/survey.service";
 import {SurveyFormValidator} from "../../form-validators/survey/survey.form-validator";
 import * as moment from 'moment/moment';
@@ -61,7 +61,10 @@ export class SurveyForm implements OnInit {
         });
         dragulaService.remove.subscribe(_ => this.questionIdsBeforeDelete = this.getQuestionIds());
 
-        dragulaService.removeModel.subscribe(_ => this.deleteRemovedQuestions());
+        dragulaService.removeModel.subscribe(_ => {
+            this.validatePages();
+            this.deleteRemovedQuestions();
+        });
     }
 
     ngOnInit() {
@@ -70,7 +73,7 @@ export class SurveyForm implements OnInit {
             start: ['', Validators.required],
             end: ['', Validators.required],
             anonymous: [''],
-            pages: ['1']
+            pages: ['1', this.pagesValidator]
         }, {validator: this.startAfterEndValidator});
 
         this.formValid = true;
@@ -85,6 +88,14 @@ export class SurveyForm implements OnInit {
         this.formErrors = this.surveyFormValidator.validateForm(this.surveyFormGroup);
     }
 
+    private validatePages() {
+        let pagesControl = this.surveyFormGroup.get('pages');
+        pagesControl.markAsDirty();
+        pagesControl.updateValueAndValidity();
+        this.validateForm();
+        this.formValid = this.surveyFormGroup.valid;
+    }
+
     private startAfterEndValidator: ValidatorFn = (g: FormGroup) => {
         let startControl = g.get('start');
         let endControl = g.get('end');
@@ -94,6 +105,14 @@ export class SurveyForm implements OnInit {
         let end = moment(endControl.value.date);
 
         return start.isAfter(end) ? {'startAfterEnd': true } : null;
+    };
+
+    private pagesValidator: ValidatorFn = (pagesControl: FormControl) => {
+        let pages = parseInt(pagesControl.value);
+        if(isNaN(pages)) return {'pagesNan': true};
+
+        let maxAllowedPages = this.questions.length > 0 ? this.questions.length : 1;
+        if(pages > maxAllowedPages) return {'muchPages': true};
     };
 
     private deleteRemovedQuestions() {
@@ -113,6 +132,7 @@ export class SurveyForm implements OnInit {
 
     submit(submitValues: any) {
         this.formValid = this.surveyFormGroup.valid;
+        this.markControlsAsDirty();
         this.validateForm();
         if(!this.formValid) return;
         let newSurvey = this.createSurveyFromSubmittedValues(submitValues);
@@ -122,6 +142,12 @@ export class SurveyForm implements OnInit {
                 this.onSurveyCreated.emit(createdSurvey);
             }
         )
+    }
+
+    private markControlsAsDirty() {
+        for (let controlName in this.surveyFormGroup.controls) {
+            this.surveyFormGroup.get(controlName).markAsDirty();
+        }
     }
 
     private updateSurveyQuestionsWithSurveyId(surveyId) {
@@ -181,11 +207,20 @@ export class SurveyForm implements OnInit {
         this.questions.push(question);
         this.showQuestionForm = false;
         this.undimSurveyForm();
+        this.validatePages();
     }
 
     cancelQuestion() {
         this.showQuestionForm = false;
         this.undimSurveyForm();
+    }
+
+    shuffleQuestions(event) {
+        event.preventDefault();
+        for (let i = this.questions.length; i; i--) {
+            let j = Math.floor(Math.random() * i);
+            [this.questions[i - 1], this.questions[j]] = [this.questions[j], this.questions[i - 1]];
+        }
     }
 
 }

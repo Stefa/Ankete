@@ -248,6 +248,7 @@ describe('SurveyForm', () => {
         };
         let createdQuestion2: Question = Object.assign({id: 2}, newQuestion2);
         beforeEach(() => {
+            createdSurvey = null;
             fixture = TestBed.createComponent(SurveyForm);
             fixture.detectChanges();
             surveyFormPage = new SurveyFormPage(fixture.debugElement);
@@ -421,6 +422,32 @@ describe('SurveyForm', () => {
 
                 expect(surveyService.createSurvey).toHaveBeenCalledWith(surveyRequest);
                 expect(createdSurvey).toEqual(surveyResponse);
+            }
+        ));
+
+        it('should display error on submit when number of pages is larger than number of questions', inject(
+            [SurveyService, AuthService, QuestionService],
+            (surveyService: SurveyService, authService: AuthService, questionService: QuestionService) => {
+                let newSurvey = Object.assign({}, newTestSurveyFormInput);
+                newSurvey.pages = 3;
+                setSpies(surveyService, null, authService);
+
+                spyOn(questionService, 'createQuestion').and.returnValues(
+                    Observable.of(createdQuestion1), Observable.of(createdQuestion2)
+                );
+
+                addQuestion(newQuestion1);
+                fixture.detectChanges();
+                addQuestion(newQuestion2);
+                fixture.detectChanges();
+
+                submitSurveyForm(newSurvey);
+                fixture.detectChanges();
+                surveyFormPage.getErrors();
+
+                expect(surveyService.createSurvey).not.toHaveBeenCalled();
+                expect(createdSurvey).toBeNull();
+                expect(surveyFormPage.tooMuchPagesError.innerHTML).toContain('Broj strana ne može biti veći od broja pitanja.');
             }
         ));
 
