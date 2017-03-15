@@ -13,12 +13,13 @@ import {leonardoUserObject} from "../../test/users";
 import {Observable} from 'rxjs/Rx';
 import {UserService} from "../../services/user/user.service";
 import {DragulaModule} from "ng2-dragula";
+import {FormErrorComponent} from "../../components/form-error/form-error.component";
 
 describe('QuestionForm', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [FormsModule, ReactiveFormsModule, HttpModule, DragulaModule],
-            declarations: [QuestionForm],
+            declarations: [QuestionForm, FormErrorComponent],
             providers: [
                 QuestionService, ApiService, AuthService, UserService
             ]
@@ -65,6 +66,10 @@ describe('QuestionForm', () => {
             let textInput = fixture.debugElement.query(By.css('.question-text'));
             expect(textInput instanceof DebugElement).toBe(true);
         });
+        it('should have a required field', () => {
+            let requiredInput = fixture.debugElement.query(By.css('.question-required'));
+            expect(requiredInput instanceof DebugElement).toBe(true);
+        });
         it('should not show answer field and Add answer button if type is not selected', () => {
             fixture.detectChanges();
             let answerInput = fixture.debugElement.query(By.css('.question-answer'));
@@ -101,6 +106,51 @@ describe('QuestionForm', () => {
             expect(addAnswerButton == null).toBe(true);
         });
 
+        it('should not show "other answer" checkbox if type is not selected', () => {
+            fixture.detectChanges();
+            let otherAnswerCheckbox = fixture.debugElement.query(By.css('.question-other-answer'));
+            expect(otherAnswerCheckbox == null).toBe(true);
+        });
+
+        it('should show "other answer" checkbox if type is choose_one or choose_multiple', () => {
+            fixture.detectChanges();
+            [questionTypes.choose_one, questionTypes.choose_multiple].forEach((type) => {
+                fixture.componentInstance.typeControl.setValue(type);
+                fixture.detectChanges();
+                let otherAnswerCheckbox = fixture.debugElement.query(By.css('.question-other-answer'));
+                expect(otherAnswerCheckbox instanceof DebugElement).toBe(true);
+            });
+        });
+
+        it('should not show "other answer" checkbox if type is numeric, text or long_text', () => {
+            fixture.detectChanges();
+            [questionTypes.numeric, questionTypes.text, questionTypes.long_text].forEach((type) => {
+                fixture.componentInstance.typeControl.setValue(type);
+                fixture.detectChanges();
+                let otherAnswerCheckbox = fixture.debugElement.query(By.css('.question-other-answer'));
+                expect(otherAnswerCheckbox == null).toBe(true);
+            });
+        });
+
+        it('should not show "other answer" text field if "other answer" checkbox is not checked', () => {
+            fixture.detectChanges();
+            fixture.componentInstance.typeControl.setValue(questionTypes.choose_multiple);
+            fixture.detectChanges();
+            let otherAnswerInput = fixture.debugElement.query(By.css('.question-other-answer-text'));
+            expect(otherAnswerInput == null).toBe(true);
+        });
+
+        it('should show "other answer" text field if "other answer" checkbox is checked', () => {
+            fixture.detectChanges();
+            fixture.componentInstance.typeControl.setValue(questionTypes.choose_multiple);
+            fixture.detectChanges();
+            let otherAnswerCheckbox = fixture.debugElement.query(By.css('.question-other-answer')).nativeElement;
+            otherAnswerCheckbox.click();
+            fixture.detectChanges();
+            let otherAnswerInput = fixture.debugElement.query(By.css('.question-other-answer-text'));
+            expect(otherAnswerInput instanceof DebugElement).toBe(true);
+        });
+
         it('should show cancel button', () => {
             let cancelButton = fixture.debugElement.query(By.css('.question-cancel'));
             expect(cancelButton instanceof DebugElement).toBe(true);
@@ -116,15 +166,19 @@ describe('QuestionForm', () => {
     describe('QuestionForm: behaviour', () => {
         let fixture: ComponentFixture<QuestionForm>, questionFormPage: QuestionFormPage, createdQuestion;
 
-        function submitQuestionForm(newQuestion: any) {
+        function fillInQuestionForm(newQuestion: any) {
             questionFormPage.setType(newQuestion.type);
             questionFormPage.setText(newQuestion.text);
+            if(newQuestion.required) questionFormPage.setRequired();
 
             fixture.detectChanges();
             questionFormPage.getAnswerInput();
             newQuestion.answers.forEach(answer => questionFormPage.setAnswer(answer));
             fixture.detectChanges();
+        }
 
+        function submitQuestionForm(newQuestion: any) {
+            fillInQuestionForm(newQuestion);
             questionFormPage.submitForm();
         }
 
@@ -157,8 +211,8 @@ describe('QuestionForm', () => {
 
             let newNumberOfAnswers = fixture.componentInstance.answers.length;
             expect(newNumberOfAnswers).toEqual(numberOfAnswers+2);
-            expect(fixture.componentInstance.answers[0]).toBe('answer 1');
-            expect(fixture.componentInstance.answers[1]).toBe('answer 2');
+            expect(fixture.componentInstance.answers[0].text).toBe('answer 1');
+            expect(fixture.componentInstance.answers[1].text).toBe('answer 2');
         });
 
         it('should send request to QuestionService::createQuestion on valid submit', inject([QuestionService, AuthService],
@@ -166,6 +220,7 @@ describe('QuestionForm', () => {
                 let newQuestion = {
                     type: questionTypes.numeric,
                     text: 'Test question?',
+                    required: true,
                     answers: ['answer1', 'answer2', 'answer3'],
                     author: leonardoUserObject
                 };
@@ -185,6 +240,7 @@ describe('QuestionForm', () => {
                 let newQuestion = {
                     type: questionTypes.numeric,
                     text: 'Test question?',
+                    required: true,
                     answers: [],
                     author: leonardoUserObject
                 };
@@ -204,6 +260,7 @@ describe('QuestionForm', () => {
                 let newQuestion = {
                     type: "",
                     text: 'Test question?',
+                    required: true,
                     answers: []
                 };
                 setSpies(questionService, null, authService);
@@ -223,6 +280,7 @@ describe('QuestionForm', () => {
                 let newQuestion = {
                     type: questionTypes.numeric,
                     text: '',
+                    required: true,
                     answers: ['answer1', 'answer2', 'answer3']
                 };
                 setSpies(questionService, null, authService);
@@ -245,6 +303,7 @@ describe('QuestionForm', () => {
                 let newQuestion = {
                     type: questionTypes.numeric,
                     text: 'Test question?',
+                    required: true,
                     answers: ['answer1', 'answer2', 'answer3'],
                     author: leonardoUserObject
                 };
@@ -266,6 +325,53 @@ describe('QuestionForm', () => {
             }
         ));
 
+        function selectOtherAnswer() {
+            fixture.detectChanges();
+            questionFormPage.getOtherAnswerCheckbox();
+            questionFormPage.setOtherAnswer();
+            fixture.detectChanges();
+            questionFormPage.getOtherAnswerInput();
+        }
+
+        it('should display "other answer" text field with default value prefilled when "other answer" checkbox is checked', () => {
+            fixture.detectChanges();
+            questionFormPage.setType(questionTypes.choose_one);
+
+            selectOtherAnswer();
+            expect(questionFormPage.otherAnswerInput.value).toBe('drugo');
+        });
+
+        it('should send value of "other answer" field on submit when populated', inject(
+            [QuestionService, AuthService],
+            (questionService: QuestionService, authService: AuthService) => {
+                let newQuestion = {
+                    type: questionTypes.choose_multiple,
+                    text: 'Test question?',
+                    required: true,
+                    answers: ['answer1', 'answer2', 'answer3'],
+                    author: leonardoUserObject
+                };
+                let otherAnswerText = 'Your answer';
+                let expectedQuestion: Question = Object.assign(
+                    {
+                        id: 1,
+                        otherAnswer: otherAnswerText
+                    }, newQuestion);
+                let expectedServiceCall: Question = Object.assign({otherAnswer: otherAnswerText}, newQuestion);
+
+                setSpies(questionService, expectedQuestion, authService);
+
+                fillInQuestionForm(newQuestion);
+                selectOtherAnswer();
+                questionFormPage.setOtherAnswerText(otherAnswerText);
+                questionFormPage.submitForm();
+
+                expect(authService.getLoggedInUser).toHaveBeenCalled();
+                expect(questionService.createQuestion).toHaveBeenCalledWith(expectedServiceCall);
+                expect(createdQuestion).toEqual(expectedQuestion);
+            }
+        ));
+
         it('should emmit cancel event when cancel button is clicked', () => {
             let canceled = false;
             fixture.componentInstance.onCancel.subscribe(() => canceled = true);
@@ -274,5 +380,28 @@ describe('QuestionForm', () => {
             expect(canceled).toBe(true);
         });
 
+        it('should display error that QuestionService throws during question creation', inject(
+            [QuestionService, AuthService],
+            (questionService: QuestionService, authService: AuthService) => {
+                let newQuestion = {
+                    type: questionTypes.numeric,
+                    text: 'Test question?',
+                    required: true,
+                    answers: ['answer1', 'answer2', 'answer3'],
+                    author: leonardoUserObject
+                };
+                spyOn(questionService, 'createQuestion').and.throwError('Autor pitanja mora biti postavljen.');
+                spyOn(authService, 'getLoggedInUser').and.returnValue(leonardoUserObject);
+
+                submitQuestionForm(newQuestion);
+                fixture.detectChanges();
+                questionFormPage.getErrors();
+
+                expect(authService.getLoggedInUser).toHaveBeenCalled();
+                expect(questionService.createQuestion).toHaveBeenCalledWith(newQuestion);
+                expect(createdQuestion).toEqual(null);
+                expect(questionFormPage.questionServiceErrorElement.innerHTML).toContain('Autor pitanja mora biti postavljen.');
+            }
+        ));
     });
 });

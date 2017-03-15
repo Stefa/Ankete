@@ -22,9 +22,12 @@ export class QuestionForm implements OnInit, OnDestroy {
     textControl: AbstractControl;
     answerControl: AbstractControl;
     formValid: boolean;
+    questionServiceError: {css: string, message: string};
 
     showAnswers: boolean = false;
-    answers: Array<string> = [];
+    showOtherAnswer: boolean = false;
+    answers: Array<{id: number, text: string}> = [];
+    currentAnswerId: number = 1;
 
     typeOptions: Array<{value:number, name: string}> = [];
 
@@ -43,10 +46,14 @@ export class QuestionForm implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        const otherAnswerDefaultText = 'drugo';
         this.questionFormGroup = this.formBuilder.group({
             type: ['', Validators.required],
             text: ['', Validators.required],
-            answers: ['']
+            required: [''],
+            answers: [''],
+            otherAnswer: [''],
+            otherAnswerText: [otherAnswerDefaultText]
         });
         this.typeControl = this.questionFormGroup.controls['type'];
         this.textControl = this.questionFormGroup.controls['text'];
@@ -55,7 +62,16 @@ export class QuestionForm implements OnInit, OnDestroy {
         questionTypeTitles.forEach((value, key) => {
             this.typeOptions.push({value: key, name: value});
         });
-        this.typeControl.valueChanges.subscribe(value => this.showAnswers = value && value!= questionTypes.long_text);
+        this.typeControl.valueChanges.subscribe(value => {
+            this.showAnswers = value && value!= questionTypes.long_text;
+            this.showOtherAnswer = value && (value == questionTypes.choose_one || value == questionTypes.choose_multiple);
+        });
+        this.questionFormGroup.valueChanges.subscribe(value => {
+            if(this.questionServiceError != null) {
+                this.questionServiceError = null;
+                this.formValid = true;
+            }
+        })
     }
 
     ngOnDestroy() {
@@ -68,12 +84,14 @@ export class QuestionForm implements OnInit, OnDestroy {
         if(!this.formValid) {
             return;
         }
+        let answers = this.answers.map(answer => answer.text);
 
         let currentUser = this.authService.getLoggedInUser();
         let newQuestion: Question = {
             type: parseInt(submitValues.type),
             text: submitValues.text,
-            answers: this.answers,
+            required: !!submitValues.required,
+            answers: answers,
             author: currentUser
         };
         if(this.surveyId) {
@@ -81,13 +99,31 @@ export class QuestionForm implements OnInit, OnDestroy {
                 id: this.surveyId
             };
         }
-        this.questionService.createQuestion(newQuestion)
-            .subscribe(createdQuestion => this.onQuestionCreated.emit(createdQuestion));
+        if(submitValues.otherAnswer) {
+            newQuestion.otherAnswer = submitValues.otherAnswerText;
+        }
+
+        try{
+            this.questionService.createQuestion(newQuestion)
+                .subscribe(createdQuestion => this.onQuestionCreated.emit(createdQuestion));
+        } catch (createError) {
+            this.formValid = false;
+            this.questionServiceError = {
+                css: 'question-service-error',
+                message: createError.message
+            }
+        }
+
     }
 
     addAnswer(event) {
-        this.answers.push(this.answerControl.value);
+        let newAnswer = {
+            id: ++this.currentAnswerId,
+            text: this.answerControl.value
+        };
+        this.answers.push(newAnswer);
         this.answerControl.reset();
+        this.answerControl.setValue('');
         event.preventDefault();
     }
 

@@ -6,6 +6,7 @@
 >
     <div class="ui clearing segment">
         <!-- Type field -->
+        <form-error [error]="questionServiceError" *ngIf="questionServiceError"></form-error>
         <div class="field">
             <label> Tip: </label>
             <select class="ui dropdown question-type" name="type" [formControl]="typeControl">
@@ -30,12 +31,20 @@
             > Unesite tekst pitanja. </div>
         </div>
 
+        <!-- Required field -->
+        <div class="ui checkbox">
+            <input type="checkbox" formControlName="required" name="required" class="question-required">
+            <label> Obavezno pitanje </label>
+        </div>
+
         <!-- Answers field -->
+        <h4 class="ui horizontal divider header" *ngIf="showAnswers">
+            Odgovori
+        </h4>
         <div class="field" *ngIf="showAnswers">
-            <label> Odgovori: </label>
             <div [dragula]='"answers-bag"' [dragulaModel]="answers" class="ui ordered large celled list question-answers">
                 <div *ngFor="let answer of answers" class="item">
-                    <div class="content"><div class="header"> {{answer}} </div> </div>
+                    <div class="content"><div class="header"> {{answer.text}} </div> </div>
                 </div>
             </div>
             <div class="ui action input">
@@ -47,10 +56,27 @@
             <button class="ui icon right floated button shuffle-answers" (click)="shuffleAnswers($event)">
                 <i class="shuffle icon"></i>
             </button>
+
+            <!-- Other answer field -->
+            <div class="ui basic clearing segment" *ngIf="showOtherAnswer">
+                <div class="ui checkbox">
+                    <input
+                            type="checkbox"  name="otherAnswer" class="question-other-answer"
+                            formControlName="otherAnswer" #otherAnswerCheckbox>
+                    <label> Dodati opciju 'drugo' </label>
+                </div>
+                <div class="field" *ngIf="otherAnswerCheckbox.checked">
+                    <label> Tekst opcije: </label>
+                    <input
+                            type="text" name="other-answer-text"
+                            class="question-other-answer-text" formControlName="otherAnswerText"
+                    >
+                </div>
+            </div>
         </div>
 
         <!-- Buttons -->
-        <div class="three ui buttons">
+        <div class="three ui buttons question-buttons">
             <button type="button" class="ui large grey button question-cancel" (click)="cancel($event)">
                 Odustani
             </button>

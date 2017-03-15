@@ -45,11 +45,11 @@ export class QuestionService {
 
     private validateQuestion(question: Question): boolean {
         if(question.text == '') {
-            throw new Error('Tekst pitanja mora biti zadat!');
+            throw new Error('Tekst pitanja mora biti zadat.');
         }
 
         if(question.author == null) {
-            throw new Error('Autor pitanja mora biti postavljen!');
+            throw new Error('Autor pitanja mora biti postavljen.');
         }
 
         switch (question.type) {
@@ -57,14 +57,14 @@ export class QuestionService {
             case questionTypes.numeric:
             case questionTypes.text:
                 if(question.answers.length == 0) {
-                    throw new Error('Tekst bar jednog polja za odgovor mora biti postavljen!');
+                    throw new Error('Tekst bar jednog polja za odgovor mora biti postavljen.');
                 }
                 break;
 
             case questionTypes.choose_one:
             case questionTypes.choose_multiple:
                 if(question.answers.length < 2) {
-                    throw new Error('Pitanje mora imati više ponuđenih odgovora!');
+                    throw new Error('Pitanje mora imati više ponuđenih odgovora.');
                 }
                 break;
         }

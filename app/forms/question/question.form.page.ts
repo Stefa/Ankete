@@ -5,12 +5,16 @@ export class QuestionFormPage extends Page{
 
     typeInput;
     textInput;
+    requiredCheckbox;
     answerInput;
     addAnswerButton;
+    otherAnswerCheckbox;
+    otherAnswerInput;
     cancelButton;
 
     typeErrorElement;
     textErrorElement;
+    questionServiceErrorElement;
 
     form;
 
@@ -18,6 +22,7 @@ export class QuestionFormPage extends Page{
         super(questionFormDebugElement);
         this.typeInput = this.getElementByCss('.question-type');
         this.textInput = this.getElementByCss('.question-text');
+        this.requiredCheckbox = this.getElementByCss('.question-required');
         this.cancelButton = this.getDebugElementByCss('.question-cancel');
         this.form = this.getElementByCss('form');
     }
@@ -25,6 +30,13 @@ export class QuestionFormPage extends Page{
     getAnswerInput() {
         this.answerInput = this.getElementByCss('.question-answer');
         this.addAnswerButton = this.getDebugElementByCss('.add-question-answer');
+    }
+
+    getOtherAnswerCheckbox() {
+        this.otherAnswerCheckbox = this.getElementByCss('.question-other-answer');
+    }
+    getOtherAnswerInput() {
+        this.otherAnswerInput = this.getElementByCss('.question-other-answer-text');
     }
 
     setText(text: string) {
@@ -35,9 +47,20 @@ export class QuestionFormPage extends Page{
         this.setSelect(this.typeInput, value);
     }
 
+    setRequired() {
+        this.requiredCheckbox.click();
+    }
+
     setAnswer(answerText: string) {
         this.setInput(this.answerInput, answerText);
         this.click(this.addAnswerButton);
+    }
+
+    setOtherAnswer() {
+        this.otherAnswerCheckbox.click();
+    }
+    setOtherAnswerText(text: string) {
+        this.setInput(this.otherAnswerInput, text);
     }
 
     submitForm() {
@@ -51,5 +74,6 @@ export class QuestionFormPage extends Page{
     getErrors() {
         this.typeErrorElement = this.getElementFromHtml('.ui.error.message.question-type');
         this.textErrorElement = this.getElementFromHtml('.ui.error.message.question-text');
+        this.questionServiceErrorElement = this.getElementFromHtml('.ui.error.message.question-service-error');
     }
 }

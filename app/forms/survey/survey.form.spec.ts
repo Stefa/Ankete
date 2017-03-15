@@ -236,6 +236,7 @@ describe('SurveyForm', () => {
         let newQuestion1 = {
             type: questionTypes.numeric,
             text: 'Test question?',
+            required: true,
             answers: ['answer1', 'answer2', 'answer3'],
             author: leonardoUserObject
         };
@@ -243,6 +244,7 @@ describe('SurveyForm', () => {
         let newQuestion2 = {
             type: questionTypes.choose_one,
             text: 'Choose one result?',
+            required: false,
             answers: ['result1', 'result2', 'result3'],
             author: leonardoUserObject
         };

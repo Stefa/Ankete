@@ -89,7 +89,7 @@ describe('QuestionService', () => {
             (apiService: MockApiService, questionService: QuestionService) => {
                 let questionWithEmptyText = Object.assign({}, newChooseOneQuestion);
                 questionWithEmptyText.text = '';
-                let message = 'Tekst pitanja mora biti zadat!';
+                let message = 'Tekst pitanja mora biti zadat.';
 
                 postInvalidQuestion(apiService, questionService, questionWithEmptyText, message);
             }
@@ -100,7 +100,7 @@ describe('QuestionService', () => {
             (apiService: MockApiService, questionService: QuestionService) => {
                 let numericQuestionWithNoAnswers = Object.assign({}, newNumericQuestion);
                 numericQuestionWithNoAnswers.answers = [];
-                let message = 'Tekst bar jednog polja za odgovor mora biti postavljen!';
+                let message = 'Tekst bar jednog polja za odgovor mora biti postavljen.';
 
                 postInvalidQuestion(apiService, questionService, numericQuestionWithNoAnswers, message);
             }
@@ -111,7 +111,7 @@ describe('QuestionService', () => {
             (apiService: MockApiService, questionService: QuestionService) => {
                 let textQuestionWithNoAnswers = Object.assign({}, newTextQuestion);
                 textQuestionWithNoAnswers.answers = [];
-                let message = 'Tekst bar jednog polja za odgovor mora biti postavljen!';
+                let message = 'Tekst bar jednog polja za odgovor mora biti postavljen.';
 
                 postInvalidQuestion(apiService, questionService, textQuestionWithNoAnswers, message);
             }
@@ -122,7 +122,7 @@ describe('QuestionService', () => {
             (apiService: MockApiService, questionService: QuestionService) => {
                 let chooseOneQuestionWithOneAnswers = Object.assign({}, newChooseOneQuestion);
                 chooseOneQuestionWithOneAnswers.answers = ['Leonardo'];
-                let message = 'Pitanje mora imati više ponuđenih odgovora!';
+                let message = 'Pitanje mora imati više ponuđenih odgovora.';
 
                 postInvalidQuestion(apiService, questionService, chooseOneQuestionWithOneAnswers, message);
             }
@@ -133,7 +133,7 @@ describe('QuestionService', () => {
             (apiService: MockApiService, questionService: QuestionService) => {
                 let chooseMultipleQuestionWithOneAnswers = Object.assign({}, newChooseMultipleQuestion);
                 chooseMultipleQuestionWithOneAnswers.answers = ['Leonardo'];
-                let message = 'Pitanje mora imati više ponuđenih odgovora!';
+                let message = 'Pitanje mora imati više ponuđenih odgovora.';
 
                 postInvalidQuestion(apiService, questionService, chooseMultipleQuestionWithOneAnswers, message);
             }
@@ -144,7 +144,7 @@ describe('QuestionService', () => {
             (apiService: MockApiService, questionService: QuestionService) => {
                 let chooseOneQuestionWithoutAuthor = Object.assign({}, newChooseOneQuestion);
                 chooseOneQuestionWithoutAuthor.author = null;
-                let message = 'Autor pitanja mora biti postavljen!';
+                let message = 'Autor pitanja mora biti postavljen.';
 
                 postInvalidQuestion(apiService, questionService, chooseOneQuestionWithoutAuthor, message);
             }
