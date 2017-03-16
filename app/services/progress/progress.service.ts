@@ -49,24 +49,17 @@ export class ProgressService {
     }
 
     updateProgress(progressId: number, progress: {done: number, total: number}): Observable<Progress> {
-        return this.api
-            .patch('progress/'+progressId, {progress: progress})
-            .map(this.createProgressFromApiResponse)
-            .catch((error: any) => {
-                let errorMessage: string = error.message;
-                if(error.hasOwnProperty('status') && error.status === 404) {
-                    errorMessage = 'Traženi progres ne postoji.'
-                }
-                if(errorMessage.startsWith('Error: ')) {
-                    errorMessage = errorMessage.substring(8);
-                }
-                return Observable.throw(new Error(errorMessage));
-            });
+        let patchProgress$ = this.api.patch('progress/'+progressId, {progress: progress});
+        return this.processProgressPatchResponse(patchProgress$);
     }
 
     setFinished(progressId: number): Observable<Progress> {
-        return this.api
-            .patch('progress/'+progressId, {finished: true})
+        let patchProgress$ = this.api.patch('progress/'+progressId, {finished: true});
+        return this.processProgressPatchResponse(patchProgress$);
+    }
+
+    private processProgressPatchResponse(patchRequest$): Observable<Progress> {
+        return patchRequest$
             .map(this.createProgressFromApiResponse)
             .catch((error: any) => {
                 let errorMessage: string = error.message;
