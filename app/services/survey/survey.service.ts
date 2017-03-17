@@ -9,6 +9,25 @@ export class SurveyService {
 
     constructor(public api: ApiService) { }
 
+    getSurvey(surveyId: number): Observable<Survey> {
+        return this.api.get('surveys/'+surveyId).map((res:any) => {
+            if(SurveyDataValidator.checkIfSurveyApiResponseIsValid(res)) {
+                return SurveyService.createSurveyObjectFromResponse(res);
+            }
+
+            throw new Error('Dobijen je pogrešan odgovor sa servera pri kreiranju ankete.');
+        }).catch((error: any) => {
+            let errorMessage: string = error.message;
+            if(error.hasOwnProperty('status') && error.status === 404) {
+                errorMessage = 'Tražena anketa ne postoji.'
+            }
+            if(errorMessage.startsWith('Error: ')) {
+                errorMessage = errorMessage.substring(8);
+            }
+            return Observable.throw(new Error(errorMessage));
+        });
+    }
+
     createSurvey(survey: Survey) {
         if(!SurveyDataValidator.checkIfSurveyObjectHasRequiredFields(survey)) {
             return Observable.throw(new Error("Anketa nema definisana sva obavezna polja."));

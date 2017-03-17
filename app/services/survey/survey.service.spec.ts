@@ -17,6 +17,61 @@ describe('SurveyService', () => {
             ]
         });
     });
+
+    describe('getSurvey', () => {
+        it('should send get request to the right api url', inject(
+            [ApiService, SurveyService],
+            fakeAsync((apiService: MockApiService, surveyService: SurveyService) => {
+                let newSurveyResponse = Object.assign({}, newTestSurveyResponse);
+                apiService.setResponse(newSurveyResponse);
+                apiService.init();
+                surveyService.getSurvey(1).subscribe();
+                expect(apiService.get).toHaveBeenCalledWith('surveys/1');
+            })
+        ));
+
+        it('should return survey object if api returns it', inject(
+            [ApiService, SurveyService],
+            fakeAsync((apiService: MockApiService, surveyService: SurveyService) => {
+                let returnedSurvey;
+                let newSurveyResponse = Object.assign({}, newTestSurveyResponse);
+                let expectedSurvey: Survey = Object.assign({}, newTestSurvey);
+                expectedSurvey.author = {id: newTestSurvey.author.id};
+
+                apiService.setResponse(newSurveyResponse);
+                apiService.init();
+                surveyService.getSurvey(1).subscribe(
+                    survey => returnedSurvey = survey
+                );
+                expect(returnedSurvey).toEqual(expectedSurvey);
+            })
+        ));
+
+        it('should return error if survey is not found', inject(
+            [ApiService, SurveyService],
+            fakeAsync((apiService: MockApiService, surveyService: SurveyService) => {
+                let returnedSurvey;
+                let errorMessage: any;
+
+                let errorResponse: any = {
+                    status: 404,
+                    message: '404 - Not Found'
+                };
+
+                apiService.setError(errorResponse);
+                apiService.init();
+
+                surveyService.getSurvey(1).subscribe(
+                    survey => returnedSurvey = survey,
+                    error => errorMessage = error.message
+                );
+
+                expect(returnedSurvey).toBeUndefined();
+                expect(errorMessage).toBe('Tražena anketa ne postoji.');
+            })
+        ));
+
+    });
     
     describe('createSurvey', () => {
         it('should send the post request to the api if survey data is correct', inject(
