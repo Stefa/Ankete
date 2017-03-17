@@ -119,4 +119,63 @@ describe('SurveyService', () => {
             })
         ));
     });
+
+    describe('blockSurvey', () => {
+        it('should send the right update data to api service patch action', inject(
+            [ApiService, SurveyService],
+            (apiService: MockApiService, surveyService: SurveyService) => {
+                let updatedSurveyPostResponse = Object.assign({}, newTestSurvey, {blocked: true});
+                apiService.setResponse(updatedSurveyPostResponse);
+                apiService.init();
+                surveyService.blockSurvey(1).subscribe();
+
+                expect(apiService.patch).toHaveBeenCalledWith('surveys/1', {blocked: true});
+            }
+        ));
+
+        it('should return survey object with updated blocked field', inject(
+            [ApiService, SurveyService],
+            (apiService: MockApiService, surveyService: SurveyService) => {
+                let updatedSurveyPostResponse = Object.assign({}, newTestSurvey, {
+                    userId: newTestSurvey.author.id, blocked: true
+                });
+                delete updatedSurveyPostResponse.author;
+                let updatedSurvey: Survey;
+                let expectedSurvey = Object.assign({}, newTestSurvey, {
+                    author: {id: newTestSurvey.author.id},
+                    blocked: true
+                });
+                apiService.setResponse(updatedSurveyPostResponse);
+                apiService.init();
+                surveyService.blockSurvey(1)
+                    .subscribe(survey => updatedSurvey = survey);
+
+                expect(updatedSurvey).toEqual(expectedSurvey);
+            }
+        ));
+
+        it('should throw appropriate error when survey was not found', inject(
+            [ApiService, SurveyService],
+            (apiService: MockApiService, surveyService: SurveyService) => {
+                let updatedSurvey: Survey;
+                let errorMessage: any;
+
+                let errorResponse: any = {
+                    status: 404,
+                    message: '404 - Not Found'
+                };
+
+                apiService.setError(errorResponse);
+                apiService.init();
+
+                surveyService.blockSurvey(1).subscribe(
+                    survey => updatedSurvey = survey,
+                    error => errorMessage = error.message
+                );
+
+                expect(updatedSurvey).toBeUndefined();
+                expect(errorMessage).toBe("Tražena anketa ne postoji.")
+            }
+        ));
+    });
 });

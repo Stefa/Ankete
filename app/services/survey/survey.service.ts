@@ -48,4 +48,19 @@ export class SurveyService {
         return createdSurvey
     }
 
+    blockSurvey(surveyId: number): Observable<Survey> {
+        return this.api.patch('surveys/'+surveyId, {blocked: true})
+            .map(SurveyService.createSurveyObjectFromResponse)
+            .catch((error: any) => {
+                let errorMessage: string = error.message;
+                if(error.hasOwnProperty('status') && error.status === 404) {
+                    errorMessage = 'Tražena anketa ne postoji.'
+                }
+                if(errorMessage.startsWith('Error: ')) {
+                    errorMessage = errorMessage.substring(8);
+                }
+                return Observable.throw(new Error(errorMessage));
+            });
+    }
+
 }

@@ -9,5 +9,6 @@ export interface Survey {
     anonymous: boolean,
     pages: number,
     author: User | {id: number},
-    questions?: Array<number>
+    questions?: Array<number>,
+    blocked?: boolean
 }
