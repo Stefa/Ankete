@@ -3,11 +3,12 @@ import {ApiService} from "../api/api.service";
 import {Progress} from "../../data/progress.data";
 import {Observable} from "rxjs/Rx";
 import {userTypes} from "../../data/user.data";
+import {AnswerService} from "../answer/answer.service";
 
 @Injectable()
 export class ProgressService {
 
-    constructor(public api: ApiService) { }
+    constructor(private api: ApiService, private answerService: AnswerService) { }
 
     createProgress(progress: Progress): Observable<Progress> {
         let progressPostObject = this.prepareProgressForApi(progress);
@@ -78,6 +79,24 @@ export class ProgressService {
             .delete('progress/'+progressId)
             .map(_ => true)
             .catch(error => Observable.of(false));
+    }
+
+    getProgressWithAnswers(surveyId: number, userId: number): Observable<any> {
+        return this.api.get(`progress?surveyId=${surveyId}&userId=${userId}&_embed=answers`).map((res:any) => {
+            let progress = this.createProgressFromApiResponse(res[0]);
+            progress.answers = progress.answers.map(this.answerService.createAnswerFromApiResponse);
+
+            return progress;
+        }).catch((error: any) => {
+            let errorMessage: string = error.message;
+            if(error.hasOwnProperty('status') && error.status === 404) {
+                errorMessage = 'Traženi odgovori ne postoje.'
+            }
+            if(errorMessage.startsWith('Error: ')) {
+                errorMessage = errorMessage.substring(8);
+            }
+            return Observable.throw(new Error(errorMessage));
+        });
     }
 
 }

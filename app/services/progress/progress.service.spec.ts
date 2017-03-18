@@ -1,4 +1,4 @@
-import {TestBed, inject} from "@angular/core/testing";
+import {TestBed, inject, fakeAsync} from "@angular/core/testing";
 import {ProgressService} from "./progress.service";
 import {ApiService} from "../api/api.service";
 import {MockApiService} from "../api/mock-api.service";
@@ -9,12 +9,13 @@ import {
 import {Progress} from "../../data/progress.data";
 import {leonardoUserObject} from "../../test/users";
 import {userTypes} from "../../data/user.data";
+import {AnswerService} from "../answer/answer.service";
 
 describe('ProgressServise', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
-                ProgressService,
+                ProgressService, AnswerService,
                 {provide: ApiService, useClass: MockApiService}
             ]
         });
@@ -265,5 +266,98 @@ describe('ProgressServise', () => {
                 expect(success).toBe(false);
             }
         ));
+    });
+
+    describe('getProgressWithAnswers', () => {
+        let apiResponse = [{
+            surveyId: 7,
+            userId: 1,
+            finished: false,
+            id: 1,
+            progress: {done: 0, total: 2},
+            answers: [
+                {
+                    progressId: 1,
+                    questionId: 1,
+                    answers: 1,
+                    id: 1
+                },
+                {
+                    progressId: 1,
+                    questionId: 2,
+                    answers: [0,3],
+                    id: 2
+                }
+            ]
+        }];
+        let methodResponse = {
+            survey: {id: 7},
+            user: {id: 1},
+            finished: false,
+            id: 1,
+            progress: {done: 0, total: 2},
+            answers: [
+                {
+                    progress: {id: 1},
+                    question: {id: 1},
+                    answers: 1,
+                    id: 1
+                },
+                {
+                    progress: {id: 1},
+                    question: {id: 2},
+                    answers: [0,3],
+                    id: 2
+                }
+            ]
+        };
+        it('should send get request to the right api url', inject(
+            [ApiService, ProgressService],
+            fakeAsync((apiService: MockApiService, progressService: ProgressService) => {
+                apiService.setResponse(apiResponse);
+                apiService.init();
+                progressService.getProgressWithAnswers(7, 1).subscribe();
+                expect(apiService.get).toHaveBeenCalledWith('progress?surveyId=7&userId=1&_embed=answers');
+            })
+        ));
+
+        it('should return survey object if api returns it', inject(
+            [ApiService, ProgressService],
+            fakeAsync((apiService: MockApiService, progressService: ProgressService) => {
+                let returnedProgress;
+                apiService.setResponse(apiResponse);
+                apiService.init();
+                progressService.getProgressWithAnswers(7, 1).subscribe(
+                    progress => returnedProgress = progress
+                );
+
+                expect(returnedProgress).toEqual(methodResponse);
+            })
+        ));
+
+        it('should return error if survey is not found', inject(
+            [ApiService, ProgressService],
+            fakeAsync((apiService: MockApiService, progressService: ProgressService) => {
+                let returnedProgress;
+                let errorMessage: any;
+
+                let errorResponse: any = {
+                    status: 404,
+                    message: '404 - Not Found'
+                };
+
+                apiService.setError(errorResponse);
+                apiService.init();
+
+                progressService.getProgressWithAnswers(7, 1).subscribe(
+                    progress => returnedProgress = progress,
+                    error => errorMessage = error.message
+                );
+
+                expect(returnedProgress).toBeUndefined();
+                expect(errorMessage).toBe('Traženi odgovori ne postoje.');
+            })
+        ));
+
     });
 });

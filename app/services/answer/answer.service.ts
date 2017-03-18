@@ -28,7 +28,7 @@ export class AnswerService {
         return answerPostObject;
     }
 
-    private createAnswerFromApiResponse(response: any) {
+    public createAnswerFromApiResponse(response: any) {
         let answerPostResponse = Object.assign({}, response);
         let additionalFields: any = {};
         additionalFields.progress = {id: answerPostResponse.progressId};
