@@ -10,5 +10,6 @@ export interface Survey {
     pages: number,
     author: User | {id: number},
     questionOrder?: Array<number>,
+    questions?: Array<Question>,
     blocked?: boolean
 }

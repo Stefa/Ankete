@@ -8,7 +8,7 @@ export class SurveyDataValidator {
     static readonly allProperties = SurveyDataValidator.requiredProperties.concat(SurveyDataValidator.optionalProperties);
 
     static readonly requiredApiProperties = ['id', 'name', 'start', 'end', 'anonymous', 'pages', 'userId'];
-    static readonly allApiProperties = SurveyDataValidator.requiredApiProperties.concat(['questionOrder', 'blocked']);
+    static readonly allApiProperties = SurveyDataValidator.requiredApiProperties.concat(['questionOrder', 'blocked', 'questions']);
 
     static checkIfSurveyObjectHasRequiredFields(survey):boolean {
         if(survey == null) return false;

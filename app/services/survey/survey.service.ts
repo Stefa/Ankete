@@ -3,11 +3,12 @@ import {ApiService} from "../api/api.service";
 import {Survey} from "../../data/survey.data";
 import {SurveyDataValidator} from "../../data-validators/survey/survey.data-validator";
 import {Observable} from 'rxjs/Rx';
+import {QuestionService} from "../question/question.service";
 
 @Injectable()
 export class SurveyService {
 
-    constructor(public api: ApiService) { }
+    constructor(public api: ApiService, public questionService: QuestionService) { }
 
     getSurvey(surveyId: number): Observable<Survey> {
         return this.api.get('surveys/'+surveyId).map((res:any) => {
@@ -80,6 +81,33 @@ export class SurveyService {
                 }
                 return Observable.throw(new Error(errorMessage));
             });
+    }
+
+    getSurveyWithQuestions(surveyId: number): Observable<any> {
+        return this.api.get(`surveys/${surveyId}?_embed=questions`).map((res:any) => {
+            if(!SurveyDataValidator.checkIfSurveyApiResponseIsValid(res)) {
+                throw new Error('Dobijen je pogrešan odgovor sa servera pri kreiranju ankete.');
+            }
+            let survey = SurveyService.createSurveyObjectFromResponse(res);
+            survey.questions = survey.questions.map(this.questionService.createQuestionFromApiResponse);
+
+            survey.questions = survey.questions.sort((q1, q2) => {
+                let q1Pos = survey.questionOrder.indexOf(q1.id);
+                let q2Pos = survey.questionOrder.indexOf(q2.id);
+                return q1Pos < q2Pos ? -1 : 1;
+            });
+
+            return survey;
+        }).catch((error: any) => {
+            let errorMessage: string = error.message;
+            if(error.hasOwnProperty('status') && error.status === 404) {
+                errorMessage = 'Tražena anketa ne postoji.'
+            }
+            if(errorMessage.startsWith('Error: ')) {
+                errorMessage = errorMessage.substring(8);
+            }
+            return Observable.throw(new Error(errorMessage));
+        });
     }
 
 }

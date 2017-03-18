@@ -4,12 +4,14 @@ import {ApiService} from "../api/api.service";
 import {MockApiService} from "../api/mock-api.service";
 import {Survey} from "../../data/survey.data";
 import {newTestSurvey, newTestSurveyResponse} from "../../test/surveys";
+import {questionTypes} from "../../data/question.data";
+import {QuestionService} from "../question/question.service";
 
 describe('SurveyService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
-                SurveyService,
+                SurveyService, QuestionService,
                 {
                     provide: ApiService,
                     useClass: MockApiService
@@ -232,5 +234,116 @@ describe('SurveyService', () => {
                 expect(errorMessage).toBe("Tražena anketa ne postoji.")
             }
         ));
+    });
+
+    describe('getSurveyWithQuestions', () => {
+        let apiResponse = {
+            name: "Survey1",
+            start: "2017-03-16T23:00:00.000Z",
+            end: "2017-04-20T21:59:59.000Z",
+            anonymous: false,
+            pages: "1",
+            userId: 1,
+            questionOrder: [2, 1],
+            id: 1,
+            questions: [
+                {
+                    userId: 1,
+                    type: questionTypes.choose_one,
+                    text: "Question1",
+                    required: true,
+                    surveyId: 1,
+                    answerLabels: ["answer1", "answer2"],
+                    id: 1
+                },
+                {
+                    userId: 1,
+                    type: questionTypes.choose_multiple,
+                    text: "Question2",
+                    required: false,
+                    surveyId: 1,
+                    answerLabels: ["answer1", "answer2", "answer3"],
+                    id: 2
+                }
+            ]
+        };
+        let methodResponse =  {
+            name: "Survey1",
+            start: new Date("2017-03-16T23:00:00.000Z"),
+            end: new Date("2017-04-20T21:59:59.000Z"),
+            anonymous: false,
+            pages: "1",
+            author: {"id": 1},
+            questionOrder: [2, 1],
+            id: 1,
+            questions: [
+                {
+                    author: {id: 1},
+                    type: questionTypes.choose_multiple,
+                    text: "Question2",
+                    required: false,
+                    survey: {id: 1},
+                    answerLabels: ["answer1", "answer2", "answer3"],
+                    id: 2
+                },
+                {
+                    author: {id: 1},
+                    type: questionTypes.choose_one,
+                    text: "Question1",
+                    required: true,
+                    survey: {id: 1},
+                    answerLabels: ["answer1", "answer2"],
+                    id: 1
+                }
+            ]
+        };
+        it('should send get request to the right api url', inject(
+            [ApiService, SurveyService],
+            fakeAsync((apiService: MockApiService, surveyService: SurveyService) => {
+                apiService.setResponse(apiResponse);
+                apiService.init();
+                surveyService.getSurveyWithQuestions(1).subscribe();
+                expect(apiService.get).toHaveBeenCalledWith('surveys/1?_embed=questions');
+            })
+        ));
+
+        it('should return survey object if api returns it', inject(
+            [ApiService, SurveyService],
+            fakeAsync((apiService: MockApiService, surveyService: SurveyService) => {
+                let returnedSurvey;
+                apiService.setResponse(apiResponse);
+                apiService.init();
+                surveyService.getSurveyWithQuestions(1).subscribe(
+                    survey => returnedSurvey = survey
+                );
+
+                expect(returnedSurvey).toEqual(methodResponse);
+            })
+        ));
+
+        it('should return error if survey is not found', inject(
+            [ApiService, SurveyService],
+            fakeAsync((apiService: MockApiService, surveyService: SurveyService) => {
+                let returnedSurvey;
+                let errorMessage: any;
+
+                let errorResponse: any = {
+                    status: 404,
+                    message: '404 - Not Found'
+                };
+
+                apiService.setError(errorResponse);
+                apiService.init();
+
+                surveyService.getSurveyWithQuestions(1).subscribe(
+                    survey => returnedSurvey = survey,
+                    error => errorMessage = error.message
+                );
+
+                expect(returnedSurvey).toBeUndefined();
+                expect(errorMessage).toBe('Tražena anketa ne postoji.');
+            })
+        ));
+
     });
 });

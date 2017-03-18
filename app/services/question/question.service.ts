@@ -17,7 +17,7 @@ export class QuestionService {
             .map(this.createQuestionFromApiResponse);
     }
 
-    private createQuestionFromApiResponse(response: any) {
+    public createQuestionFromApiResponse(response: any) {
         let questionPostResponse = Object.assign({}, response);
         let additionalFields: any = {};
         additionalFields.author = {id: questionPostResponse.userId};
