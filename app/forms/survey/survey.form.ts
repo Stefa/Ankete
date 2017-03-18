@@ -172,7 +172,7 @@ export class SurveyForm implements OnInit {
             anonymous: anonymous,
             pages: submitValues.pages,
             author: currentUser,
-            questions: questionIds
+            questionOrder: questionIds
         };
     }
 

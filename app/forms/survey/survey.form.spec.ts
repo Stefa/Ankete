@@ -123,14 +123,14 @@ describe('SurveyForm', () => {
             );
 
             newSurvey = Object.assign({}, newTestSurveyFormInput);
-            newSurvey.questions = [];
+            newSurvey.questionOrder = [];
         });
 
         it('should send request to SurveyService::createSurvey on valid submit', inject([SurveyService, AuthService],
             (surveyService: SurveyService, authService: AuthService) => {
                 let surveyRequest = Object.assign({}, newTestSurvey);
                 delete surveyRequest.id;
-                surveyRequest.questions = [];
+                surveyRequest.questionOrder = [];
                 let surveyResponse = Object.assign({}, newTestSurvey);
 
                 setSpies(surveyService, surveyResponse, authService);
@@ -148,7 +148,7 @@ describe('SurveyForm', () => {
                 let surveyRequest = Object.assign({}, newTestSurvey);
                 surveyRequest.anonymous = true;
                 delete surveyRequest.id;
-                surveyRequest.questions = [];
+                surveyRequest.questionOrder = [];
                 let surveyResponse = Object.assign({}, newTestSurvey);
                 surveyResponse.anonymous = true;
 
@@ -394,7 +394,7 @@ describe('SurveyForm', () => {
                 let surveyResponse = Object.assign({}, newTestSurvey);
                 let surveyRequest = Object.assign({}, newTestSurvey);
                 delete surveyRequest.id;
-                surveyRequest.questions = [1,2];
+                surveyRequest.questionOrder = [1,2];
 
                 setSpies(surveyService, surveyResponse, authService);
                 spyOn(questionService, 'createQuestion').and.returnValues(

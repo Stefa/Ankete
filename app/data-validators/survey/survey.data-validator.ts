@@ -4,11 +4,11 @@ import {Injectable} from '@angular/core';
 export class SurveyDataValidator {
 
     static readonly requiredProperties = ['name', 'start', 'end', 'anonymous', 'pages', 'author'];
-    static readonly optionalProperties = ['id', 'questions'];
+    static readonly optionalProperties = ['id', 'questionOrder'];
     static readonly allProperties = SurveyDataValidator.requiredProperties.concat(SurveyDataValidator.optionalProperties);
 
     static readonly requiredApiProperties = ['id', 'name', 'start', 'end', 'anonymous', 'pages', 'userId'];
-    static readonly allApiProperties = SurveyDataValidator.requiredApiProperties.concat(['questions', 'blocked']);
+    static readonly allApiProperties = SurveyDataValidator.requiredApiProperties.concat(['questionOrder', 'blocked']);
 
     static checkIfSurveyObjectHasRequiredFields(survey):boolean {
         if(survey == null) return false;

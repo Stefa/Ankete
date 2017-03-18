@@ -9,7 +9,7 @@ let newTestSurvey: Survey = {
     anonymous: false,
     pages: 1,
     author: leonardoUserObject,
-    questions: [1,2,3],
+    questionOrder: [1,2,3],
     id: 1
 };
 let newTestSurveyResponse: any = Object.assign({}, newTestSurvey);

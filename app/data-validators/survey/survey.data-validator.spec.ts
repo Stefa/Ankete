@@ -19,8 +19,8 @@ describe('SurveyDataValidator', () => {
             expect(valid).toBe(true);
         });
 
-        it('should return true if only questions is missing from survey object', () => {
-            delete testSurvey.questions;
+        it('should return true if only questionOrder is missing from survey object', () => {
+            delete testSurvey.questionOrder;
             let valid = SurveyDataValidator.checkIfSurveyObjectHasRequiredFields(testSurvey);
             expect(valid).toBe(true);
         });
@@ -50,7 +50,7 @@ describe('SurveyDataValidator', () => {
             expect(valid).toBe(false);
         });
 
-        ['id', 'name', 'start', 'end', 'anonymous', 'pages', 'author', 'questions'].forEach(field => {
+        ['id', 'name', 'start', 'end', 'anonymous', 'pages', 'author', 'questionOrder'].forEach(field => {
             it(`should return false if ${field} is missing from survey object`, () => {
                 delete testSurvey[field];
                 let valid = SurveyDataValidator.checkIfSurveyObjectHasAllFields(testSurvey);
@@ -75,8 +75,8 @@ describe('SurveyDataValidator', () => {
             expect(valid).toBe(false);
         });
 
-        it('should return true if only questions is missing from survey api response', () => {
-            delete testSurveyResponse.questions;
+        it('should return true if only questionOrder is missing from survey api response', () => {
+            delete testSurveyResponse.questionOrder;
             let valid = SurveyDataValidator.checkIfSurveyApiResponseIsValid(testSurveyResponse);
             expect(valid).toBe(true);
         });
