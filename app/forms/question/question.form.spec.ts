@@ -173,7 +173,7 @@ describe('QuestionForm', () => {
 
             fixture.detectChanges();
             questionFormPage.getAnswerInput();
-            newQuestion.answers.forEach(answer => questionFormPage.setAnswer(answer));
+            newQuestion.answerLabels.forEach(answer => questionFormPage.setAnswer(answer));
             fixture.detectChanges();
         }
 
@@ -221,7 +221,7 @@ describe('QuestionForm', () => {
                     type: questionTypes.numeric,
                     text: 'Test question?',
                     required: true,
-                    answers: ['answer1', 'answer2', 'answer3'],
+                    answerLabels: ['answer1', 'answer2', 'answer3'],
                     author: leonardoUserObject
                 };
                 let expectedQuestion: Question = Object.assign({id: 1}, newQuestion);
@@ -241,7 +241,7 @@ describe('QuestionForm', () => {
                     type: questionTypes.numeric,
                     text: 'Test question?',
                     required: true,
-                    answers: [],
+                    answerLabels: [],
                     author: leonardoUserObject
                 };
                 let expectedQuestion: Question = Object.assign({id: 1}, newQuestion);
@@ -261,7 +261,7 @@ describe('QuestionForm', () => {
                     type: "",
                     text: 'Test question?',
                     required: true,
-                    answers: []
+                    answerLabels: []
                 };
                 setSpies(questionService, null, authService);
 
@@ -281,7 +281,7 @@ describe('QuestionForm', () => {
                     type: questionTypes.numeric,
                     text: '',
                     required: true,
-                    answers: ['answer1', 'answer2', 'answer3']
+                    answerLabels: ['answer1', 'answer2', 'answer3']
                 };
                 setSpies(questionService, null, authService);
 
@@ -304,7 +304,7 @@ describe('QuestionForm', () => {
                     type: questionTypes.numeric,
                     text: 'Test question?',
                     required: true,
-                    answers: ['answer1', 'answer2', 'answer3'],
+                    answerLabels: ['answer1', 'answer2', 'answer3'],
                     author: leonardoUserObject
                 };
                 let expectedQuestion: Question = Object.assign(
@@ -348,7 +348,7 @@ describe('QuestionForm', () => {
                     type: questionTypes.choose_multiple,
                     text: 'Test question?',
                     required: true,
-                    answers: ['answer1', 'answer2', 'answer3'],
+                    answerLabels: ['answer1', 'answer2', 'answer3'],
                     author: leonardoUserObject
                 };
                 let otherAnswerText = 'Your answer';
@@ -387,7 +387,7 @@ describe('QuestionForm', () => {
                     type: questionTypes.numeric,
                     text: 'Test question?',
                     required: true,
-                    answers: ['answer1', 'answer2', 'answer3'],
+                    answerLabels: ['answer1', 'answer2', 'answer3'],
                     author: leonardoUserObject
                 };
                 spyOn(questionService, 'createQuestion').and.throwError('Autor pitanja mora biti postavljen.');

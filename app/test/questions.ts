@@ -5,7 +5,7 @@ import {newTestSurvey} from "./surveys";
 let questionObject = {
     type: questionTypes.choose_one,
     text: 'How is your favourite turtle?',
-    answers: ['Donatello', 'Leonardo', 'Michelangelo', 'Raphael'],
+    answerLabels: ['Donatello', 'Leonardo', 'Michelangelo', 'Raphael'],
     required: true
 };
 
@@ -74,7 +74,7 @@ let newNumericQuestion = {
     type: questionTypes.numeric,
     text: 'What is the number of artwork that you can remember by:',
     required: true,
-    answers: ['Donatello', 'Leonardo', 'Michelangelo', 'Raphael'],
+    answerLabels: ['Donatello', 'Leonardo', 'Michelangelo', 'Raphael'],
     author: leonardoUserObject
 };
 
@@ -82,7 +82,7 @@ let newTextQuestion = {
     type: questionTypes.text,
     text: 'Name some turtles:',
     required: false,
-    answers: ['First turtle', 'Second turtle', 'Third turtle', 'Forth turtle'],
+    answerLabels: ['First turtle', 'Second turtle', 'Third turtle', 'Forth turtle'],
     author: leonardoUserObject
 };
 
@@ -90,7 +90,7 @@ let newChooseMultipleQuestion = {
     type: questionTypes.choose_multiple,
     text: 'What turtles do you like!',
     required: false,
-    answers: ['Donatello', 'Leonardo', 'Michelangelo', 'Raphael'],
+    answerLabels: ['Donatello', 'Leonardo', 'Michelangelo', 'Raphael'],
     author: leonardoUserObject
 };
 

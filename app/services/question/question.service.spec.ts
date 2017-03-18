@@ -95,44 +95,44 @@ describe('QuestionService', () => {
             }
         ));
 
-        it('should throw an error if type is numeric and answers property is empty', inject(
+        it('should throw an error if type is numeric and answerLabels property is empty', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let numericQuestionWithNoAnswers = Object.assign({}, newNumericQuestion);
-                numericQuestionWithNoAnswers.answers = [];
+                numericQuestionWithNoAnswers.answerLabels = [];
                 let message = 'Tekst bar jednog polja za odgovor mora biti postavljen.';
 
                 postInvalidQuestion(apiService, questionService, numericQuestionWithNoAnswers, message);
             }
         ));
 
-        it('should throw an error if type is text and answers property is empty', inject(
+        it('should throw an error if type is text and answerLabels property is empty', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let textQuestionWithNoAnswers = Object.assign({}, newTextQuestion);
-                textQuestionWithNoAnswers.answers = [];
+                textQuestionWithNoAnswers.answerLabels = [];
                 let message = 'Tekst bar jednog polja za odgovor mora biti postavljen.';
 
                 postInvalidQuestion(apiService, questionService, textQuestionWithNoAnswers, message);
             }
         ));
 
-        it('should throw an error if type is choose_one and length of answers property is less than two', inject(
+        it('should throw an error if type is choose_one and length of answerLabels property is less than two', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let chooseOneQuestionWithOneAnswers = Object.assign({}, newChooseOneQuestion);
-                chooseOneQuestionWithOneAnswers.answers = ['Leonardo'];
+                chooseOneQuestionWithOneAnswers.answerLabels = ['Leonardo'];
                 let message = 'Pitanje mora imati više ponuđenih odgovora.';
 
                 postInvalidQuestion(apiService, questionService, chooseOneQuestionWithOneAnswers, message);
             }
         ));
 
-        it('should throw an error if type is choose_multiple and length of answers property is less than two', inject(
+        it('should throw an error if type is choose_multiple and length of answerLabels property is less than two', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 let chooseMultipleQuestionWithOneAnswers = Object.assign({}, newChooseMultipleQuestion);
-                chooseMultipleQuestionWithOneAnswers.answers = ['Leonardo'];
+                chooseMultipleQuestionWithOneAnswers.answerLabels = ['Leonardo'];
                 let message = 'Pitanje mora imati više ponuđenih odgovora.';
 
                 postInvalidQuestion(apiService, questionService, chooseMultipleQuestionWithOneAnswers, message);

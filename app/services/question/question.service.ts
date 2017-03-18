@@ -56,14 +56,14 @@ export class QuestionService {
 
             case questionTypes.numeric:
             case questionTypes.text:
-                if(question.answers.length == 0) {
+                if(question.answerLabels.length == 0) {
                     throw new Error('Tekst bar jednog polja za odgovor mora biti postavljen.');
                 }
                 break;
 
             case questionTypes.choose_one:
             case questionTypes.choose_multiple:
-                if(question.answers.length < 2) {
+                if(question.answerLabels.length < 2) {
                     throw new Error('Pitanje mora imati više ponuđenih odgovora.');
                 }
                 break;

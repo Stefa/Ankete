@@ -91,7 +91,7 @@ export class QuestionForm implements OnInit, OnDestroy {
             type: parseInt(submitValues.type),
             text: submitValues.text,
             required: !!submitValues.required,
-            answers: answers,
+            answerLabels: answers,
             author: currentUser
         };
         if(this.surveyId) {

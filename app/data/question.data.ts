@@ -6,7 +6,7 @@ export interface Question {
     type: questionTypes,
     text: string,
     required: boolean,
-    answers?: string[],
+    answerLabels?: string[],
     otherAnswer?: string,
     author: User | {id: number},
     survey?: Survey | {id: number}
