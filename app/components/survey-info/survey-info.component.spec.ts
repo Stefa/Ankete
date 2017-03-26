@@ -211,7 +211,7 @@ describe('SurveyInfoComponent', () => {
                 fixture.detectChanges();
                 let page = new SurveyInfoComponentPage(fixture.debugElement);
                 page.startSurvey();
-                expect(router.navigate).toHaveBeenCalledWith(['fill-out'], { relativeTo: route });
+                expect(router.navigate).toHaveBeenCalledWith(['../fill-out'], { relativeTo: route });
             }
         ));
     });
@@ -248,7 +248,7 @@ describe('SurveyInfoComponent', () => {
                 fixture.detectChanges();
                 let page = new SurveyInfoComponentPage(fixture.debugElement);
                 page.viewAnswers();
-                expect(router.navigate).toHaveBeenCalledWith(['result'], { relativeTo: route });
+                expect(router.navigate).toHaveBeenCalledWith(['../result'], { relativeTo: route });
             }
         ));
     });
@@ -398,7 +398,7 @@ describe('SurveyInfoComponent', () => {
                 fixture.detectChanges();
                 page.startSurvey();
 
-                expect(router.navigate).toHaveBeenCalledWith(['fill-out', newProgress.id], { relativeTo: route });
+                expect(router.navigate).toHaveBeenCalledWith(['../fill-out', newProgress.id], { relativeTo: route });
             }
         ));
     });

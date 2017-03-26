@@ -1,0 +1,13 @@
+<div class="ui borderless large menu" *ngIf="totalPages>0">
+    <a class="question-pager-previous item" [class.disabled]="previousButtonDisabled" (click)="previous()">
+        <i class="angle left icon"></i>
+        Prethodna
+    </a>
+    <div class="question-pager-current-page item">
+        {{currentPage}}
+    </div>
+    <a class="question-pager-next item" [class.disabled]="nextButtonDisabled" (click)="next()">
+        Sledeća
+        <i class="angle right icon"></i>
+    </a>
+</div>
