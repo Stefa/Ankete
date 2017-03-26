@@ -11,7 +11,7 @@ export class SurveyResolverGuard implements Resolve<Survey> {
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Survey> {
         let surveyId = route.params['surveyId'];
         return this.surveyService
-            .getSurveyWithQuestions(surveyId)
+            .getFullSurvey(surveyId)
             .map(survey => {
                 if(survey.blocked) {
                     this.router.navigate(['/']);

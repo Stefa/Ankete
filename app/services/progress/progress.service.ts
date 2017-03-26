@@ -42,7 +42,7 @@ export class ProgressService {
         additionalFields.survey = {id: progressPostResponse.surveyId};
         delete progressPostResponse.surveyId;
 
-        if('userData' in progressPostResponse) {
+        if('userData' in progressPostResponse && progressPostResponse.userData != 'anonymous') {
             progressPostResponse.userData.birthday = new Date(progressPostResponse.userData.birthday);
         }
 
@@ -81,9 +81,30 @@ export class ProgressService {
             .catch(error => Observable.of(false));
     }
 
-    getProgressWithAnswers(surveyId: number, userId: number): Observable<any> {
+    getProgressWithAnswersBySurveyAndUser(surveyId: number, userId: number): Observable<any> {
         return this.api.get(`progress?surveyId=${surveyId}&userId=${userId}&_embed=answers`).map((res:any) => {
-            let progress = this.createProgressFromApiResponse(res[0]);
+            let usersProgress = res.filter(progress => !('userData' in progress));
+            if(usersProgress.length == 0) return null;
+
+            let progress = this.createProgressFromApiResponse(usersProgress[0]);
+            progress.answers = progress.answers.map(this.answerService.createAnswerFromApiResponse);
+
+            return progress;
+        }).catch((error: any) => {
+            let errorMessage: string = error.message;
+            if(error.hasOwnProperty('status') && error.status === 404) {
+                errorMessage = 'Traženi odgovori ne postoje.'
+            }
+            if(errorMessage.startsWith('Error: ')) {
+                errorMessage = errorMessage.substring(8);
+            }
+            return Observable.throw(new Error(errorMessage));
+        });
+    }
+
+    getProgressWithAnswersById(progressId: number): Observable<any> {
+        return this.api.get(`progress/${progressId}?_embed=answers`).map((res:any) => {
+            let progress = this.createProgressFromApiResponse(res);
             progress.answers = progress.answers.map(this.answerService.createAnswerFromApiResponse);
 
             return progress;

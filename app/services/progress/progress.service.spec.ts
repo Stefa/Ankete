@@ -268,8 +268,119 @@ describe('ProgressServise', () => {
         ));
     });
 
-    describe('getProgressWithAnswers', () => {
-        let apiResponse = [{
+    describe('getProgressWithAnswersBySurveyAndUser', () => {
+        let apiResponse = [
+            {
+                surveyId: 7,
+                userId: 1,
+                finished: false,
+                id: 2,
+                progress: {done: 1, total: 4},
+                userData: 'anonymous',
+                answers: [
+                    {
+                        progressId: 2,
+                        questionId: 1,
+                        answers: 1,
+                        id: 3
+                    }
+                ]
+            },
+            {
+                surveyId: 7,
+                userId: 1,
+                finished: false,
+                id: 1,
+                progress: {done: 2, total: 4},
+                answers: [
+                    {
+                        progressId: 1,
+                        questionId: 1,
+                        answers: 1,
+                        id: 1
+                    },
+                    {
+                        progressId: 1,
+                        questionId: 2,
+                        answers: [0,3],
+                        id: 2
+                    }
+                ]
+            }
+        ];
+        let methodResponse = {
+            survey: {id: 7},
+            user: {id: 1},
+            finished: false,
+            id: 1,
+            progress: {done: 2, total: 4},
+            answers: [
+                {
+                    progress: {id: 1},
+                    question: {id: 1},
+                    answers: 1,
+                    id: 1
+                },
+                {
+                    progress: {id: 1},
+                    question: {id: 2},
+                    answers: [0,3],
+                    id: 2
+                }
+            ]
+        };
+        it('should send get request to the right api url', inject(
+            [ApiService, ProgressService],
+            fakeAsync((apiService: MockApiService, progressService: ProgressService) => {
+                apiService.setResponse(apiResponse);
+                apiService.init();
+                progressService.getProgressWithAnswersBySurveyAndUser(7, 1).subscribe();
+                expect(apiService.get).toHaveBeenCalledWith('progress?surveyId=7&userId=1&_embed=answers');
+            })
+        ));
+
+        it('should return survey object if api returns it', inject(
+            [ApiService, ProgressService],
+            fakeAsync((apiService: MockApiService, progressService: ProgressService) => {
+                let returnedProgress;
+                apiService.setResponse(apiResponse);
+                apiService.init();
+                progressService.getProgressWithAnswersBySurveyAndUser(7, 1).subscribe(
+                    progress => returnedProgress = progress
+                );
+
+                expect(returnedProgress).toEqual(methodResponse);
+            })
+        ));
+
+        it('should return error if survey is not found', inject(
+            [ApiService, ProgressService],
+            fakeAsync((apiService: MockApiService, progressService: ProgressService) => {
+                let returnedProgress;
+                let errorMessage: any;
+
+                let errorResponse: any = {
+                    status: 404,
+                    message: '404 - Not Found'
+                };
+
+                apiService.setError(errorResponse);
+                apiService.init();
+
+                progressService.getProgressWithAnswersBySurveyAndUser(7, 1).subscribe(
+                    progress => returnedProgress = progress,
+                    error => errorMessage = error.message
+                );
+
+                expect(returnedProgress).toBeUndefined();
+                expect(errorMessage).toBe('Traženi odgovori ne postoje.');
+            })
+        ));
+
+    });
+
+    describe('getProgressWithAnswersById', () => {
+        let apiResponse = {
             surveyId: 7,
             userId: 1,
             finished: false,
@@ -289,7 +400,7 @@ describe('ProgressServise', () => {
                     id: 2
                 }
             ]
-        }];
+        };
         let methodResponse = {
             survey: {id: 7},
             user: {id: 1},
@@ -316,8 +427,8 @@ describe('ProgressServise', () => {
             fakeAsync((apiService: MockApiService, progressService: ProgressService) => {
                 apiService.setResponse(apiResponse);
                 apiService.init();
-                progressService.getProgressWithAnswers(7, 1).subscribe();
-                expect(apiService.get).toHaveBeenCalledWith('progress?surveyId=7&userId=1&_embed=answers');
+                progressService.getProgressWithAnswersById(1).subscribe();
+                expect(apiService.get).toHaveBeenCalledWith('progress/1?_embed=answers');
             })
         ));
 
@@ -327,7 +438,7 @@ describe('ProgressServise', () => {
                 let returnedProgress;
                 apiService.setResponse(apiResponse);
                 apiService.init();
-                progressService.getProgressWithAnswers(7, 1).subscribe(
+                progressService.getProgressWithAnswersById(1).subscribe(
                     progress => returnedProgress = progress
                 );
 
@@ -349,7 +460,7 @@ describe('ProgressServise', () => {
                 apiService.setError(errorResponse);
                 apiService.init();
 
-                progressService.getProgressWithAnswers(7, 1).subscribe(
+                progressService.getProgressWithAnswersById(1).subscribe(
                     progress => returnedProgress = progress,
                     error => errorMessage = error.message
                 );

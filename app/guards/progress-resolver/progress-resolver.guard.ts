@@ -11,11 +11,23 @@ export class ProgressResolverGuard implements Resolve<Progress> {
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Progress> {
         let surveyId = route.params['surveyId'];
+        let progressId = route.params['progressId'];
+
+        let progress$ = ('progressId' in route.params)
+            ? this.getProgressById(progressId) : this.getUsersProgress(surveyId);
+
+        return progress$.catch(_ => {
+            return Observable.of(null);
+        });
+    }
+
+    private getUsersProgress(surveyId) {
         let userId = this.authService.getLoggedInUser().id;
         return this.progressService
-            .getProgressWithAnswers(surveyId, userId)
-            .catch(_ => {
-                return Observable.of(null);
-            });
+            .getProgressWithAnswersBySurveyAndUser(surveyId, userId)
+    }
+
+    private getProgressById(progressId) {
+        return this.progressService.getProgressWithAnswersById(progressId);
     }
 }

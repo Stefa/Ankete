@@ -14,17 +14,23 @@ function isJsFile(path) {
 function isSpecFile(path) {
     return path.slice(-8) == '.spec.js';
 }
-// function isSpecFile(path) {
-//     var files = [
-//         'survey.form.spec.js',
-//         // 'survey.service.spec.js'
-//     ];
-//     for(var i = 0; i<files.length; i++) {
-//         var flength = files[i].length;
-//         if(path.slice(-flength) == files[i]) return true;
-//     }
-//     return false;
-// }
+function isSpecFile1(path) {
+    var files = [
+        // 'question.form.spec.js',
+        // 'progress.service.spec.js',
+        // 'answer.service.spec.js',
+        // 'survey.form.spec.js',
+        'survey-info.component.spec.js'
+        // 'question.service.spec.js',
+        // 'survey.data-validator.spec.js'
+        // 'api.service.spec.js'
+    ];
+    for(var i = 0; i<files.length; i++) {
+        var flength = files[i].length;
+        if(path.slice(-flength) == files[i]) return true;
+    }
+    return false;
+}
 
 function isAppFile(path) {
     var appPath = '/base/app/';
@@ -32,7 +38,7 @@ function isAppFile(path) {
 }
 
 var allSpecFiles = Object.keys(window.__karma__.files)
-    .filter(isSpecFile)
+    .filter(isSpecFile1)
     .filter(isAppFile);
 
 // Load our SystemJS configuration.

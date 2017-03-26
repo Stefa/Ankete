@@ -33,6 +33,11 @@ export class Page {
         selectElement.dispatchEvent(new Event('change'));
     }
 
+    protected setDate(dateInput, date) {
+        dateInput.value = date;
+        dateInput.dispatchEvent(new Event('keyup'));
+    }
+
     protected click(element: DebugElement, event = new Event('click')) {
         element.triggerEventHandler('click', event);
     }

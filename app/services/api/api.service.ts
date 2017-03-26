@@ -27,6 +27,12 @@ export class ApiService{
         return res.map(this.handleJsonResponse).catch(this.handleErrorResponse);
     }
 
+    put(path: string, body: any): Observable<any> {
+        let requestPath = this.createRequestUri(path);
+        let res: Observable<Response> = this.http.put(requestPath, body);
+        return res.map(this.handleJsonResponse).catch(this.handleErrorResponse);
+    }
+
     delete(path: string): Observable<any> {
         let requestPath = this.createRequestUri(path);
         let res: Observable<Response> = this.http.delete(requestPath);

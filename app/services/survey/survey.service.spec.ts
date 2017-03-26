@@ -302,8 +302,8 @@ describe('SurveyService', () => {
             fakeAsync((apiService: MockApiService, surveyService: SurveyService) => {
                 apiService.setResponse(apiResponse);
                 apiService.init();
-                surveyService.getSurveyWithQuestions(1).subscribe();
-                expect(apiService.get).toHaveBeenCalledWith('surveys/1?_embed=questions');
+                surveyService.getFullSurvey(1).subscribe();
+                expect(apiService.get).toHaveBeenCalledWith('surveys/1?_embed=questions&_expand=user');
             })
         ));
 
@@ -313,7 +313,7 @@ describe('SurveyService', () => {
                 let returnedSurvey;
                 apiService.setResponse(apiResponse);
                 apiService.init();
-                surveyService.getSurveyWithQuestions(1).subscribe(
+                surveyService.getFullSurvey(1).subscribe(
                     survey => returnedSurvey = survey
                 );
 
@@ -335,7 +335,7 @@ describe('SurveyService', () => {
                 apiService.setError(errorResponse);
                 apiService.init();
 
-                surveyService.getSurveyWithQuestions(1).subscribe(
+                surveyService.getFullSurvey(1).subscribe(
                     survey => returnedSurvey = survey,
                     error => errorMessage = error.message
                 );

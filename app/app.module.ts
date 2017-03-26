@@ -22,6 +22,11 @@ import {DragulaModule} from "ng2-dragula";
 import {SurveyForm} from "./forms/survey/survey.form";
 import {SurveyService} from "./services/survey/survey.service";
 import {SurveyFormValidator} from "./form-validators/survey/survey.form-validator";
+import {SurveyInfoComponent} from "./components/survey-info/survey-info.component";
+import {ProgressService} from "./services/progress/progress.service";
+import {AnswerService} from "./services/answer/answer.service";
+import {SurveyFillOutComponent} from "./components/survey-fill-out/survey-fill-out.component";
+import {SurveyResultComponent} from "./components/survey-result/survey-result.component";
 
 @NgModule({
     imports:      [
@@ -36,11 +41,13 @@ import {SurveyFormValidator} from "./form-validators/survey/survey.form-validato
     declarations: [
         AppComponent, LoginForm, HomeComponent, TopBarComponent,
         QuestionForm, TestComponent, TestForm, UserForm,
-        FormErrorComponent, SurveyForm
+        FormErrorComponent, SurveyForm, SurveyInfoComponent, SurveyFillOutComponent, SurveyResultComponent
     ],
     bootstrap:    [ AppComponent ],
     providers: [
-        ApiService, UserService, AuthService, QuestionService, UserFormValidator, SurveyService, SurveyFormValidator
+        ApiService, UserService, AuthService, QuestionService,
+        UserFormValidator, SurveyService, SurveyFormValidator,
+        ProgressService, AnswerService
     ]
 })
 export class AppModule { }

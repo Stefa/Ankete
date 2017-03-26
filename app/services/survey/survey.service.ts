@@ -64,6 +64,10 @@ export class SurveyService {
                 end: new Date(surveyResponse.end)
             }
         );
+        if('user' in createdSurvey) {
+            createdSurvey.author = createdSurvey.user;
+            delete createdSurvey.user;
+        }
         delete createdSurvey.userId;
         return createdSurvey
     }
@@ -83,8 +87,8 @@ export class SurveyService {
             });
     }
 
-    getSurveyWithQuestions(surveyId: number): Observable<any> {
-        return this.api.get(`surveys/${surveyId}?_embed=questions`).map((res:any) => {
+    getFullSurvey(surveyId: number): Observable<any> {
+        return this.api.get(`surveys/${surveyId}?_embed=questions&_expand=user`).map((res:any) => {
             if(!SurveyDataValidator.checkIfSurveyApiResponseIsValid(res)) {
                 throw new Error('Dobijen je pogrešan odgovor sa servera pri kreiranju ankete.');
             }

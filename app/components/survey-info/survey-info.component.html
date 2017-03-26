@@ -1,0 +1,74 @@
+<h1 class="ui center aligned header">
+    {{survey.name}}
+</h1>
+<div class="ui hidden divider"></div>
+
+<div class="ui container">
+    <div class="ui middle aligned large animated list">
+        <div class="item">
+            <i class="user large icon"></i>
+            <div class="content">
+                Autor: {{survey.author.name}} {{survey.author.surname}}
+            </div>
+        </div>
+        <div class="item">
+            <i class="checked calendar large icon"></i>
+            <div class="content">
+                Početak: {{start}}
+            </div>
+        </div>
+        <div class="item">
+            <i class="delete calendar large icon"></i>
+            <div class="content">
+                Kraj: {{end}}
+            </div>
+        </div>
+    </div>
+
+    <div class="ui teal progress" id="survey-progress">
+        <div class="bar">
+            <div class="progress"></div>
+        </div>
+        <div class="label">Anketa nije popunjavana</div>
+    </div>
+
+    <div class="ui form" *ngIf="showUserDataForm" [class.error]="userDataInvalid">
+        <div class="three fields">
+            <div class="field">
+                <label>Ime</label>
+                <input type="text" [(ngModel)]="userData.name" class="survey-info-name">
+            </div>
+            <div class="field">
+                <label>Prezime</label>
+                <input type="text" [(ngModel)]="userData.surname" class="survey-info-surname">
+            </div>
+            <div class="field">
+                <label>Datum rođenja</label>
+                <my-date-picker
+                        [options]="myDatePickerOptions"
+                        [(ngModel)]="userData.birthday"
+                        class="survey-info-birthday"
+                ></my-date-picker>
+            </div>
+        </div>
+        <div class="ui error message">
+            Svi podaci o korisniku su obavezni
+        </div>
+    </div>
+
+    <div class="ui hidden divider"></div>
+    <div class="ui three basic buttons">
+        <button class="ui labeled icon button survey-info-start" [class.disabled]="!startButtonActive" (click)="fillOutSurvey()">
+            <i class="toggle right icon"></i>
+            {{startButtonLabel}}
+        </button>
+        <button class="ui labeled icon button survey-info-answers" [class.disabled]="!answersButtonActive" (click)="surveyResults()">
+            <i class="ordered list icon"></i>
+            Rezultat
+        </button>
+        <button class="ui labeled icon button survey-info-finish" [class.disabled]="!lockButtonActive" (click)="lockSurvey()">
+            <i class="lock icon"></i>
+            Zaključaj
+        </button>
+    </div>
+</div>

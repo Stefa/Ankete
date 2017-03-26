@@ -61,11 +61,6 @@ export class SurveyFormPage extends Page {
         this.setInput(this.pagesInput, pages);
     }
 
-    private setDate(dateInput, date) {
-        dateInput.value = date;
-        dateInput.dispatchEvent(new Event('keyup'));
-    }
-
     showQuestionForm() {
         this.click(this.addQuestionButton);
     }
