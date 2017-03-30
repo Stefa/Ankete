@@ -127,6 +127,78 @@ describe('AnswerService', () => {
             }
         ));
     });
+
+    describe('updateAnswer', () => {
+        it('should send the right update data to api service put action', inject(
+            [ApiService, AnswerService],
+            (apiService: MockApiService, answerService: AnswerService) => {
+                let updatedAnswerPostResponse = Object.assign({}, answerPostResponse);
+                let updateAnswer = Object.assign({}, answerObject);
+                delete updateAnswer.id;
+                let updateAnswerRequest = Object.assign({}, answerPostResponse);
+                delete updateAnswerRequest.id;
+
+                apiService.setResponse(updatedAnswerPostResponse);
+                apiService.init();
+                answerService.updateAnswer(1, updateAnswer).subscribe();
+
+                expect(apiService.put).toHaveBeenCalledWith('answers/1', updateAnswerRequest);
+            }
+        ));
+
+        it('should return answer object with updated answers field', inject(
+            [ApiService, AnswerService],
+            (apiService: MockApiService, answerService: AnswerService) => {
+                let updatedAnswerPostResponse = Object.assign({}, answerPostResponse);
+
+                let updateAnswer = Object.assign({}, answerObject);
+                delete updateAnswer.id;
+
+                let updateAnswerRequest = Object.assign({}, answerPostResponse);
+                delete updateAnswerRequest.id;
+
+                let updatedAnswer: Answer;
+                let expectedAnswer = Object.assign({}, answerObject, {
+                    progress: {id: answerObject.progress.id},
+                    question: {id: answerObject.question.id},
+                    answers: [2]
+                });
+
+                apiService.setResponse(updatedAnswerPostResponse);
+                apiService.init();
+                answerService.updateAnswer(1, updateAnswer)
+                    .subscribe(answer => updatedAnswer = answer);
+
+                expect(updatedAnswer).toEqual(expectedAnswer);
+            }
+        ));
+
+        it('should throw appropriate error when answer for update was not found', inject(
+            [ApiService, AnswerService],
+            (apiService: MockApiService, answerService: AnswerService) => {
+                let updatedAnswer: Answer;
+                let errorMessage: any;
+                let updateAnswer = Object.assign({}, answerObject);
+                delete updateAnswer.id;
+
+                let errorResponse: any = {
+                    status: 404,
+                    message: '404 - Not Found'
+                };
+
+                apiService.setError(errorResponse);
+                apiService.init();
+
+                answerService.updateAnswer(1, updateAnswer).subscribe(
+                    answer => updatedAnswer = answer,
+                    error => errorMessage = error.message
+                );
+
+                expect(updatedAnswer).toBeUndefined();
+                expect(errorMessage).toBe("Traženi odgovor ne postoji.")
+            }
+        ));
+    });
     
     describe('setUserAnswer', () => {
         it('should send the right update data to api service patch action', inject(

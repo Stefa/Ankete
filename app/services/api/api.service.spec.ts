@@ -229,12 +229,68 @@ describe('ApiService', () => {
             })
         ));
     });
+
+    describe('Put action', () => {
+        it('should send serialized object to the right api url with put request', inject(
+            [ApiService, MockBackend],
+            fakeAsync((service: ApiService, backend: MockBackend) => {
+                let answerSurveyIdUpdate: any = {
+                    progressId: 1,
+                    questionId: 2,
+                    answers: 4
+                };
+                let updatedObject = Object.assign({id: 7}, answerSurveyIdUpdate);
+                let putUrl: string = apiUrl+'/answers/7';
+                let requestBodyString = JSON.stringify(answerSurveyIdUpdate);
+
+                backend.connections.subscribe((connection: MockConnection) => {
+                    expect(connection.request.url).toBe(putUrl);
+                    expect(connection.request.method).toBe(RequestMethod.Put);
+                    expect(JSON.stringify(JSON.parse(connection.request.getBody()))).toEqual(requestBodyString);
+                    let responseBody = `{
+                        "progressId": 1,
+                        "questionId": 2,
+                        "answers": 4,
+                        "id": 7
+                    }`;
+                    let response: ResponseOptions = new ResponseOptions({body: responseBody});
+                    connection.mockRespond(new Response(response));
+                });
+
+
+                let putResponse: any = null;
+
+                service.put('answers/7', answerSurveyIdUpdate)
+                    .subscribe(response => putResponse = response);
+                tick();
+                expect(putResponse).toEqual(updatedObject);
+            })
+        ));
+
+        it('should handle http errors by returning the status code and message', inject(
+            [ApiService, MockBackend],
+            fakeAsync((service: ApiService, backend: MockBackend) => {
+                let putResponse = null;
+                let putError = null;
+                mockConnectionError(backend, 404, 'Not Found');
+                service.put('tests/8', {title: 'New test'}).subscribe(
+                    (response) => putResponse = response,
+                    (error) => putError = error
+                );
+                tick();
+
+                expect(putResponse).toBeNull();
+                expect(putError.status).toBe(404);
+                expect(putError.message).toBe('404 - Not Found')
+            })
+        ));
+    });
     
     describe('Delete action', () => {
         it('should send delete request to the api', inject(
             [ApiService, MockBackend],
             fakeAsync((service: ApiService, backend: MockBackend) => {
-                let deleteUrl: string = apiUrl+'/questions/1';
+                let deleteUrl: string = apiUrl+'/answers/1';
                 let deleteResponse;
 
                 backend.connections.subscribe((connection: MockConnection) => {
@@ -244,7 +300,7 @@ describe('ApiService', () => {
                     connection.mockRespond(new Response(response));
                 });
 
-                service.delete('questions/1')
+                service.delete('answers/1')
                     .subscribe(response => deleteResponse = response);
                 tick();
                 expect(deleteResponse).toEqual({});

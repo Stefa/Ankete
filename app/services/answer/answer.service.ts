@@ -24,6 +24,7 @@ export class AnswerService {
 
         delete answerPostObject.progress;
         delete answerPostObject.question;
+        delete answerPostObject.id;
 
         return answerPostObject;
     }
@@ -42,15 +43,21 @@ export class AnswerService {
 
     updateAnswers(answerId: number, answers: Answers): Observable<Answer> {
         let patchAnswer$ = this.api.patch('answers/'+answerId, {answers: answers});
-        return this.processAnswerPatchResponse(patchAnswer$);
+        return this.processAnswerResponse(patchAnswer$);
     }
 
     setUserAnswer(answerId:number, userAnswer: string): Observable<Answer> {
         let patchAnswer$ = this.api.patch('answers/'+answerId, {userAnswer: userAnswer});
-        return this.processAnswerPatchResponse(patchAnswer$);
+        return this.processAnswerResponse(patchAnswer$);
     }
 
-    private processAnswerPatchResponse(patchRequest$): Observable<Answer> {
+    updateAnswer(answerId: number, answer: Answer): Observable<Answer> {
+        let answerPutObject = this.prepareAnswerForApi(answer);
+        let putAnswer$ = this.api.put('answers/'+answerId, answerPutObject);
+        return this.processAnswerResponse(putAnswer$);
+    }
+
+    private processAnswerResponse(patchRequest$): Observable<Answer> {
         return patchRequest$
             .map(this.createAnswerFromApiResponse)
             .catch((error: any) => {

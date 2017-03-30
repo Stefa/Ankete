@@ -4,6 +4,7 @@ export class MockApiService {
     get;
     post;
     patch;
+    put;
     delete;
     private fakeObservable;
 
@@ -11,6 +12,7 @@ export class MockApiService {
         this.get = jasmine.createSpy('get').and.returnValue(this.fakeObservable);
         this.post = jasmine.createSpy('post').and.returnValue(this.fakeObservable);
         this.patch = jasmine.createSpy('patch').and.returnValue(this.fakeObservable);
+        this.put = jasmine.createSpy('put').and.returnValue(this.fakeObservable);
         this.delete = jasmine.createSpy('delete').and.returnValue(this.fakeObservable);
     }
 
