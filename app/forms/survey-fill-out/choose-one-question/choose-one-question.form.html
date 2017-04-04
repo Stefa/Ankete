@@ -1,0 +1,19 @@
+<form [formGroup]="chooseOneQuestionFormGroup" class="ui form">
+    <div class="grouped fields">
+        <div *ngFor="let answerLabel of answerLabels; let i=index" class="choose-one-answer field">
+            <div class="ui radio checkbox">
+                <input formControlName="answer" type="radio" [value]="i">
+                <label> {{answerLabel}} </label>
+            </div>
+        </div>
+        <div *ngIf="hasUserAnswerOption">
+            <div class="ui choose-other radio checkbox">
+                <input formControlName="answer" type="radio" value="other">
+                <label> {{userAnswerLabel}} </label>
+            </div>
+            <div class="ui user-answer input">
+                <input *ngIf="showUserAnswerInput" formControlName="userAnswer" type="text">
+            </div>
+        </div>
+    </div>
+</form>

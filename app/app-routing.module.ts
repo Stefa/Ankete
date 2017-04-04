@@ -29,21 +29,29 @@ import {SurveyResultComponent} from "./components/survey-result/survey-result.co
                 path: 'survey/:surveyId',
                 canActivate: [ParticipantGuard],
                 resolve: {
-                    survey: SurveyResolverGuard,
-                    progress: ProgressResolverGuard
+                    survey: SurveyResolverGuard
                 },
                 children: [
                     {
                         path: 'info',
-                        component: SurveyInfoComponent
+                        component: SurveyInfoComponent,
+                        resolve: {
+                            progress: ProgressResolverGuard
+                        }
                     },
                     {
                         path: 'fill-out',
-                        component: SurveyFillOutComponent
+                        component: SurveyFillOutComponent,
+                        resolve: {
+                            progress: ProgressResolverGuard
+                        }
                     },
                     {
                         path: 'result',
-                        component: SurveyResultComponent
+                        component: SurveyResultComponent,
+                        resolve: {
+                            progress: ProgressResolverGuard
+                        }
                     }
                 ]
             },
@@ -65,7 +73,7 @@ import {SurveyResultComponent} from "./components/survey-result/survey-result.co
                         canActivate: [],
                         resolve: {
                             progress: ProgressResolverGuard
-                        },
+                        }
                     }
                 ]
             },

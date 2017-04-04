@@ -1,21 +1,21 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Question} from "../../../data/question.data";
 import {Answer} from "../../../data/answer.data";
+import {Observable} from "rxjs/Rx";
 import {FormArray, FormControl, FormGroup} from "@angular/forms";
 import {AnswerService} from "../../../services/answer/answer.service";
-import {Observable} from "rxjs/Rx";
 
 @Component({
     moduleId: module.id,
-    selector: 'numeric-question',
-    templateUrl: 'numeric-question.form.html'
+    selector: 'text-question',
+    templateUrl: 'text-question.form.html'
 })
-export class NumericQuestionForm implements OnInit {
+export class TextQuestionForm implements OnInit {
     @Input() question: Question;
     @Input() answer: Answer;
     @Input() progressId: number;
 
-    numericQuestionFormGroup: FormGroup;
+    textQuestionFormGroup: FormGroup;
     answersControl;
 
     answerStrings: Array<string>;
@@ -40,16 +40,16 @@ export class NumericQuestionForm implements OnInit {
         let answerArray = this.answerStrings.map(answer => new FormControl(answer));
         let answers: FormArray = new FormArray(answerArray);
 
-        this.numericQuestionFormGroup = new FormGroup({
+        this.textQuestionFormGroup = new FormGroup({
             answers: answers
         });
-        this.answersControl = this.numericQuestionFormGroup.get('answers');
+        this.answersControl = this.textQuestionFormGroup.get('answers');
     }
 
     answerQuestion(): Observable<Answer> {
-        if(!this.numericQuestionFormGroup.dirty) return Observable.of(null);
+        if(!this.textQuestionFormGroup.dirty) return Observable.of(null);
 
-        let answers = this.numericQuestionFormGroup.value.answers;
+        let answers = this.textQuestionFormGroup.value.answers;
         return (this.answer) ? this.updateAnswer(answers) : this.createAnswer(answers);
     }
 

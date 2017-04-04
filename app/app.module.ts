@@ -27,6 +27,15 @@ import {ProgressService} from "./services/progress/progress.service";
 import {AnswerService} from "./services/answer/answer.service";
 import {SurveyFillOutComponent} from "./components/survey-fill-out/survey-fill-out.component";
 import {SurveyResultComponent} from "./components/survey-result/survey-result.component";
+import {UnoForm} from "./forms/test/uno/uno.form";
+import {DosForm} from "./forms/test/dos/dos.form";
+import {QuestionPagerComponent} from "./components/question-pager/question-pager.component";
+import {QuestionComponent} from "./components/question/question.component";
+import {NumericQuestionForm} from "./forms/survey-fill-out/numeric-question/numeric-question.form";
+import {TextQuestionForm} from "./forms/survey-fill-out/text-question/text-question.form";
+import {LongTextQuestionForm} from "./forms/survey-fill-out/long-text-question/long-text-question.form";
+import {ChooseOneQuestionForm} from "./forms/survey-fill-out/choose-one-question/choose-one-question.form";
+import {ChooseMultipleQuestionForm} from "./forms/survey-fill-out/choose-multiple-question/choose-multiple-question.form";
 
 @NgModule({
     imports:      [
@@ -41,7 +50,9 @@ import {SurveyResultComponent} from "./components/survey-result/survey-result.co
     declarations: [
         AppComponent, LoginForm, HomeComponent, TopBarComponent,
         QuestionForm, TestComponent, TestForm, UserForm,
-        FormErrorComponent, SurveyForm, SurveyInfoComponent, SurveyFillOutComponent, SurveyResultComponent
+        FormErrorComponent, SurveyForm, SurveyInfoComponent, SurveyFillOutComponent, SurveyResultComponent,
+        UnoForm, DosForm, QuestionPagerComponent, QuestionComponent,
+        NumericQuestionForm, TextQuestionForm, LongTextQuestionForm, ChooseOneQuestionForm, ChooseMultipleQuestionForm,
     ],
     bootstrap:    [ AppComponent ],
     providers: [

@@ -1,0 +1,41 @@
+<div class="ui basic segment">
+    <h4 class="ui dividing header">{{question.text}}</h4>
+
+    <div [ngSwitch]="question.type">
+        <numeric-question
+                #questionForm
+                *ngSwitchCase="questionTypes.numeric"
+                [question]="question"
+                [answer]="answer"
+                [progressId]="progressId"
+        ></numeric-question>
+        <text-question
+                #questionForm
+                *ngSwitchCase="questionTypes.text"
+                [question]="question"
+                [answer]="answer"
+                [progressId]="progressId"
+        ></text-question>
+        <long-text-question
+                #questionForm
+                *ngSwitchCase="questionTypes.long_text"
+                [question]="question"
+                [answer]="answer"
+                [progressId]="progressId"
+        ></long-text-question>
+        <choose-one-question
+                #questionForm
+                *ngSwitchCase="questionTypes.choose_one"
+                [question]="question"
+                [answer]="answer"
+                [progressId]="progressId"
+        ></choose-one-question>
+        <choose-multiple-question
+                #questionForm
+                *ngSwitchCase="questionTypes.choose_multiple"
+                [question]="question"
+                [answer]="answer"
+                [progressId]="progressId"
+        ></choose-multiple-question>
+    </div>
+</div>

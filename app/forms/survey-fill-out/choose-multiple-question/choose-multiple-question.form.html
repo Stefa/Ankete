@@ -1,0 +1,19 @@
+<form [formGroup]="chooseMultipleQuestionFormGroup" class="ui form">
+    <div formArrayName="answers" class="grouped fields">
+        <div *ngFor="let answer of answersControl.controls; let i=index" class="choose-multiple-answer field">
+            <div class="ui checkbox">
+                <input [formControlName]="i" type="checkbox">
+                <label> {{answerLabels[i]}} </label>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="hasUserAnswerOption">
+        <div class="ui check-other checkbox">
+            <input formControlName="otherAnswer" type="checkbox" (change)="changeUserAnswerVisibility()">
+            <label> {{userAnswerLabel}} </label>
+        </div>
+        <div *ngIf="showUserAnswerInput" class="ui user-answer input">
+            <input formControlName="userAnswer" type="text">
+        </div>
+    </div>
+</form>

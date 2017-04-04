@@ -1,0 +1,8 @@
+<form [formGroup]="textQuestionFormGroup" class="ui form">
+    <div formArrayName="answers">
+        <div *ngFor="let answer of answersControl.controls; let i=index" class="text-answer field">
+            <label> {{answerLabels[i]}} </label>
+            <input [formControlName]="i" type="text">
+        </div>
+    </div>
+</form>
