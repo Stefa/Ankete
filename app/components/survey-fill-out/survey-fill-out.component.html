@@ -1,1 +1,11 @@
 <h1>Fill out</h1>
+
+<div *ngFor="let question of questions; let i=index">
+    <question [question]="question" [answer]="answers[i]" [progressId]="progress.id"></question>
+</div>
+
+<question-pager [totalPages]="numberOfPages" (onPageChanged)="pageChanged($event)"></question-pager>
+<button (click)="finishFillOut()" class="ui right floated right labeled icon finish-survey button">
+    <i class="checkmark box large icon"></i>
+    Završi popunjavanje
+</button>
