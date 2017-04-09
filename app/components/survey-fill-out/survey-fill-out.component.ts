@@ -6,6 +6,7 @@ import {Question} from "../../data/question.data";
 import {Answer} from "../../data/answer.data";
 import {QuestionComponent} from "../question/question.component";
 import {Observable} from "rxjs/Rx";
+import {ProgressService} from "../../services/progress/progress.service";
 
 @Component({
     moduleId: module.id,
@@ -28,7 +29,7 @@ export class SurveyFillOutComponent implements OnInit {
 
     @ViewChildren(QuestionComponent) questionComponents: QueryList<QuestionComponent>;
 
-    constructor(private route: ActivatedRoute, private router: Router) { }
+    constructor(private route: ActivatedRoute, private router: Router, private progressService: ProgressService) { }
 
     ngOnInit() {
         this.survey = this.route.snapshot.data['survey'];
@@ -83,7 +84,20 @@ export class SurveyFillOutComponent implements OnInit {
             answers
                 .filter(answer => !!answer)
                 .forEach((answer:Answer) => this.allAnswers.set(answer.question.id, answer));
-            afterSaveCallback();
+
+            this.updateProgress(afterSaveCallback);
+        });
+    }
+
+    updateProgress(afterUpdateCallback: Function) {
+        if(this.progress.progress.done == this.allAnswers.size) {
+            afterUpdateCallback();
+            return;
+        }
+        let progressObject = {done: this.allAnswers.size, total: this.progress.progress.total};
+        this.progressService.updateProgress(this.progress.id, progressObject).subscribe( progress => {
+            this.progress = progress;
+            afterUpdateCallback();
         });
     }
 

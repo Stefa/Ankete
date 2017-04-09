@@ -22,6 +22,7 @@ import {DebugElement} from "@angular/core";
 import {QuestionPagerComponentPage} from "../question-pager/question-pager.component.page";
 import {Observable} from "rxjs/Observable";
 import {MockRouter} from "../../test/mock.router";
+import {ProgressService} from "../../services/progress/progress.service";
 describe('SurveyFillOutComponent', () => {
     let question1 = {
         id: 2,
@@ -93,7 +94,7 @@ describe('SurveyFillOutComponent', () => {
         survey: {id: 4},
         user: {id: 12},
         finished: false,
-        progress: {done: 1, total: 3},
+        progress: {done: 2, total: 3},
         answers: [answer1, answer2]
     };
 
@@ -108,7 +109,7 @@ describe('SurveyFillOutComponent', () => {
                 NumericQuestionForm, TextQuestionForm, LongTextQuestionForm, ChooseOneQuestionForm, ChooseMultipleQuestionForm
             ],
             providers: [
-                AnswerService, ApiService,
+                AnswerService, ApiService, ProgressService,
                 {provide: Router, useClass: MockRouter},
                 {provide: ActivatedRoute, useClass: MockActivatedRoute}
             ]

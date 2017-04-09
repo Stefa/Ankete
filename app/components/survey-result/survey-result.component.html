@@ -1,1 +1,8 @@
-<h1>Survey Result</h1>
+<h1 class="ui center aligned header">
+    {{survey.name}}
+</h1>
+
+<div *ngFor="let answer of allAnswers">
+    <answer [question]="answer.question" [answer]="answer.answer"></answer>
+</div>
+

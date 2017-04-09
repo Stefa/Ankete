@@ -1,0 +1,4 @@
+<div *ngFor="let answer of answers" class="numeric-answer ui grid">
+    <em class="label eight wide column" *ngIf="answer.label">{{answer.label}}</em>
+    <div class="answer four wide column">{{answer.answer}}</div>
+</div>

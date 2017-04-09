@@ -1,4 +1,6 @@
-<h1>Fill out</h1>
+<h1 class="ui center aligned header">
+    {{survey.name}}
+</h1>
 
 <div *ngFor="let question of questions; let i=index">
     <question [question]="question" [answer]="answers[i]" [progressId]="progress.id"></question>
