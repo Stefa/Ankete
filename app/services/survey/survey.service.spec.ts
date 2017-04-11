@@ -236,7 +236,7 @@ describe('SurveyService', () => {
         ));
     });
 
-    describe('getSurveyWithQuestions', () => {
+    describe('getFullSurvey', () => {
         let apiResponse = {
             name: "Survey1",
             start: "2017-03-16T23:00:00.000Z",
@@ -345,5 +345,78 @@ describe('SurveyService', () => {
             })
         ));
 
+    });
+
+    let surveyResponse1 = {
+        name: "Survey 1",
+        start: "2017-03-16T23:00:00.000Z",
+        end: "2017-04-20T21:59:59.000Z",
+        anonymous: false,
+        pages: 1,
+        userId: 1,
+        questionOrder: [56, 57],
+        id: 7
+    };
+    let surveyResponse2 = {
+        name: "Survey 2",
+        start: "2017-04-16T23:00:00.000Z",
+        end: "2017-05-20T21:59:59.000Z",
+        anonymous: true,
+        pages: 2,
+        userId: 1,
+        questionOrder: [25, 26, 27],
+        id: 9
+    };
+    let surveyResponse3 = {
+        name: "Survey 3",
+        start: "2017-06-16T23:00:00.000Z",
+        end: "2017-07-20T21:59:59.000Z",
+        anonymous: false,
+        pages: 3,
+        userId: 1,
+        questionOrder: [5, 6, 7, 8, 9],
+        id: 6,
+        blocked: true
+    };
+    let surveysApiResponse = [surveyResponse1, surveyResponse2, surveyResponse3];
+    let surveysResponse = [surveyResponse1, surveyResponse2].map(survey => {
+        let surveyCopy = $.extend(true, {}, survey);
+        surveyCopy.start = new Date(survey.start);
+        surveyCopy.end = new Date(survey.end);
+        surveyCopy.author = {id: survey.userId};
+        delete surveyCopy.userId;
+        return surveyCopy;
+    });
+
+    describe('getSurveys', () => {
+        it('should send get request to right api url', inject(
+            [ApiService, SurveyService],
+            fakeAsync((apiService: MockApiService, surveyService: SurveyService) => {
+                let returnValue;
+                apiService.setResponse(surveysApiResponse);
+                apiService.init();
+                surveyService.getSurveys().subscribe(
+                    surveys => returnValue = surveys
+                );
+                expect(apiService.get).toHaveBeenCalledWith('surveys');
+                expect(returnValue).toEqual(surveysResponse);
+            })
+        ));
+    });
+
+    describe('getUserSurveys', () => {
+        it('should send get request to right api url', inject(
+            [ApiService, SurveyService],
+            fakeAsync((apiService: MockApiService, surveyService: SurveyService) => {
+                let returnValue;
+                apiService.setResponse(surveysApiResponse);
+                apiService.init();
+                surveyService.getUserSurveys(1).subscribe(
+                    surveys => returnValue = surveys
+                );
+                expect(apiService.get).toHaveBeenCalledWith('surveys?userId=1');
+                expect(returnValue).toEqual(surveysResponse);
+            })
+        ));
     });
 });

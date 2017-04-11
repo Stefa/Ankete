@@ -114,4 +114,20 @@ export class SurveyService {
         });
     }
 
+    getSurveys(): Observable<Array<Survey>> {
+        return this.api.get('surveys').map((res: any) => {
+            return res
+                .map(SurveyService.createSurveyObjectFromResponse)
+                .filter(survey => !survey.blocked);
+        });
+    }
+
+    getUserSurveys(userId: number): Observable<Array<Survey>> {
+        return this.api.get('surveys?userId='+userId).map((res: any) => {
+            return res
+                .map(SurveyService.createSurveyObjectFromResponse)
+                .filter(survey => !survey.blocked);
+        });
+    }
+
 }
