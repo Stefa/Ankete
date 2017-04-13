@@ -1,0 +1,7 @@
+.ui.sortable.table thead th.action-header:hover {
+    background: none;
+}
+
+.ui.sortable.table thead th.action-header {
+    cursor: default;
+}

@@ -42,6 +42,7 @@ import {TextAnswerComponent} from "./components/survey-result-answers/text-answe
 import {LongTextAnswerComponent} from "./components/survey-result-answers/long-text-answer/long-text-answer.component";
 import {ChooseOneAnswerComponent} from "./components/survey-result-answers/choose-one-answer/choose-one-answer.component";
 import {ChooseMultipleAnswerComponent} from "./components/survey-result-answers/choose-multiple-answer/choose-multiple-answer.component";
+import {SurveyListComponent} from "./components/survey-list/survey-list.component";
 
 @NgModule({
     imports:      [
@@ -59,7 +60,8 @@ import {ChooseMultipleAnswerComponent} from "./components/survey-result-answers/
         FormErrorComponent, SurveyForm, SurveyInfoComponent, SurveyFillOutComponent, SurveyResultComponent,
         UnoForm, DosForm, QuestionPagerComponent, QuestionComponent, AnswerComponent,
         NumericQuestionForm, TextQuestionForm, LongTextQuestionForm, ChooseOneQuestionForm, ChooseMultipleQuestionForm,
-        NumericAnswerComponent, TextAnswerComponent, LongTextAnswerComponent, ChooseOneAnswerComponent, ChooseMultipleAnswerComponent
+        NumericAnswerComponent, TextAnswerComponent, LongTextAnswerComponent, ChooseOneAnswerComponent, ChooseMultipleAnswerComponent,
+        SurveyListComponent
     ],
     bootstrap:    [ AppComponent ],
     providers: [

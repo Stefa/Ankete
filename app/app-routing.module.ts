@@ -12,6 +12,9 @@ import {ProgressResolverGuard} from "./guards/progress-resolver/progress-resolve
 import {ClerkGuard} from "./guards/clerk/clerk.guard";
 import {SurveyFillOutComponent} from "./components/survey-fill-out/survey-fill-out.component";
 import {SurveyResultComponent} from "./components/survey-result/survey-result.component";
+import {SurveyListComponent} from "./components/survey-list/survey-list.component";
+import {SurveysResolverGuard} from "./guards/surveys-resolver/surveys-resolver.guard";
+import {UserSurveysResolverGuard} from "./guards/user-surveys-resolver/user-surveys-resolver.guard";
 
 @NgModule({
     imports: [
@@ -77,9 +80,26 @@ import {SurveyResultComponent} from "./components/survey-result/survey-result.co
                     }
                 ]
             },
+            {
+                path: 'surveys',
+                component: SurveyListComponent,
+                resolve: {
+                    surveys: SurveysResolverGuard
+                }
+            },
+            {
+                path: 'my-surveys',
+                component: SurveyListComponent,
+                resolve: {
+                    surveys: UserSurveysResolverGuard
+                }
+            }
         ])
     ],
     exports: [RouterModule],
-    providers: [ParticipantGuard, ClerkGuard, SurveyResolverGuard, ProgressResolverGuard]
+    providers: [
+        ParticipantGuard, ClerkGuard,
+        SurveyResolverGuard, ProgressResolverGuard, SurveysResolverGuard, UserSurveysResolverGuard
+    ]
 })
 export class AppRoutingModule{}

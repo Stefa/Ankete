@@ -6,21 +6,26 @@ export class Page {
         this.topNativeElement = topDebugElement.nativeElement;
     }
 
-    protected getElementByCss(cssSelector: string) {
+    protected getElementByCss(cssSelector: string): any {
         let debugElement = this.getDebugElementByCss(cssSelector);
         return debugElement != null ? debugElement.nativeElement : null;
     }
 
-    protected getElementFromHtml(cssSelector: string) {
+    protected getElementFromHtml(cssSelector: string): any {
         return this.topNativeElement.querySelector(cssSelector);
     }
 
-    protected getDebugElementByCss(cssSelector: string) {
+    protected getDebugElementByCss(cssSelector: string): DebugElement {
         return this.topDebugElement.query(By.css(cssSelector));
     }
 
-    protected getAllDebugElementsByCss(cssSelector: string) {
+    protected getAllDebugElementsByCss(cssSelector: string): Array<DebugElement> {
         return this.topDebugElement.queryAll(By.css(cssSelector));
+    }
+
+    protected getAllEmementsByCss(cssSelector: string): Array<any> {
+        return this.getAllDebugElementsByCss(cssSelector)
+            .map(element => element.nativeElement);
     }
 
     protected setInput(inputElement, value) {

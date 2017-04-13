@@ -1,0 +1,31 @@
+<table class="ui very basic sortable celled table" *ngIf="surveys.length">
+    <thead><tr>
+        <th
+                (click)="sort('name')"
+                [class.sorted]="sortField=='name'"
+                [class.ascending]="sortDirection==1"
+                [class.descending]="sortDirection==-1"
+        >Naziv</th>
+        <th
+                (click)="sort('start')"
+                [class.sorted]="sortField=='start'"
+                [class.ascending]="sortDirection==1"
+                [class.descending]="sortDirection==-1"
+        >Početak</th>
+        <th
+                (click)="sort('end')"
+                [class.sorted]="sortField=='end'"
+                [class.ascending]="sortDirection==1"
+                [class.descending]="sortDirection==-1"
+        >Kraj</th>
+        <th *ngIf="showActionColumn" class="action-header"></th>
+    </tr></thead>
+    <tbody>
+        <tr *ngFor="let survey of surveys" class="survey">
+            <td><a [routerLink]="['/survey', survey.id, 'info']">{{survey.name}}</a></td>
+            <td>{{survey.start | date:'d. M. y.'}}</td>
+            <td>{{survey.end | date:'d. M. y.'}}</td>
+            <td *ngIf="showActionColumn">Edit Delete</td>
+        </tr>
+    </tbody>
+</table>
