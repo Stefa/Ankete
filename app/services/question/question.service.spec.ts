@@ -201,7 +201,7 @@ describe('QuestionService', () => {
     });
 
     describe('deleteQuestion', () => {
-        it('should send the right question path to api service', inject(
+        it('should send delete request at the right question path to api service', inject(
             [ApiService, QuestionService],
             (apiService: MockApiService, questionService: QuestionService) => {
                 apiService.setResponse({});

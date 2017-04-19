@@ -66,7 +66,9 @@ export class SurveyFillOutComponent implements OnInit {
     }
 
     finishFillOut() {
-        let goToSurveyInfo = _ => this.router.navigate(['../result'], { relativeTo: this.route});
+        let resultRoute = (this.route.snapshot.params != null && 'progressId' in this.route.snapshot.params) ?
+            ['../../result', this.route.snapshot.params.progressId] : ['../result'];
+        let goToSurveyInfo = _ => this.router.navigate(resultRoute, { relativeTo: this.route});
         this.saveAnswers(goToSurveyInfo);
     }
 

@@ -73,7 +73,13 @@ import {UserSurveysResolverGuard} from "./guards/user-surveys-resolver/user-surv
                     {
                         path: 'fill-out/:progressId',
                         component: SurveyFillOutComponent,
-                        canActivate: [],
+                        resolve: {
+                            progress: ProgressResolverGuard
+                        }
+                    },
+                    {
+                        path: 'result/:progressId',
+                        component: SurveyResultComponent,
                         resolve: {
                             progress: ProgressResolverGuard
                         }

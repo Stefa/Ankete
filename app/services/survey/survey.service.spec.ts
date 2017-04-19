@@ -419,4 +419,48 @@ describe('SurveyService', () => {
             })
         ));
     });
+
+    describe('deleteSurvey', () => {
+        it('should send delete request at the right survey path to api service', inject(
+            [ApiService, SurveyService],
+            (apiService: MockApiService, surveyService: SurveyService) => {
+                apiService.setResponse({});
+                apiService.init();
+                surveyService.deleteSurvey(1).subscribe();
+
+                expect(apiService.delete).toHaveBeenCalledWith('surveys/1');
+            }
+        ));
+
+        it('should return true if survey was successfully deleted', inject(
+            [ApiService, SurveyService],
+            (apiService: MockApiService, surveyService: SurveyService) => {
+                let success: boolean;
+
+                apiService.setResponse({});
+                apiService.init();
+                surveyService.deleteSurvey(1).subscribe(deleted => success = deleted);
+
+                expect(success).toBe(true);
+            }
+        ));
+
+        it('should return false if survey was not found',  inject(
+            [ApiService, SurveyService],
+            (apiService: MockApiService, surveyService: SurveyService) => {
+                let success: boolean;
+                let errorResponse: any = {
+                    status: 404,
+                    message: '404 - Not Found'
+                };
+
+                apiService.setError(errorResponse);
+                apiService.init();
+
+                surveyService.deleteSurvey(1).subscribe(deleted => success = deleted);
+
+                expect(success).toBe(false);
+            }
+        ));
+    });
 });

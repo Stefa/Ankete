@@ -130,4 +130,11 @@ export class SurveyService {
         });
     }
 
+    deleteSurvey(surveyId: number): Observable<boolean> {
+        return this.api
+            .delete('surveys/'+surveyId)
+            .map(_ => true)
+            .catch(error => Observable.of(false));
+    }
+
 }
