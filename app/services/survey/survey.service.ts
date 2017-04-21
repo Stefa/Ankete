@@ -131,6 +131,12 @@ export class SurveyService {
     }
 
     deleteSurvey(surveyId: number): Observable<boolean> {
+        this.questionService.getSurveyQuestions(surveyId).subscribe(questions => {
+            questions.forEach(
+                question => this.questionService.deleteQuestion(question.id)
+            );
+        });
+
         return this.api
             .delete('surveys/'+surveyId)
             .map(_ => true)

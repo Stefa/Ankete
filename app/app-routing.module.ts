@@ -15,6 +15,9 @@ import {SurveyResultComponent} from "./components/survey-result/survey-result.co
 import {SurveyListComponent} from "./components/survey-list/survey-list.component";
 import {SurveysResolverGuard} from "./guards/surveys-resolver/surveys-resolver.guard";
 import {UserSurveysResolverGuard} from "./guards/user-surveys-resolver/user-surveys-resolver.guard";
+import {SurveyForm} from "./forms/survey/survey.form";
+import {AuthorGuard} from "./guards/author/author.guard";
+import {AdministratorGuard} from "./guards/administrator/administrator.guard";
 
 @NgModule({
     imports: [
@@ -96,15 +99,24 @@ import {UserSurveysResolverGuard} from "./guards/user-surveys-resolver/user-surv
             {
                 path: 'my-surveys',
                 component: SurveyListComponent,
+                canActivate: [AuthorGuard],
                 resolve: {
                     surveys: UserSurveysResolverGuard
+                },
+                data: {
+                    'mySurveys': true
                 }
+            },
+            {
+                path: 'new-survey',
+                component: SurveyForm,
+                canActivate: [AuthorGuard]
             }
         ])
     ],
     exports: [RouterModule],
     providers: [
-        ParticipantGuard, ClerkGuard,
+        ParticipantGuard, ClerkGuard, AuthorGuard, AdministratorGuard,
         SurveyResolverGuard, ProgressResolverGuard, SurveysResolverGuard, UserSurveysResolverGuard
     ]
 })

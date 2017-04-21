@@ -23,7 +23,7 @@ export class Page {
         return this.topDebugElement.queryAll(By.css(cssSelector));
     }
 
-    protected getAllEmementsByCss(cssSelector: string): Array<any> {
+    protected getAllElementsByCss(cssSelector: string): Array<any> {
         return this.getAllDebugElementsByCss(cssSelector)
             .map(element => element.nativeElement);
     }

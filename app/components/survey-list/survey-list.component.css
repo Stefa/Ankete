@@ -5,3 +5,11 @@
 .ui.sortable.table thead th.action-header {
     cursor: default;
 }
+
+.ui.basic.buttons {
+    border: none;
+}
+
+.ui.basic.buttons .button{
+    border: none;
+}

@@ -2,7 +2,7 @@ import {TestBed, inject} from "@angular/core/testing";
 import {QuestionService} from "./question.service";
 import {ApiService} from "../api/api.service";
 import {MockApiService} from "../api/mock-api.service";
-import {Question} from "../../data/question.data";
+import {Question, questionTypes} from "../../data/question.data";
 import {
     newChooseOneQuestion, questionPostRequest, questionPostResponse, expectedCreateQuestionResponse,
     newNumericQuestion, newTextQuestion, newChooseMultipleQuestion, newQuestionForSurvey, questionForSurveyPostResponse,
@@ -240,6 +240,71 @@ describe('QuestionService', () => {
                 questionService.deleteQuestion(1).subscribe(deleted => success = deleted);
 
                 expect(success).toBe(false);
+            }
+        ));
+    });
+    
+    describe('getSurveyQuestions', () => {
+        let apiResponse = [
+            {
+                userId: 1,
+                type: questionTypes.choose_one,
+                text: "Question1",
+                required: true,
+                surveyId: 1,
+                answerLabels: ["answer1", "answer2"],
+                id: 1
+            },
+            {
+                userId: 1,
+                type: questionTypes.choose_multiple,
+                text: "Question2",
+                required: false,
+                surveyId: 1,
+                answerLabels: ["answer1", "answer2", "answer3"],
+                id: 2
+            }
+        ];
+
+        let methodResponse = [
+            {
+                author: {id: 1},
+                type: questionTypes.choose_one,
+                text: "Question1",
+                required: true,
+                survey: {id: 1},
+                answerLabels: ["answer1", "answer2"],
+                id: 1
+            },
+            {
+                author: {id: 1},
+                type: questionTypes.choose_multiple,
+                text: "Question2",
+                required: false,
+                survey: {id: 1},
+                answerLabels: ["answer1", "answer2", "answer3"],
+                id: 2
+            }
+        ];
+
+        it('should send get request to questions path with surveyId filter', inject(
+            [ApiService, QuestionService],
+            (apiService: MockApiService, questionService: QuestionService) => {
+                apiService.setResponse(apiResponse);
+                apiService.init();
+                questionService.getSurveyQuestions(1).subscribe();
+                expect(apiService.get).toHaveBeenCalledWith('questions?surveyId=1');
+            }
+        ));
+
+        it('should return array of Question objects on success', inject(
+            [ApiService, QuestionService],
+            (apiService: MockApiService, questionService: QuestionService) => {
+                let result;
+                apiService.setResponse(apiResponse);
+                apiService.init();
+                questionService.getSurveyQuestions(1).subscribe(res => result = res);
+                expect(result).toEqual(methodResponse);
             }
         ));
     });

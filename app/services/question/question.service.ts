@@ -94,4 +94,11 @@ export class QuestionService {
             .map(_ => true)
             .catch(error => Observable.of(false));
     }
+
+    getSurveyQuestions(surveyId: number): Observable<Question[]> {
+        return this.api.get('questions?surveyId='+surveyId).map((res: any) => {
+            return res
+                .map(this.createQuestionFromApiResponse);
+        });
+    }
 }

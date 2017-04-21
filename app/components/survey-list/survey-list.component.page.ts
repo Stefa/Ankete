@@ -7,6 +7,7 @@ export class SurveyListPage extends Page {
     endHeader;
 
     surveyRows;
+    surveyRowsDebugElements;
 
     constructor(surveyListDebugElement: DebugElement) {
         super(surveyListDebugElement);
@@ -14,7 +15,11 @@ export class SurveyListPage extends Page {
     }
 
     getSurveyRows() {
-        this.surveyRows = this.getAllEmementsByCss('.survey');
+        this.surveyRows = this.getAllElementsByCss('.survey');
+    }
+
+    getSurveyRowsDebugElements() {
+        this.surveyRowsDebugElements = this.getAllDebugElementsByCss('.survey');
     }
 
     sortByName() {

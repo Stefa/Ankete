@@ -19,11 +19,11 @@ export const userTypes = {
 
 
 export enum UserPermissions {
-anonymous = 0,
-participant,
-clerk,
-author,
-administrator
+    anonymous = 0,
+    participant,
+    clerk,
+    author,
+    administrator
 }
 
 let userTypeTitles = new Map(<[string,string][]>[

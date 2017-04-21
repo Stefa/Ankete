@@ -6,6 +6,7 @@ import {Survey} from "../../data/survey.data";
 import {newTestSurvey, newTestSurveyResponse} from "../../test/surveys";
 import {questionTypes} from "../../data/question.data";
 import {QuestionService} from "../question/question.service";
+import {Observable} from "rxjs/Rx";
 
 describe('SurveyService', () => {
     beforeEach(() => {
@@ -421,9 +422,31 @@ describe('SurveyService', () => {
     });
 
     describe('deleteSurvey', () => {
+        let surveyQuestions = [
+            {
+                author: {id: 1},
+                type: questionTypes.choose_one,
+                text: "Question1",
+                required: true,
+                survey: {id: 1},
+                answerLabels: ["answer1", "answer2"],
+                id: 1
+            },
+            {
+                author: {id: 1},
+                type: questionTypes.choose_multiple,
+                text: "Question2",
+                required: false,
+                survey: {id: 1},
+                answerLabels: ["answer1", "answer2", "answer3"],
+                id: 2
+            }
+        ];
         it('should send delete request at the right survey path to api service', inject(
-            [ApiService, SurveyService],
-            (apiService: MockApiService, surveyService: SurveyService) => {
+            [ApiService, SurveyService, QuestionService],
+            (apiService: MockApiService, surveyService: SurveyService, questionService: QuestionService) => {
+                spyOn(questionService, 'getSurveyQuestions').and.returnValue(Observable.of(surveyQuestions));
+                spyOn(questionService, 'deleteQuestion').and.returnValues(Observable.of(true), Observable.of(true));
                 apiService.setResponse({});
                 apiService.init();
                 surveyService.deleteSurvey(1).subscribe();
@@ -432,10 +455,27 @@ describe('SurveyService', () => {
             }
         ));
 
+        it('should questions that belong to the survey', inject(
+            [ApiService, SurveyService, QuestionService],
+            (apiService: MockApiService, surveyService: SurveyService, questionService: QuestionService) => {
+                spyOn(questionService, 'getSurveyQuestions').and.returnValue(Observable.of(surveyQuestions));
+                spyOn(questionService, 'deleteQuestion').and.returnValues(Observable.of(true), Observable.of(true));
+                apiService.setResponse({});
+                apiService.init();
+                surveyService.deleteSurvey(1).subscribe();
+
+                expect(questionService.getSurveyQuestions).toHaveBeenCalledWith(1);
+                expect((<any>questionService.deleteQuestion).calls.argsFor(0)).toEqual([1]);
+                expect((<any>questionService.deleteQuestion).calls.argsFor(1)).toEqual([2]);
+            }
+        ));
+
         it('should return true if survey was successfully deleted', inject(
-            [ApiService, SurveyService],
-            (apiService: MockApiService, surveyService: SurveyService) => {
+            [ApiService, SurveyService, QuestionService],
+            (apiService: MockApiService, surveyService: SurveyService, questionService: QuestionService) => {
                 let success: boolean;
+                spyOn(questionService, 'getSurveyQuestions').and.returnValue(Observable.of(surveyQuestions));
+                spyOn(questionService, 'deleteQuestion').and.returnValues(Observable.of(true), Observable.of(true));
 
                 apiService.setResponse({});
                 apiService.init();
@@ -446,8 +486,11 @@ describe('SurveyService', () => {
         ));
 
         it('should return false if survey was not found',  inject(
-            [ApiService, SurveyService],
-            (apiService: MockApiService, surveyService: SurveyService) => {
+            [ApiService, SurveyService, QuestionService],
+            (apiService: MockApiService, surveyService: SurveyService, questionService: QuestionService) => {
+                spyOn(questionService, 'getSurveyQuestions').and.returnValue(Observable.of(surveyQuestions));
+                spyOn(questionService, 'deleteQuestion').and.returnValues(Observable.of(true), Observable.of(true));
+
                 let success: boolean;
                 let errorResponse: any = {
                     status: 404,

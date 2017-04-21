@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewInit, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Survey} from "../../data/survey.data";
+import {SurveyService} from "../../services/survey/survey.service";
+import {AuthService} from "../../services/authentication/auth.service";
+import {User, UserPermissions} from "../../data/user.data";
 
 @Component({
     moduleId: module.id,
@@ -8,15 +11,38 @@ import {Survey} from "../../data/survey.data";
     templateUrl: 'survey-list.component.html',
     styleUrls: ['survey-list.component.css']
 })
-export class SurveyListComponent implements OnInit {
+export class SurveyListComponent implements OnInit, AfterViewInit {
     surveys: any;
+    onMySurveysPage: boolean = false;
     sortField: string;
     sortDirection: number = 1;
     showActionColumn: boolean = false;
-    constructor(private route: ActivatedRoute, private router: Router,) { }
+
+    showSurveyActions: boolean;
+
+    constructor(
+        private route: ActivatedRoute,
+        private router: Router,
+        private surveyService: SurveyService,
+        private authService: AuthService
+    ) { }
 
     ngOnInit() {
         this.surveys = this.route.snapshot.data['surveys'];
+        this.onMySurveysPage = this.route.snapshot.data['mySurveys'];
+        this.initActionVisibility();
+    }
+
+    ngAfterViewInit() {
+        jQuery('.buttons .button').popup();
+    }
+
+    private initActionVisibility() {
+        let currentUser = this.authService.getLoggedInUser();
+        let userPermission: UserPermissions = UserPermissions[currentUser.type];
+
+        this.showActionColumn = userPermission >= UserPermissions.clerk;
+        this.showSurveyActions = userPermission >= UserPermissions.administrator || this.onMySurveysPage;
     }
 
     sortByName() {
@@ -45,5 +71,23 @@ export class SurveyListComponent implements OnInit {
             case 'start':{ this.sortByStart(); break; }
             case 'end':{ this.sortByEnd(); break; }
         }
+    }
+
+    goToSurveyProxy(surveyId) {
+        this.router.navigate(['/survey-proxy', surveyId, 'info']);
+    }
+
+    deleteSurvey(surveyId) {
+        this.surveyService.deleteSurvey(surveyId).subscribe(_ => {
+            this.surveys = this.surveys.filter(survey => survey.id != surveyId);
+        })
+    }
+
+    editSurvey(surveyId) {
+
+    }
+
+    goToSurveyResults(surveyId) {
+
     }
 }

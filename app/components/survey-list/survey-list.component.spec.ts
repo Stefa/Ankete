@@ -6,26 +6,18 @@ import {MockRouter} from "../../test/mock.router";
 import {HttpModule} from "@angular/http";
 import {MockRouterLinkDirective} from "../../test/mock.router-link";
 import {SurveyListPage} from "./survey-list.component.page";
+import {By} from "@angular/platform-browser";
+import {SurveyService} from "../../services/survey/survey.service";
+import {Observable} from "rxjs/Rx";
+import {ApiService} from "../../services/api/api.service";
+import {QuestionService} from "../../services/question/question.service";
+import {AuthService} from "../../services/authentication/auth.service";
+import {UserService} from "../../services/user/user.service";
+import {leonardoUserObject} from "../../test/users";
 
 describe('SurveyListComponent', () => {
     let fixture: ComponentFixture<SurveyListComponent>;
     let comp: SurveyListComponent;
-
-    beforeEach( async(() => {
-        TestBed.configureTestingModule({
-            imports: [HttpModule],
-            declarations: [SurveyListComponent, MockRouterLinkDirective],
-            providers: [
-                {provide: Router, useClass: MockRouter},
-                {provide: ActivatedRoute, useClass: MockActivatedRoute}
-            ]
-        })
-            .compileComponents()
-            .then(() => {
-                fixture = TestBed.createComponent(SurveyListComponent);
-                comp    = fixture.componentInstance;
-            });
-    }));
 
     let survey1 = {
         name: "Survey 1",
@@ -58,15 +50,35 @@ describe('SurveyListComponent', () => {
         id: 6,
         blocked: false
     };
-    let allSurveys = [survey1, survey2, survey3];
+    let allSurveys;
+
+    beforeEach( async(() => {
+        TestBed.configureTestingModule({
+            imports: [HttpModule],
+            declarations: [SurveyListComponent, MockRouterLinkDirective],
+            providers: [
+                SurveyService, QuestionService, ApiService, AuthService, UserService,
+                {provide: Router, useClass: MockRouter},
+                {provide: ActivatedRoute, useClass: MockActivatedRoute}
+            ]
+        })
+            .compileComponents()
+            .then(() => {
+                fixture = TestBed.createComponent(SurveyListComponent);
+                comp    = fixture.componentInstance;
+                allSurveys = [survey1, survey2, survey3];
+            });
+    }));
+
 
     function setActivatedRoute(route: MockActivatedRoute) {
         route.testData = {surveys: allSurveys};
     }
 
-    it('should display table with all surveys', inject([ActivatedRoute],
-        (route: MockActivatedRoute) => {
+    it('should display table with all surveys', inject([ActivatedRoute, AuthService, AuthService],
+        (route: MockActivatedRoute, authService: AuthService) => {
             setActivatedRoute(route);
+            spyOn(authService, 'getLoggedInUser').and.returnValue(leonardoUserObject);
             fixture.detectChanges();
             let page = new SurveyListPage(fixture.debugElement);
             page.getSurveyRows();
@@ -77,9 +89,10 @@ describe('SurveyListComponent', () => {
         }
     ));
 
-    it('should sort the surveys by name descending after clicking on name header twice', inject([ActivatedRoute],
-        (route: MockActivatedRoute) => {
+    it('should sort the surveys by name descending after clicking on name header twice', inject([ActivatedRoute, AuthService],
+        (route: MockActivatedRoute, authService: AuthService) => {
             setActivatedRoute(route);
+            spyOn(authService, 'getLoggedInUser').and.returnValue(leonardoUserObject);
             fixture.detectChanges();
             let page = new SurveyListPage(fixture.debugElement);
             page.sortByName();
@@ -91,9 +104,10 @@ describe('SurveyListComponent', () => {
         }
     ));
 
-    it('should sort the surveys by start date descending after clicking on start header twice', inject([ActivatedRoute],
-        (route: MockActivatedRoute) => {
+    it('should sort the surveys by start date descending after clicking on start header twice', inject([ActivatedRoute, AuthService],
+        (route: MockActivatedRoute, authService: AuthService) => {
             setActivatedRoute(route);
+            spyOn(authService, 'getLoggedInUser').and.returnValue(leonardoUserObject);
             fixture.detectChanges();
             let page = new SurveyListPage(fixture.debugElement);
             page.sortByStart();
@@ -105,9 +119,10 @@ describe('SurveyListComponent', () => {
         }
     ));
 
-    it('should sort the surveys by end date descending after clicking on end header twice', inject([ActivatedRoute],
-        (route: MockActivatedRoute) => {
+    it('should sort the surveys by end date descending after clicking on end header twice', inject([ActivatedRoute, AuthService],
+        (route: MockActivatedRoute, authService: AuthService) => {
             setActivatedRoute(route);
+            spyOn(authService, 'getLoggedInUser').and.returnValue(leonardoUserObject);
             fixture.detectChanges();
             let page = new SurveyListPage(fixture.debugElement);
             page.sortByEnd();
@@ -118,5 +133,46 @@ describe('SurveyListComponent', () => {
             expect(comp.surveys[2]).toEqual(survey1);
         }
     ));
+
+    describe('deleteSurvey', () => {
+        it("should call SurveyService's deleteSurvey method", inject([ActivatedRoute, AuthService, SurveyService],
+            (route: MockActivatedRoute, authService: AuthService, surveyService: SurveyService) => {
+                spyOn(surveyService, 'deleteSurvey').and.returnValue(Observable.of(true));
+                spyOn(authService, 'getLoggedInUser').and.returnValue(leonardoUserObject);
+
+                setActivatedRoute(route);
+                fixture.detectChanges();
+
+                let page = new SurveyListPage(fixture.debugElement);
+                page.getSurveyRowsDebugElements();
+
+                let surveyRow1 = page.surveyRowsDebugElements[0];
+                let deleteButton = surveyRow1.query(By.css('.delete'));
+                deleteButton.triggerEventHandler('click', event);
+
+                expect(surveyService.deleteSurvey).toHaveBeenCalledWith(7);
+            }
+        ));
+
+        it('should remove survey from the list after successful delete', inject([ActivatedRoute, AuthService, SurveyService],
+            (route: MockActivatedRoute, authService: AuthService, surveyService: SurveyService) => {
+                spyOn(surveyService, 'deleteSurvey').and.returnValue(Observable.of(true));
+                spyOn(authService, 'getLoggedInUser').and.returnValue(leonardoUserObject);
+
+                setActivatedRoute(route);
+                fixture.detectChanges();
+
+                let page = new SurveyListPage(fixture.debugElement);
+                page.getSurveyRowsDebugElements();
+
+                let surveyRow1 = page.surveyRowsDebugElements[0];
+                let deleteButton = surveyRow1.query(By.css('.delete'));
+                deleteButton.triggerEventHandler('click', event);
+                fixture.detectChanges();
+
+                expect(comp.surveys.length).toBe(2);
+            }
+        ));
+    });
 
 });

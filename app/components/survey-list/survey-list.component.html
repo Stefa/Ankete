@@ -25,7 +25,22 @@
             <td><a [routerLink]="['/survey', survey.id, 'info']">{{survey.name}}</a></td>
             <td>{{survey.start | date:'d. M. y.'}}</td>
             <td>{{survey.end | date:'d. M. y.'}}</td>
-            <td *ngIf="showActionColumn">Edit Delete</td>
+            <td *ngIf="showActionColumn">
+                <div class="ui small basic icon buttons">
+                    <button class="ui button" (click)="goToSurveyProxy(survey.id)" data-content="Popuni kao službenik">
+                        <i class="add user icon"></i>
+                    </button>
+                    <button class="ui delete button" (click)="deleteSurvey(survey.id)" data-content="Obriši anketu">
+                        <i class="remove icon"></i>
+                    </button>
+                    <button class="ui button" (click)="editSurvey(survey.id)" data-content="Izmeni anketu">
+                        <i class="write icon"></i>
+                    </button>
+                    <button class="ui button" (click)="goToSurveyResults(survey.id)" data-content="Rezultati ankete">
+                        <i class="tasks icon"></i>
+                    </button>
+                </div>
+            </td>
         </tr>
     </tbody>
 </table>
