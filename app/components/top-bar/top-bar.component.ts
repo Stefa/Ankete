@@ -19,14 +19,11 @@ export class TopBarComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.authService.getCurrentUser().subscribe(
-            (user: User) => {
-                this.currentUser = user;
-                this.currentUserPermission = user != null ?
-                    this.userPermissions[user.type] :
-                    0;
-            }
-        )
+        this.authService.getCurrentUser().subscribe((user: User) => {
+            this.currentUser = user;
+            this.currentUserPermission = user != null ?
+                this.userPermissions[user.type] : 0;
+        })
     }
 
     logout() {

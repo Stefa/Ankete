@@ -26,7 +26,7 @@ import {AdministratorGuard} from "./guards/administrator/administrator.guard";
                 path: '',
                 // component: HomeComponent,
                 // canActivate: [ParticipantGuard],
-                redirectTo: 'test',
+                redirectTo: 'surveys',
                 pathMatch: 'full'
             },
             { path: 'login', component: LoginForm },

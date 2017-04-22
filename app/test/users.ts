@@ -49,3 +49,43 @@ export {fibonacciUserObject}
 export {fibonacciUserResponse}
 
 export {formInputUser}
+
+let participantUserObject: User = {
+    name: "partName",
+    surname: "partSurname",
+    type: userTypes.participant,
+    username: "partUsername",
+    password: "partPass",
+    birthday: new Date(2002,2,2),
+    phone: "54321",
+    email: "participant@gmail.com",
+    id: 3
+};
+
+let clerkUserObject: User = {
+    name: "clerkName",
+    surname: "clerkSurname",
+    type: userTypes.clerk,
+    username: "clerkUsername",
+    password: "clerkPass",
+    birthday: new Date(1991,1,9),
+    phone: "32154",
+    email: "clerk@gmail.com",
+    id: 4
+};
+
+let authorUserObject: User = {
+    name: "authorName",
+    surname: "authorSurname",
+    type: userTypes.author,
+    username: "authorUsername",
+    password: "authorPass",
+    birthday: new Date(1999,9,1),
+    phone: "09876",
+    email: "author@gmail.com",
+    id: 5
+};
+
+export {participantUserObject}
+export {clerkUserObject}
+export {authorUserObject}

@@ -455,7 +455,7 @@ describe('SurveyService', () => {
             }
         ));
 
-        it('should questions that belong to the survey', inject(
+        it('should delete questions that belong to the survey', inject(
             [ApiService, SurveyService, QuestionService],
             (apiService: MockApiService, surveyService: SurveyService, questionService: QuestionService) => {
                 spyOn(questionService, 'getSurveyQuestions').and.returnValue(Observable.of(surveyQuestions));

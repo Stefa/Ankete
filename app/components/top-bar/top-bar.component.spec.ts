@@ -9,7 +9,7 @@ import {HttpModule} from "@angular/http";
 import {Router} from "@angular/router";
 import {MockRouter} from "../../test/mock.router";
 import {Observable} from 'rxjs/Rx';
-import { leonardoUserObject } from '../../test/users';
+import {authorUserObject, leonardoUserObject} from '../../test/users';
 
 describe('TopBar', () => {
     let fixture: ComponentFixture<TopBarComponent>;
@@ -41,14 +41,27 @@ describe('TopBar', () => {
             fixture.detectChanges();
 
             linkDes = fixture.debugElement.queryAll(By.directive(MockRouterLinkDirective));
-
             links = linkDes.map(de => de.injector.get(MockRouterLinkDirective) as MockRouterLinkDirective);
         });
 
         it('should show the home page link', () => {
             expect(links.length).toBe(1, 'should have 3 links');
-            expect(links[0].linkParams).toBe('/', '1st link should go to Home page');
+            expect(links[0].linkParams).toBe('/surveys', '1st link should go to Home page');
         });
+    });
+
+    xdescribe('My surveys link', () => {
+        it('should be shown if user is author', inject(
+            [AuthService], (authService: AuthService) => {
+                spyOn(authService, 'getCurrentUser').and.returnValue(Observable.of(authorUserObject));
+                fixture.detectChanges();
+
+                linkDes = fixture.debugElement.queryAll(By.directive(MockRouterLinkDirective));
+                links = linkDes.map(de => de.injector.get(MockRouterLinkDirective) as MockRouterLinkDirective);
+
+                expect(links[0].linkParams).toBe('/', '1st link should go to Home page');
+            }
+        ));
     });
 
     describe('Logout button', () => {

@@ -15,7 +15,7 @@ import {DragulaService} from "ng2-dragula";
     templateUrl: 'survey.form.html',
     styleUrls: ['survey.form.css']
 })
-export class SurveyForm implements OnInit {
+export class SurveyForm implements OnInit, OnDestroy {
     @Output() onSurveyCreated = new EventEmitter<Survey>();
     @Output() onCancel = new EventEmitter();
 
@@ -82,6 +82,10 @@ export class SurveyForm implements OnInit {
 
         this.$surveyFields = jQuery('.survey-fields');
         this.$buttons = jQuery('.survey-buttons');
+    }
+
+    ngOnDestroy() {
+        this.dragulaService.destroy('questions-bag');
     }
 
     validateForm() {

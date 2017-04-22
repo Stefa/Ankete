@@ -1,9 +1,22 @@
 <div class="ui fixed inverted menu">
     <div class="ui container">
-        <a routerLink="/" routerLinkActive="active" class="ui header item">
+        <a routerLink="/surveys" routerLinkActive="active"  class="ui header item">
             <img src="/assets/images/logo.png" class="logo">
             Ankete
         </a>
+
+        <a
+                *ngIf="currentUserPermission >= userPermissions.author"
+                routerLink="/my-surveys" routerLinkActive="active"
+                class="ui header item"
+        > Moje ankete </a>
+
+        <a
+                *ngIf="currentUserPermission >= userPermissions.author"
+                routerLink="/new-survey" routerLinkActive="active"
+                class="ui header item"
+        > Nova anketa </a>
+
         <button
                 *ngIf="currentUserPermission > userPermissions.anonymous"
                 class="ui right floated header item logout"

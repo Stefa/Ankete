@@ -80,7 +80,7 @@ export class SurveyListComponent implements OnInit, AfterViewInit {
     deleteSurvey(surveyId) {
         this.surveyService.deleteSurvey(surveyId).subscribe(_ => {
             this.surveys = this.surveys.filter(survey => survey.id != surveyId);
-        })
+        });
     }
 
     editSurvey(surveyId) {
