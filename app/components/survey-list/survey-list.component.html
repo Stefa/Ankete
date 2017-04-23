@@ -33,7 +33,12 @@
                     <button class="ui delete button" (click)="deleteSurvey(survey.id)" data-content="Obriši anketu">
                         <i class="remove icon"></i>
                     </button>
-                    <button class="ui button" (click)="editSurvey(survey.id)" data-content="Izmeni anketu">
+                    <button
+                            class="ui button"
+                            [class.noedit]="!survey.canEdit"
+                            (click)="editSurvey(survey.id)"
+                            [attr.data-content]="survey.canEdit ? 'Izmeni anketu' : 'Menjanje nije moguće posle početka ankete'"
+                    >
                         <i class="write icon"></i>
                     </button>
                     <button class="ui button" (click)="goToSurveyResults(survey.id)" data-content="Rezultati ankete">

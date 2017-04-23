@@ -4,6 +4,7 @@ import {Survey} from "../../data/survey.data";
 import {SurveyService} from "../../services/survey/survey.service";
 import {AuthService} from "../../services/authentication/auth.service";
 import {User, UserPermissions} from "../../data/user.data";
+import * as moment from 'moment/moment';
 
 @Component({
     moduleId: module.id,
@@ -29,6 +30,10 @@ export class SurveyListComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.surveys = this.route.snapshot.data['surveys'];
+        this.surveys.map(survey => {
+            survey.canEdit = moment().isBefore(moment(survey.start));
+            return survey;
+        });
         this.onMySurveysPage = this.route.snapshot.data['mySurveys'];
         this.initActionVisibility();
     }
@@ -84,7 +89,7 @@ export class SurveyListComponent implements OnInit, AfterViewInit {
     }
 
     editSurvey(surveyId) {
-
+        this.router.navigate(['/edit-survey', surveyId]);
     }
 
     goToSurveyResults(surveyId) {

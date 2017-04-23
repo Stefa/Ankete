@@ -8,6 +8,7 @@ import {AuthService} from "../../services/authentication/auth.service";
 import {Question} from "../../data/question.data";
 import {QuestionService} from "../../services/question/question.service";
 import {DragulaService} from "ng2-dragula";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
     moduleId: module.id,
@@ -17,18 +18,24 @@ import {DragulaService} from "ng2-dragula";
 })
 export class SurveyForm implements OnInit, OnDestroy {
     @Output() onSurveyCreated = new EventEmitter<Survey>();
+    @Output() onSurveyUpdated = new EventEmitter<Survey>();
     @Output() onCancel = new EventEmitter();
+    @Input() survey: Survey;
 
     surveyFormGroup: FormGroup;
     showQuestionForm: boolean = false;
     questions: Array<Question> = [];
     questionIdsBeforeDelete: Array<number> = [];
 
+    formValues: any;
     formValid: boolean;
     formErrors: any;
 
     $surveyFields: JQuery;
     $buttons: JQuery;
+
+    submitButtonLabel: string;
+    surveyId: number;
 
     private myDatePickerOptions = {
         dateFormat: 'dd.mm.yyyy',
@@ -68,12 +75,16 @@ export class SurveyForm implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.submitButtonLabel = this.survey ? 'Ažuriraj' : 'Kreiraj';
+        this.surveyId = this.survey ? this.survey.id : 0;
+        this.initFormValues();
+
         this.surveyFormGroup = this.formBuilder.group({
-            name: ['', Validators.required],
-            start: ['', Validators.required],
-            end: ['', Validators.required],
-            anonymous: [''],
-            pages: ['1', this.pagesValidator]
+            name: [this.formValues.name, Validators.required],
+            start: [this.formValues.start, Validators.required],
+            end: [this.formValues.end, Validators.required],
+            anonymous: [this.formValues.anonymous],
+            pages: [this.formValues.pages, this.pagesValidator]
         }, {validator: this.startAfterEndValidator});
 
         this.formValid = true;
@@ -82,6 +93,36 @@ export class SurveyForm implements OnInit, OnDestroy {
 
         this.$surveyFields = jQuery('.survey-fields');
         this.$buttons = jQuery('.survey-buttons');
+    }
+
+    initFormValues() {
+        if(!this.survey) {
+            this.formValues = {
+                name: '',
+                start: '',
+                end: '',
+                anonymous: '',
+                pages: '1'
+            };
+            return;
+        }
+
+        this.formValues = {};
+        this.formValues.name = this.survey.name;
+        this.formValues.start = {date: {
+            year: this.survey.start.getFullYear(),
+            month: this.survey.start.getMonth()+1,
+            day: this.survey.start.getDate()
+        }};
+        this.formValues.end = {date: {
+            year: this.survey.end.getFullYear(),
+            month: this.survey.end.getMonth()+1,
+            day: this.survey.end.getDate()
+        }};
+        this.formValues.anonymous = this.survey.anonymous;
+        this.formValues.pages = this.survey.pages;
+
+        this.questions = this.survey.questions;
     }
 
     ngOnDestroy() {
@@ -139,13 +180,24 @@ export class SurveyForm implements OnInit, OnDestroy {
         this.markControlsAsDirty();
         this.validateForm();
         if(!this.formValid) return;
+
         let newSurvey = this.createSurveyFromSubmittedValues(submitValues);
+        this.survey ? this.updateSurvey(newSurvey) : this.createSurvey(newSurvey);
+    }
+
+    private createSurvey(newSurvey: any) {
         this.surveyService.createSurvey(newSurvey).subscribe(
             createdSurvey => {
                 this.updateSurveyQuestionsWithSurveyId(createdSurvey.id);
                 this.onSurveyCreated.emit(createdSurvey);
             }
         )
+    }
+
+    private updateSurvey(updateSurvey: any) {
+        this.surveyService.updateSurvey(this.survey.id, updateSurvey).subscribe(
+            updatedSurvey => this.onSurveyUpdated.emit(updatedSurvey)
+        );
     }
 
     private markControlsAsDirty() {
@@ -164,18 +216,20 @@ export class SurveyForm implements OnInit, OnDestroy {
     }
 
     private createSurveyFromSubmittedValues(submitValues: any): Survey {
-        let currentUser = this.authService.getLoggedInUser();
+        let author = (this.survey) ? this.survey.author : this.authService.getLoggedInUser();
         let anonymous = !!submitValues.anonymous;
+        const s = submitValues.start.date;
+        let start = new Date(s.year, s.month-1, s.day, 0, 0, 0);
         const e = submitValues.end.date;
         let end = new Date(e.year, e.month-1, e.day, 23, 59, 59);
         let questionIds = this.getQuestionIds();
         return {
             name: submitValues.name,
-            start: submitValues.start.jsdate,
+            start: start,
             end: end,
             anonymous: anonymous,
             pages: submitValues.pages,
-            author: currentUser,
+            author: author,
             questionOrder: questionIds
         };
     }

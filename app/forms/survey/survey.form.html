@@ -89,6 +89,7 @@
             <question-form
                 (onQuestionCreated)="addQuestion($event)"
                 (onCancel)="cancelQuestion()"
+                [surveyId]="surveyId"
             ></question-form>
         </div>
 
@@ -99,7 +100,7 @@
                 Odustani
             </button>
             <button type="submit" class="ui large teal submit button survey-save">
-                Kreiraj
+                {{submitButtonLabel}}
             </button>
         </div>
     </div>

@@ -20,13 +20,19 @@ import {UserService} from "../../services/user/user.service";
 import {QuestionForm} from "../question/question.form";
 import {QuestionService} from "../../services/question/question.service";
 import {questionTypes, Question} from "../../data/question.data";
+import {MockActivatedRoute} from "../../test/mock.activated-route";
+import {ActivatedRoute} from "@angular/router";
+import {userTypes} from "../../data/user.data";
 
 describe('SurveyForm', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [FormsModule, ReactiveFormsModule, HttpModule, DragulaModule, MyDatePickerModule],
             declarations: [SurveyForm, FormErrorComponent, QuestionForm],
-            providers: [SurveyService, ApiService, SurveyFormValidator, AuthService, UserService, QuestionService]
+            providers: [
+                SurveyService, ApiService, SurveyFormValidator, AuthService, UserService, QuestionService,
+                {provide: ActivatedRoute, useClass: MockActivatedRoute}
+            ]
         })
             .compileComponents();
     }));
@@ -453,6 +459,109 @@ describe('SurveyForm', () => {
             }
         ));
 
+    });
+
+    describe('Survey edit', () => {
+        let question1 = {
+            id: 2,
+            type: questionTypes.choose_multiple,
+            text: 'Choose multiple',
+            required: false,
+            answerLabels: ['choice1', 'choice2', 'choice3'],
+            otherAnswer: 'other',
+            author: {id: 7},
+            survey: {id: 4}
+        };
+        let question2 = {
+            id: 1,
+            type: questionTypes.long_text,
+            text: 'Enter long text',
+            required: false,
+            author: {id: 7},
+            survey: {id: 4}
+        };
+        let question3 = {
+            id: 3,
+            type: questionTypes.numeric,
+            text: 'Write numbers',
+            required: false,
+            answerLabels: ['number1', 'number2', 'number3'],
+            author: {id: 7},
+            survey: {id: 4}
+        };
+
+        let fullSurvey: Survey = {
+            id: 4,
+            name: 'Survey1',
+            start: new Date(2017, 0, 1),
+            end: new Date(2020, 0, 1),
+            anonymous: true,
+            pages: 2,
+            author: {
+                id: 7,
+                type: userTypes.author,
+                name: 'Leonardo',
+                surname: 'da Vinci',
+                username: 'Leo',
+                password: 'turtlePower',
+                birthday: new Date(1452, 4, 15),
+                phone: '161803398',
+                email: 'gmail@leo.com'
+            },
+            questionOrder: [2,1,3],
+            questions: [question1, question2, question3],
+            blocked: false,
+        };
+
+        let fixture;
+        let component;
+        beforeEach( () => {
+            fixture = TestBed.createComponent(SurveyForm);
+            component = fixture.componentInstance;
+            component.survey = fullSurvey;
+            fixture.detectChanges();
+        });
+
+        it('should pre-populate fields with survey values', () => {
+            expect(component.surveyFormGroup.get('name').value).toBe('Survey1');
+            expect(component.surveyFormGroup.get('start').value).toEqual({date: {year: 2017, month: 1, day: 1}});
+            expect(component.surveyFormGroup.get('end').value).toEqual({date: {year: 2020, month: 1, day: 1}});
+            expect(component.surveyFormGroup.get('anonymous').value).toBe(true);
+            expect(component.surveyFormGroup.get('pages').value).toBe(2);
+            expect(component.questions).toEqual(fullSurvey.questions);
+        });
+
+        it('should update the survey on form submit', inject([SurveyService],
+            (surveyService: SurveyService) => {
+                let expectedRequest = {
+                    name: 'Survey1',
+                    start: new Date(2017, 0, 1),
+                    end: new Date(2020, 0, 1, 23, 59, 59),
+                    anonymous: true,
+                    pages: 3,
+                    author: {
+                        id: 7,
+                        type: userTypes.author,
+                        name: 'Leonardo',
+                        surname: 'da Vinci',
+                        username: 'Leo',
+                        password: 'turtlePower',
+                        birthday: new Date(1452, 4, 15),
+                        phone: '161803398',
+                        email: 'gmail@leo.com'
+                    },
+                    questionOrder: [2,1,3]
+                };
+                fixture.detectChanges();
+
+                spyOn(surveyService, 'updateSurvey').and.returnValue(Observable.of({}));
+                let surveyFormPage = new SurveyFormPage(fixture.debugElement);
+                surveyFormPage.setPages('3');
+                fixture.detectChanges();
+                surveyFormPage.submitForm();
+                expect(surveyService.updateSurvey).toHaveBeenCalledWith(4, expectedRequest);
+            }
+        ));
     });
 
 });

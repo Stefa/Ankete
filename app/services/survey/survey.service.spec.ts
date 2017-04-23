@@ -506,4 +506,26 @@ describe('SurveyService', () => {
             }
         ));
     });
+
+    describe('updateSurvey', () => {
+        it('should send the right update data to api service put action', inject(
+            [ApiService, SurveyService],
+            (apiService: MockApiService, surveyService: SurveyService) => {
+                let updatedSurveyPutResponse = Object.assign({}, newTestSurveyResponse);
+
+                let updateSurvey = Object.assign({}, newTestSurvey);
+                delete updateSurvey.id;
+
+                let updateSurveyRequest = Object.assign({userId: newTestSurvey.author.id}, newTestSurvey);
+                delete updateSurveyRequest.id;
+                delete updateSurveyRequest.author;
+
+                apiService.setResponse(updatedSurveyPutResponse);
+                apiService.init();
+                surveyService.updateSurvey(1, updateSurvey).subscribe();
+
+                expect(apiService.put).toHaveBeenCalledWith('surveys/1', updateSurveyRequest);
+            }
+        ));
+    });
 });

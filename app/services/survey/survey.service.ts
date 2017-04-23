@@ -143,4 +143,16 @@ export class SurveyService {
             .catch(error => Observable.of(false));
     }
 
+    updateSurvey(surveyId: number, survey: Survey): Observable<Survey> {
+        let surveyPutObject = this.prepareSurveyRequest(survey);
+        return this.api.put('surveys/'+surveyId, surveyPutObject)
+            .map((res:any) => {
+                if(SurveyDataValidator.checkIfSurveyApiResponseIsValid(res)) {
+                    return SurveyService.createSurveyObjectFromResponse(res);
+                }
+
+                throw new Error('Dobijen je pogrešan odgovor sa servera pri ažuriranju ankete.');
+            });
+    }
+
 }

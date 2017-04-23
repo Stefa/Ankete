@@ -13,3 +13,7 @@
 .ui.basic.buttons .button{
     border: none;
 }
+
+.button.noedit {
+    opacity: .45;
+}
