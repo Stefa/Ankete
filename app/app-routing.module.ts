@@ -15,12 +15,14 @@ import {SurveyResultComponent} from "./components/survey-result/survey-result.co
 import {SurveyListComponent} from "./components/survey-list/survey-list.component";
 import {SurveysResolverGuard} from "./guards/surveys-resolver/surveys-resolver.guard";
 import {UserSurveysResolverGuard} from "./guards/user-surveys-resolver/user-surveys-resolver.guard";
-import {SurveyForm} from "./forms/survey/survey.form";
 import {AuthorGuard} from "./guards/author/author.guard";
 import {AdministratorGuard} from "./guards/administrator/administrator.guard";
 import {SurveyEditGuard} from "./guards/survey-edit/survey-edit.guard";
 import {EditSurveyComponent} from "./containers/edit-survey/edit-survey.component";
 import {NewSurveyComponent} from "./containers/new-survey/new-survey.component";
+import {ResultsComponent} from "./components/results/results.component";
+import {FinishedProgressResolverGuard} from "./guards/finished-progress-resolver/finished-progress-resolver.guard";
+import {SurveyResultsGuard} from "./guards/survey-results/survey-results.guard";
 
 @NgModule({
     imports: [
@@ -122,13 +124,32 @@ import {NewSurveyComponent} from "./containers/new-survey/new-survey.component";
                 resolve: {
                     survey: SurveyResolverGuard
                 }
+            },
+            {
+                path: 'results/:surveyId',
+                component: ResultsComponent,
+                canActivate: [AuthorGuard, SurveyResultsGuard],
+                resolve: {
+                    survey: SurveyResolverGuard,
+                    results: FinishedProgressResolverGuard
+                }
+            },
+            {
+                path: 'result/:surveyId/:progressId',
+                component: SurveyResultComponent,
+                canActivate: [AuthorGuard, SurveyResultsGuard],
+                resolve: {
+                    survey: SurveyResolverGuard,
+                    progress: ProgressResolverGuard
+                }
             }
         ])
     ],
     exports: [RouterModule],
     providers: [
         ParticipantGuard, ClerkGuard, AuthorGuard, AdministratorGuard, SurveyEditGuard,
-        SurveyResolverGuard, ProgressResolverGuard, SurveysResolverGuard, UserSurveysResolverGuard
+        SurveyResolverGuard, ProgressResolverGuard, SurveysResolverGuard, UserSurveysResolverGuard,
+        FinishedProgressResolverGuard, SurveyResultsGuard
     ]
 })
 export class AppRoutingModule{}

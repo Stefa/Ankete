@@ -1,0 +1,9 @@
+<router-outlet>
+<table class="ui very basic celled table" *ngIf="resultLinks.length">
+    <tbody>
+        <tr *ngFor="let result of resultLinks" class="result">
+            <td><a [routerLink]="['/result', survey.id, result.id]">{{result.data}}</a></td>
+        </tr>
+    </tbody>
+</table>
+</router-outlet>

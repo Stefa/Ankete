@@ -93,6 +93,6 @@ export class SurveyListComponent implements OnInit, AfterViewInit {
     }
 
     goToSurveyResults(surveyId) {
-
+        this.router.navigate(['/results', surveyId]);
     }
 }

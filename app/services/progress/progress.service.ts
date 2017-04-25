@@ -4,6 +4,7 @@ import {Progress} from "../../data/progress.data";
 import {Observable} from "rxjs/Rx";
 import {userTypes} from "../../data/user.data";
 import {AnswerService} from "../answer/answer.service";
+import {UserService} from "../user/user.service";
 
 @Injectable()
 export class ProgressService {
@@ -118,6 +119,18 @@ export class ProgressService {
             }
             return Observable.throw(new Error(errorMessage));
         });
+    }
+
+    getFinishedProgressBySurvey(surveyId: number): Observable<Progress[]> {
+        return this.api.get(`progress?surveyId=${surveyId}&finished=true&_expand=user`)
+            .map(res => res.map(
+                p => {
+                    let user = UserService.createUserObjectFromResponse(p.user);
+                    let progress = this.createProgressFromApiResponse(p);
+                    progress.user = user;
+                    return progress;
+                }
+            ))
     }
 
 }

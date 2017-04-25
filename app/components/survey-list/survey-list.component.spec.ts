@@ -75,7 +75,7 @@ describe('SurveyListComponent', () => {
         route.testData = {surveys: allSurveys};
     }
 
-    it('should display table with all surveys', inject([ActivatedRoute, AuthService, AuthService],
+    it('should display table with all surveys', inject([ActivatedRoute, AuthService],
         (route: MockActivatedRoute, authService: AuthService) => {
             setActivatedRoute(route);
             spyOn(authService, 'getLoggedInUser').and.returnValue(leonardoUserObject);

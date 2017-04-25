@@ -7,7 +7,7 @@ import {
     progressByClerkPostResponse, progressByClerkPostRequest
 } from "../../test/progress";
 import {Progress} from "../../data/progress.data";
-import {leonardoUserObject} from "../../test/users";
+import {leonardoUserObject, leonardoUserResponse} from "../../test/users";
 import {userTypes} from "../../data/user.data";
 import {AnswerService} from "../answer/answer.service";
 
@@ -470,5 +470,74 @@ describe('ProgressServise', () => {
             })
         ));
 
+    });
+
+    describe('getProgressBySurvey', () => {
+        let apiResponse = [
+            {
+                surveyId: 7,
+                userId: 1,
+                finished: true,
+                id: 1,
+                progress: {done: 2, total: 2},
+                user: leonardoUserResponse
+            },
+            {
+                surveyId: 7,
+                userId: 1,
+                finished: true,
+                id: 3,
+                progress: {done: 2, total: 2},
+                user: leonardoUserResponse,
+                userData: {
+                    name: "Arthur",
+                    surname: "Dent",
+                    birthday: "1984-03-26T22:00:00.000Z"
+                }
+            }
+        ];
+
+        let methodResponse = [
+            {
+                survey: {id: 7},
+                finished: true,
+                id: 1,
+                progress: {done: 2, total: 2},
+                user: leonardoUserObject
+            },
+            {
+                survey: {id: 7},
+                finished: true,
+                id: 3,
+                progress: {done: 2, total: 2},
+                user: leonardoUserObject,
+                userData: {
+                    name: "Arthur",
+                    surname: "Dent",
+                    birthday: new Date("1984-03-26T22:00:00.000Z")
+                }
+            }
+        ];
+
+        it('should send get request to progress path with survey filter', inject(
+            [ApiService, ProgressService],
+            fakeAsync((apiService: MockApiService, progressService: ProgressService) => {
+                apiService.setResponse(apiResponse);
+                apiService.init();
+                progressService.getFinishedProgressBySurvey(7).subscribe();
+                expect(apiService.get).toHaveBeenCalledWith('progress?surveyId=7&finished=true&_expand=user');
+            })
+        ));
+
+        it('should return array of survey objects', inject(
+            [ApiService, ProgressService],
+            fakeAsync((apiService: MockApiService, progressService: ProgressService) => {
+                let result;
+                apiService.setResponse(apiResponse);
+                apiService.init();
+                progressService.getFinishedProgressBySurvey(7).subscribe(progress => result = progress);
+                expect(result).toEqual(methodResponse);
+            })
+        ));
     });
 });

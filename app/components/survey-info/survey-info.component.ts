@@ -104,6 +104,10 @@ export class SurveyInfoComponent implements OnInit {
     }
 
     private prepareLockButton() {
+        if(this.isSurveyLocked()) {
+            this.lockButtonActive = false;
+            return;
+        }
         let requiredQuestions = this.survey.questions.filter(question => question.required);
         let answers = this.progress != null ? this.progress.answers : [];
         let answeredQuestionIds = answers.map(answer => answer.question.id);
@@ -151,7 +155,6 @@ export class SurveyInfoComponent implements OnInit {
             survey: this.survey,
             user: me,
             progress: {done: 0, total: this.survey.questions.length},
-            answers: [],
             finished: false
         };
 
@@ -179,7 +182,10 @@ export class SurveyInfoComponent implements OnInit {
 
     public lockSurvey() {
         this.progressService.setFinished(this.progress.id).subscribe(
-            _ => this.lockButtonActive = false
+            _ => {
+                this.startButtonActive = false;
+                this.lockButtonActive = false;
+            }
         );
     }
 

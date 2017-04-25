@@ -17,6 +17,7 @@ import {ProgressService} from "../../services/progress/progress.service";
 export class SurveyFillOutComponent implements OnInit {
     survey: Survey;
     progress: Progress;
+    proxy: boolean;
 
     questionPage: QuestionPage;
     allAnswers: Map<number, Answer>;
@@ -34,6 +35,7 @@ export class SurveyFillOutComponent implements OnInit {
     ngOnInit() {
         this.survey = this.route.snapshot.data['survey'];
         this.progress = this.route.snapshot.data['progress'];
+        this.proxy = this.route.snapshot.data['proxy'];
 
         this.numberOfPages = this.survey.pages;
         this.questionPage = new QuestionPage(this.survey.questions, this.numberOfPages);
@@ -69,6 +71,9 @@ export class SurveyFillOutComponent implements OnInit {
         let resultRoute = (this.route.snapshot.params != null && 'progressId' in this.route.snapshot.params) ?
             ['../../result', this.route.snapshot.params.progressId] : ['../result'];
         let goToSurveyInfo = _ => this.router.navigate(resultRoute, { relativeTo: this.route});
+
+        if(this.proxy) this.progressService.setFinished(this.progress.id).subscribe();
+
         this.saveAnswers(goToSurveyInfo);
     }
 
@@ -96,7 +101,8 @@ export class SurveyFillOutComponent implements OnInit {
             afterUpdateCallback();
             return;
         }
-        let progressObject = {done: this.allAnswers.size, total: this.progress.progress.total};
+        let progressObject: any = {done: this.allAnswers.size, total: this.progress.progress.total};
+
         this.progressService.updateProgress(this.progress.id, progressObject).subscribe( progress => {
             this.progress = progress;
             afterUpdateCallback();
