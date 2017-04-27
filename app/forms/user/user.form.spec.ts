@@ -20,7 +20,7 @@ describe('UserForm', () => {
             imports: [FormsModule, ReactiveFormsModule, HttpModule],
             declarations: [UserForm, FormErrorComponent],
             providers: [
-                UserService, ApiService, AuthService, UserFormValidator
+                UserFormValidator
             ]
         })
             .compileComponents();
@@ -141,10 +141,6 @@ describe('UserForm', () => {
             userFormPage.submitForm();
         }
 
-        function setSpies(userService: UserService, returnUser: User) {
-            spyOn(userService, 'createUser').and.returnValue(Observable.of(returnUser));
-        }
-
         beforeEach(() => {
             createdUser = null;
             fixture = TestBed.createComponent(UserForm);
@@ -157,260 +153,191 @@ describe('UserForm', () => {
             );
         });
 
-        it('should send request to UserService::createUser on valid submit', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                let newUser = Object.assign({birthday: new Date(formInput.year, formInput.month, formInput.day)}, formInput);
-                ['day', 'month', 'year', 'passwordConfirm'].forEach( p => delete newUser[p] );
+        it('should emit user object output on valid submit', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            let expectedOutput = $.extend(true, {}, fibonacciUserObject);
+            delete expectedOutput.id;
 
-                setSpies(userService, fibonacciUserObject);
-                submitUserForm(formInput);
+            submitUserForm(formInput);
+            expect(createdUser).toEqual(expectedOutput);
+        });
 
-                expect(userService.createUser).toHaveBeenCalledWith(newUser);
-                expect(createdUser).toEqual(fibonacciUserObject);
-            }
-        ));
+        it('should display error on submit when type is not set', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            delete formInput.type;
 
-        it('should display error on submit when type is not set', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                delete formInput.type;
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.typeMissingErrorElement.innerHTML).toContain('Izaberite tip korisnika.');
+        });
+        it('should display error on submit when name is not set', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.name = '';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.typeMissingErrorElement.innerHTML).toContain('Izaberite tip korisnika.');
-            }
-        ));
-        it('should display error on submit when name is not set', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.name = '';
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.nameMissingErrorElement.innerHTML).toContain('Unesite ime korisnika.');
+        });
+        it('should display error on submit when surname is not set', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.surname = '';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.nameMissingErrorElement.innerHTML).toContain('Unesite ime korisnika.');
-            }
-        ));
-        it('should display error on submit when surname is not set', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.surname = '';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.surnameMissingErrorElement.innerHTML).toContain('Unesite prezime korisnika.');
+        });
+        it('should display error on submit when username is not set', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.username = '';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.surnameMissingErrorElement.innerHTML).toContain('Unesite prezime korisnika.');
-            }
-        ));
-        it('should display error on submit when username is not set', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.username = '';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.usernameMissingErrorElement.innerHTML).toContain('Unesite korisničko ime.');
+        });
+        it('should display error on submit when password is not set', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.password = '';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.usernameMissingErrorElement.innerHTML).toContain('Unesite korisničko ime.');
-            }
-        ));
-        it('should display error on submit when password is not set', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.password = '';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.passwordMissingErrorElement.innerHTML).toContain('Unesite lozinku korisnika.');
+        });
+        it('should display error on submit when password is less than five characters', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.password = '123';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.passwordMissingErrorElement.innerHTML).toContain('Unesite lozinku korisnika.');
-            }
-        ));
-        it('should display error on submit when password is less than five characters', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.password = '123';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.passwordLengthErrorElement.innerHTML).toContain('Minimalna dužina lozinke mora biti pet karaktera.');
+        });
+        it('should display error on submit when password confirmation is not set', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.passwordConfirm = '';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.passwordLengthErrorElement.innerHTML).toContain('Minimalna dužina lozinke mora biti pet karaktera.');
-            }
-        ));
-        it('should display error on submit when password confirmation is not set', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.passwordConfirm = '';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.passwordConfirmMissingErrorElement.innerHTML).toContain('Unesite potvrdu lozinke.');
+        });
+        it('should display error on submit when password confirmation does not match password', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.passwordConfirm = 'wrongpassword';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.passwordConfirmMissingErrorElement.innerHTML).toContain('Unesite potvrdu lozinke.');
-            }
-        ));
-        it('should display error on submit when password confirmation does not match password', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.passwordConfirm = 'wrongpassword';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.passwordMismatchErrorElement.innerHTML).toContain('Lozinka i potvrda lozinke se ne slažu.');
+        });
+        it('should display error on submit when birthday day is not set', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.day = '';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.passwordMismatchErrorElement.innerHTML).toContain('Lozinka i potvrda lozinke se ne slažu.');
-            }
-        ));
-        it('should display error on submit when birthday day is not set', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.day = '';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.birthdayMissingErrorElement.innerHTML).toContain('Unesite datum rođenja korisnika.');
+        });
+        it('should display error on submit when birthday month is not set', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.month = '';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.birthdayMissingErrorElement.innerHTML).toContain('Unesite datum rođenja korisnika.');
-            }
-        ));
-        it('should display error on submit when birthday month is not set', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.month = '';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.birthdayMissingErrorElement.innerHTML).toContain('Unesite datum rođenja korisnika.');
+        });
+        it('should display error on submit when birthday year is not set', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.year = '';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.birthdayMissingErrorElement.innerHTML).toContain('Unesite datum rođenja korisnika.');
-            }
-        ));
-        it('should display error on submit when birthday year is not set', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.year = '';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.birthdayMissingErrorElement.innerHTML).toContain('Unesite datum rođenja korisnika.');
+        });
+        it('should display error on submit when birthday is not valid', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.day = 31;
+            formInput.month = 1;
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.birthdayMissingErrorElement.innerHTML).toContain('Unesite datum rođenja korisnika.');
-            }
-        ));
-        it('should display error on submit when birthday is not valid', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.day = 31;
-                formInput.month = 1;
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.birthdayInvalidErrorElement.innerHTML).toContain('Datum rođenja nije validan.');
+        });
+        it('should display error on submit when phone is not set', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.phone = '';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.birthdayInvalidErrorElement.innerHTML).toContain('Datum rođenja nije validan.');
-            }
-        ));
-        it('should display error on submit when phone is not set', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.phone = '';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.phoneMissingErrorElement.innerHTML).toContain('Unesite kontakt telefon korisnika.');
+        });
+        it('should display error on submit when phone is not valid', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.phone = 'abcdefgh';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.phoneMissingErrorElement.innerHTML).toContain('Unesite kontakt telefon korisnika.');
-            }
-        ));
-        it('should display error on submit when phone is not valid', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.phone = 'abcdefgh';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.phoneInvalidErrorElement.innerHTML).toContain('Kontakt telefon nije validan.');
+        });
+        it('should display error on submit when email is not set', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.email = '';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.phoneInvalidErrorElement.innerHTML).toContain('Kontakt telefon nije validan.');
-            }
-        ));
-        it('should display error on submit when email is not set', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.email = '';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
+            expect(createdUser).toBe(null);
+            expect(userFormPage.emailMissingErrorElement.innerHTML).toContain('Unesite email adresu korisnika.');
+        });
+        it('should display error on submit when email is not valid', () =>{
+            let formInput = Object.assign({}, formInputUser);
+            formInput.email = 'P Sherman, 42 Wallaby Way, Sydney';
 
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.emailMissingErrorElement.innerHTML).toContain('Unesite email adresu korisnika.');
-            }
-        ));
-        it('should display error on submit when email is not valid', inject([UserService],
-            (userService: UserService) => {
-                let formInput = Object.assign({}, formInputUser);
-                formInput.email = 'P Sherman, 42 Wallaby Way, Sydney';
+            submitUserForm(formInput);
+            fixture.detectChanges();
+            userFormPage.getErrors();
 
-                setSpies(userService, null);
-                submitUserForm(formInput);
-                fixture.detectChanges();
-                userFormPage.getErrors();
-
-                expect(userService.createUser).not.toHaveBeenCalled();
-                expect(createdUser).toBe(null);
-                expect(userFormPage.emailInvalidErrorElement.innerHTML).toContain('Email adresa nije validna.');
-            }
-        ));
+            expect(createdUser).toBe(null);
+            expect(userFormPage.emailInvalidErrorElement.innerHTML).toContain('Email adresa nije validna.');
+        });
 
         it('should emmit cancel event when cancel button is clicked', () => {
             let canceled = false;

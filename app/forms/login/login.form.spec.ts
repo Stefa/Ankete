@@ -11,6 +11,7 @@ import {DebugElement} from "@angular/core";
 import {Router} from "@angular/router";
 import {MockRouter} from "../../test/mock.router";
 import {LoginFormPage} from "./login.form.page";
+import {MockRouterLinkDirective} from "../../test/mock.router-link";
 
 
 describe('LoginFrom', () => {
@@ -19,7 +20,7 @@ describe('LoginFrom', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [FormsModule, ReactiveFormsModule, HttpModule],
-            declarations: [LoginForm],
+            declarations: [LoginForm, MockRouterLinkDirective],
             providers: [
                 AuthService, UserService, ApiService,
                 {provide: Router, useValue: mockRouter}

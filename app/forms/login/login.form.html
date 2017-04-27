@@ -21,7 +21,7 @@
                                 id="username"
                                 type="text"
                                 name="username"
-                                placeholder="Username"
+                                placeholder="Korisničko ime"
                                 [formControl]="usernameControl"
                         >
                     </div>
@@ -37,7 +37,7 @@
                                 id="password"
                                 type="password"
                                 name="password"
-                                placeholder="Password"
+                                placeholder="Lozinka"
                                 [formControl]="passwordControl"
                         >
                     </div>
@@ -50,7 +50,8 @@
                         *ngIf="authenticationError"
                         class="ui error message login-form"
                 >Pogrešno korisničko ime ili šifra!</div>
-                <button type="submit" class="ui fluid large teal submit button">Login</button>
+                <button type="submit" class="ui fluid large teal submit button">Prijavi se</button>
+                <a [routerLink]="['/register']" class="ui register label">Registracija</a>
             </div>
         </form>
 

@@ -46,6 +46,9 @@ import {SurveyListComponent} from "./components/survey-list/survey-list.componen
 import {EditSurveyComponent} from "./containers/edit-survey/edit-survey.component";
 import {NewSurveyComponent} from "./containers/new-survey/new-survey.component";
 import {ResultsComponent} from "./components/results/results.component";
+import {RegisterComponent} from "./containers/register/register.component";
+import {CreateUserComponent} from "./containers/create-user/create-user.component";
+import {RegistrationService} from "./services/registration/registration.service";
 
 @NgModule({
     imports:      [
@@ -64,13 +67,13 @@ import {ResultsComponent} from "./components/results/results.component";
         UnoForm, DosForm, QuestionPagerComponent, QuestionComponent, AnswerComponent,
         NumericQuestionForm, TextQuestionForm, LongTextQuestionForm, ChooseOneQuestionForm, ChooseMultipleQuestionForm,
         NumericAnswerComponent, TextAnswerComponent, LongTextAnswerComponent, ChooseOneAnswerComponent, ChooseMultipleAnswerComponent,
-        SurveyListComponent, EditSurveyComponent, NewSurveyComponent, ResultsComponent
+        SurveyListComponent, EditSurveyComponent, NewSurveyComponent, ResultsComponent, RegisterComponent, CreateUserComponent
     ],
     bootstrap:    [ AppComponent ],
     providers: [
         ApiService, UserService, AuthService, QuestionService,
         UserFormValidator, SurveyService, SurveyFormValidator,
-        ProgressService, AnswerService
+        ProgressService, AnswerService, RegistrationService
     ]
 })
 export class AppModule { }

@@ -31,7 +31,6 @@ export class UserForm implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
-        private userService: UserService,
         private userFormValidator: UserFormValidator
     ) { }
 
@@ -82,8 +81,9 @@ export class UserForm implements OnInit {
 
         let newUser = this.createUserObjectFromSubmittedValue(submitValues);
 
-        this.userService.createUser(newUser)
-            .subscribe(createdUser => this.onUserCreated.emit(createdUser));
+        this.onUserCreated.emit(newUser);
+        // this.userService.createUser(newUser)
+        //     .subscribe(createdUser => this.onUserCreated.emit(createdUser));
     }
 
     private markControlsAsDirty() {

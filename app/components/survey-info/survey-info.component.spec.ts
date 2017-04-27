@@ -344,6 +344,7 @@ describe('SurveyInfoComponent', () => {
             newProgressRequest.user = clerk;
             newProgressRequest.survey = $.extend(true, {}, fullSurvey);
             newProgressRequest.survey.anonymous = false;
+            delete newProgressRequest.answers;
         }
 
         beforeEach(() => {

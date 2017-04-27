@@ -23,6 +23,8 @@ import {NewSurveyComponent} from "./containers/new-survey/new-survey.component";
 import {ResultsComponent} from "./components/results/results.component";
 import {FinishedProgressResolverGuard} from "./guards/finished-progress-resolver/finished-progress-resolver.guard";
 import {SurveyResultsGuard} from "./guards/survey-results/survey-results.guard";
+import {RegisterComponent} from "./containers/register/register.component";
+import {CreateUserComponent} from "./containers/create-user/create-user.component";
 
 @NgModule({
     imports: [
@@ -30,7 +32,6 @@ import {SurveyResultsGuard} from "./guards/survey-results/survey-results.guard";
             {
                 path: '',
                 // component: HomeComponent,
-                // canActivate: [ParticipantGuard],
                 redirectTo: 'surveys',
                 pathMatch: 'full'
             },
@@ -97,6 +98,7 @@ import {SurveyResultsGuard} from "./guards/survey-results/survey-results.guard";
             {
                 path: 'surveys',
                 component: SurveyListComponent,
+                canActivate: [ParticipantGuard],
                 resolve: {
                     surveys: SurveysResolverGuard
                 }
@@ -142,6 +144,15 @@ import {SurveyResultsGuard} from "./guards/survey-results/survey-results.guard";
                     survey: SurveyResolverGuard,
                     progress: ProgressResolverGuard
                 }
+            },
+            {
+                path: 'register',
+                component: RegisterComponent
+            },
+            {
+                path: 'create-user',
+                component: CreateUserComponent,
+                canActivate: [AdministratorGuard]
             }
         ])
     ],
