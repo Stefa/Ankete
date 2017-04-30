@@ -17,6 +17,18 @@
                 class="ui header item"
         > Nova anketa </a>
 
+        <a
+                *ngIf="currentUserPermission == userPermissions.administrator"
+                routerLink="/registrations" routerLinkActive="active"
+                class="ui header item"
+        > Registracije </a>
+
+        <a
+                *ngIf="currentUserPermission == userPermissions.administrator"
+                routerLink="/create-user" routerLinkActive="active"
+                class="ui header item"
+        > Novi korisnik </a>
+
         <button
                 *ngIf="currentUserPermission > userPermissions.anonymous"
                 class="ui right floated header item logout"

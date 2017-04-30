@@ -49,6 +49,7 @@ import {ResultsComponent} from "./components/results/results.component";
 import {RegisterComponent} from "./containers/register/register.component";
 import {CreateUserComponent} from "./containers/create-user/create-user.component";
 import {RegistrationService} from "./services/registration/registration.service";
+import {RegistrationsComponent} from "./components/reigistrations/registrations.component";
 
 @NgModule({
     imports:      [
@@ -67,7 +68,8 @@ import {RegistrationService} from "./services/registration/registration.service"
         UnoForm, DosForm, QuestionPagerComponent, QuestionComponent, AnswerComponent,
         NumericQuestionForm, TextQuestionForm, LongTextQuestionForm, ChooseOneQuestionForm, ChooseMultipleQuestionForm,
         NumericAnswerComponent, TextAnswerComponent, LongTextAnswerComponent, ChooseOneAnswerComponent, ChooseMultipleAnswerComponent,
-        SurveyListComponent, EditSurveyComponent, NewSurveyComponent, ResultsComponent, RegisterComponent, CreateUserComponent
+        SurveyListComponent, EditSurveyComponent, NewSurveyComponent, ResultsComponent, RegisterComponent, CreateUserComponent,
+        RegistrationsComponent
     ],
     bootstrap:    [ AppComponent ],
     providers: [

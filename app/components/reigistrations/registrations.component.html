@@ -1,0 +1,43 @@
+<div class="ui styled accordion">
+    <div *ngFor="let registration of registrations;let i=index" class="registration">
+        <div class="title">
+            <i class="dropdown icon"></i>
+            {{registration.name}} {{registration.surname}}
+        </div>
+        <div class="content">
+            <p>
+                <strong>Tip: </strong>
+                {{userTypeTitles.get(registration.type)}}
+            </p>
+            <p>
+                <strong>Ime: </strong>
+                {{registration.name}}
+            </p>
+            <p>
+                <strong>Prezime: </strong>
+                {{registration.surname}}
+            </p>
+            <p>
+                <strong>Korisničko ime: </strong>
+                {{registration.username}}
+            </p>
+            <p>
+                <strong>Datum rođenja: </strong>
+                {{registration.birthday | date:'d. M. y.'}}
+            </p>
+            <p>
+                <strong>Telefon: </strong>
+                {{registration.phone}}
+            </p>
+            <p>
+                <strong>Elektronska pošta: </strong>
+                {{registration.email}}
+            </p>
+            <div class="ui basic clearing segment">
+                <button class="ui positive right floated button" (click)="approveRegistration(i)">Odobri</button>
+                <button class="ui negative right floated button" (click)="denyRegistration(i)">Obriši</button>
+            </div>
+        </div>
+
+    </div>
+</div>
