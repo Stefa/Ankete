@@ -13,10 +13,12 @@ export class CreateUserComponent implements OnInit {
     ngOnInit() { }
 
     onUserFormSubmit(userObject) {
-        this.userService.createUser(userObject).subscribe();
+        this.userService.createUser(userObject).subscribe(
+            createdUser => this.router.navigate(['/users'])
+        );
     }
 
     onUserFormCancel() {
-        // this.router.navigate(['/']);
+        this.router.navigate(['/users']);
     }
 }

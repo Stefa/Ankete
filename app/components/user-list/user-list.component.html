@@ -1,0 +1,21 @@
+<table class="ui very basic sortable celled table" *ngIf="users.length">
+    <tbody>
+        <tr *ngFor="let user of users" class="user">
+            <td>{{user.name}} {{user.surname}}</td>
+            <td class="actions-column right aligned">
+                <div class="ui small basic icon buttons">
+                    <button
+                            class="ui button"
+                            (click)="goToEditUser(user.id)"
+                            data-content="Izmeni korisnika"
+                    >
+                        <i class="write icon"></i>
+                    </button>
+                    <button class="ui delete button" (click)="deleteUser(user.id)" data-content="Obriši korisnika">
+                        <i class="remove icon"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

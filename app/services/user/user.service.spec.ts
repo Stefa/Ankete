@@ -280,4 +280,17 @@ describe('UserService', () => {
             }))
         );
     });
+
+    describe('deleteUser', () => {
+        it('should send delete request at the right user path to api service', inject(
+            [ApiService, UserService],
+            (apiService: MockApiService, userService: UserService) => {
+                apiService.setResponse({});
+                apiService.init();
+                userService.deleteUser(1).subscribe();
+
+                expect(apiService.delete).toHaveBeenCalledWith('users/1');
+            }
+        ));
+    });
 });

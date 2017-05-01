@@ -27,6 +27,9 @@ import {RegisterComponent} from "./containers/register/register.component";
 import {CreateUserComponent} from "./containers/create-user/create-user.component";
 import {RegistrationsResolverGuard} from "./guards/registrations-resolver/registrations-resolver.guard";
 import {RegistrationsComponent} from "./components/reigistrations/registrations.component";
+import {UserListComponent} from "./components/user-list/user-list.component";
+import {UsersResolverGuard} from "./guards/users-resolver/users-resolver.guard";
+import {EditUserComponent} from "./containers/edit-user/edit-user.component";
 
 @NgModule({
     imports: [
@@ -163,6 +166,19 @@ import {RegistrationsComponent} from "./components/reigistrations/registrations.
                 resolve: {
                     registrations: RegistrationsResolverGuard
                 }
+            },
+            {
+                path: 'users',
+                component: UserListComponent,
+                canActivate: [AdministratorGuard],
+                resolve: {
+                    users: UsersResolverGuard
+                }
+            },
+            {
+                path: 'edit-user/:userId',
+                component: EditUserComponent,
+                canActivate: [AdministratorGuard]
             }
         ])
     ],
@@ -170,7 +186,7 @@ import {RegistrationsComponent} from "./components/reigistrations/registrations.
     providers: [
         ParticipantGuard, ClerkGuard, AuthorGuard, AdministratorGuard, SurveyEditGuard,
         SurveyResolverGuard, ProgressResolverGuard, SurveysResolverGuard, UserSurveysResolverGuard,
-        FinishedProgressResolverGuard, SurveyResultsGuard, RegistrationsResolverGuard
+        FinishedProgressResolverGuard, SurveyResultsGuard, RegistrationsResolverGuard, UsersResolverGuard
     ]
 })
 export class AppRoutingModule{}

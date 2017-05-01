@@ -125,4 +125,11 @@ export class UserService {
             users => users.length>0 ? error$ : continue$
         );
     }
+
+    deleteUser(userId: number): Observable<boolean> {
+        return this.api
+            .delete('users/'+userId)
+            .map(_ => true)
+            .catch(error => Observable.of(false));
+    }
 }

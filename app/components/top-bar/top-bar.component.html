@@ -25,6 +25,12 @@
 
         <a
                 *ngIf="currentUserPermission == userPermissions.administrator"
+                routerLink="/users" routerLinkActive="active"
+                class="ui header item"
+        > Korisnici </a>
+
+        <a
+                *ngIf="currentUserPermission == userPermissions.administrator"
                 routerLink="/create-user" routerLinkActive="active"
                 class="ui header item"
         > Novi korisnik </a>

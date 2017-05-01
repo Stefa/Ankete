@@ -148,7 +148,7 @@ describe('SurveyListComponent', () => {
 
                 let surveyRow1 = page.surveyRowsDebugElements[0];
                 let deleteButton = surveyRow1.query(By.css('.delete'));
-                deleteButton.triggerEventHandler('click', event);
+                deleteButton.triggerEventHandler('click', new Event('click'));
 
                 expect(surveyService.deleteSurvey).toHaveBeenCalledWith(7);
             }
@@ -167,7 +167,7 @@ describe('SurveyListComponent', () => {
 
                 let surveyRow1 = page.surveyRowsDebugElements[0];
                 let deleteButton = surveyRow1.query(By.css('.delete'));
-                deleteButton.triggerEventHandler('click', event);
+                deleteButton.triggerEventHandler('click', new Event('click'));
                 fixture.detectChanges();
 
                 expect(comp.surveys.length).toBe(2);
