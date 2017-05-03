@@ -293,4 +293,23 @@ describe('UserService', () => {
             }
         ));
     });
+
+    describe('updateUser', () => {
+        it('should send the right update data to api service put action', inject(
+            [ApiService, UserService],
+            (apiService: MockApiService, userService: UserService) => {
+                let updatedUserPutResponse = Object.assign({}, leonardoUserResponse);
+
+                let updateUser = Object.assign({}, leonardoUserObject);
+
+                let updateUserRequest = Object.assign({}, leonardoUserObject);
+
+                apiService.setResponse(updatedUserPutResponse);
+                apiService.init();
+                userService.updateUser(1, updateUser).subscribe();
+
+                expect(apiService.put).toHaveBeenCalledWith('users/1', updateUserRequest);
+            }
+        ));
+    });
 });

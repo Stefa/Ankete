@@ -132,4 +132,16 @@ export class UserService {
             .map(_ => true)
             .catch(error => Observable.of(false));
     }
+
+    updateUser(userId: number, user: User): Observable<User> {
+        return this.api.put('users/'+userId, user)
+            .map((res:any) => {
+                let userValidator = new UserDataValidator(res);
+                if(userValidator.checkIfUserApiResponseIsValid()) {
+                    return UserService.createUserObjectFromResponse(res);
+                }
+
+                throw new Error('Objekat korisnika nije validan.');
+            });
+    }
 }

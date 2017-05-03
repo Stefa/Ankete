@@ -1,4 +1,4 @@
-import {Component, OnInit, Output, EventEmitter, ViewChild} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter, ViewChild, Input} from '@angular/core';
 import {FormBuilder, FormGroup, Validators, AbstractControl, ValidatorFn} from "@angular/forms";
 import {UserService} from "../../services/user/user.service";
 import {User, userTypeTitles} from "../../data/user.data";
@@ -14,12 +14,15 @@ import {UserFormValidator} from "../../form-validators/user/user.form-validator"
 export class UserForm implements OnInit {
     @Output() onUserCreated = new EventEmitter<User>();
     @Output() onCancel = new EventEmitter();
+    @Input() user: User;
 
+    formValues: any;
     userFormGroup: FormGroup;
 
     formValid: boolean;
 
     formErrors: any;
+    submitButtonLabel: string;
 
     typeOptions: Array<{value:string, name: string}> = [];
     readonly currentYear = moment().year();
@@ -35,6 +38,7 @@ export class UserForm implements OnInit {
     ) { }
 
     ngOnInit() {
+        this.submitButtonLabel = this.user ? 'Ažuriraj' : 'Kreiraj';
         this.createFormGroup();
         this.formValid = true;
 
@@ -48,23 +52,56 @@ export class UserForm implements OnInit {
     }
 
     private createFormGroup() {
+        this.initFormValues();
         const emailRegexp = "^[a-z0-9!#$%&'*+\\/=?^_`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$";
         const phoneRegexp = "^\\+?[0-9\\(\\) -]*$";
         this.userFormGroup = this.formBuilder.group({
-            type: ['', Validators.required],
-            name: ['', Validators.required],
-            surname: ['', Validators.required],
-            username: ['', Validators.required],
-            password: ['', [Validators.required, Validators.minLength(5)]],
-            passwordConfirm: ['', [Validators.required]],
+            type: [this.formValues.type, Validators.required],
+            name: [this.formValues.name, Validators.required],
+            surname: [this.formValues.surname, Validators.required],
+            username: [this.formValues.username, Validators.required],
+            password: [this.formValues.password, [Validators.required, Validators.minLength(5)]],
+            passwordConfirm: [this.formValues.passwordConfirm, [Validators.required]],
             birthday: this.formBuilder.group({
-                day: ['', Validators.required],
-                month: ['', Validators.required],
-                year: ['', Validators.required],
+                day: [this.formValues.birthdayDay, Validators.required],
+                month: [this.formValues.birthdayMonth, Validators.required],
+                year: [this.formValues.birthdayYear, Validators.required],
             }),
-            phone: ['', [Validators.required, Validators.pattern(phoneRegexp)]],
-            email: ['', [Validators.required, Validators.pattern(emailRegexp)]],
+            phone: [this.formValues.phone, [Validators.required, Validators.pattern(phoneRegexp)]],
+            email: [this.formValues.email, [Validators.required, Validators.pattern(emailRegexp)]],
         }, {validator: Validators.compose([this.passwordMatchValidator, this.birthdayValidator])});
+    }
+
+    private initFormValues() {
+        if(!this.user) {
+            this.formValues = {
+                type: '',
+                name: '',
+                surname: '',
+                username: '',
+                password: '',
+                passwordConfirm: '',
+                birthdayDay: '',
+                birthdayMonth: '',
+                birthdayYear: '',
+                phone: '',
+                email: ''
+            };
+            return;
+        }
+
+        this.formValues = {};
+        this.formValues.type = this.user.type;
+        this.formValues.name = this.user.name;
+        this.formValues.surname = this.user.surname;
+        this.formValues.username = this.user.username;
+        this.formValues.password = this.user.password;
+        this.formValues.passwordConfirm = this.user.password;
+        this.formValues.birthdayDay = this.user.birthday.getDate();
+        this.formValues.birthdayMonth = this.user.birthday.getMonth()+1;
+        this.formValues.birthdayYear = this.user.birthday.getFullYear();
+        this.formValues.phone = this.user.phone;
+        this.formValues.email = this.user.email;
     }
 
     validateForm() {
@@ -82,8 +119,6 @@ export class UserForm implements OnInit {
         let newUser = this.createUserObjectFromSubmittedValue(submitValues);
 
         this.onUserCreated.emit(newUser);
-        // this.userService.createUser(newUser)
-        //     .subscribe(createdUser => this.onUserCreated.emit(createdUser));
     }
 
     private markControlsAsDirty() {

@@ -30,6 +30,7 @@ import {RegistrationsComponent} from "./components/reigistrations/registrations.
 import {UserListComponent} from "./components/user-list/user-list.component";
 import {UsersResolverGuard} from "./guards/users-resolver/users-resolver.guard";
 import {EditUserComponent} from "./containers/edit-user/edit-user.component";
+import {UserResolverGuard} from "./guards/user-resolver/user-resolver.guard";
 
 @NgModule({
     imports: [
@@ -178,7 +179,10 @@ import {EditUserComponent} from "./containers/edit-user/edit-user.component";
             {
                 path: 'edit-user/:userId',
                 component: EditUserComponent,
-                canActivate: [AdministratorGuard]
+                canActivate: [AdministratorGuard],
+                resolve: {
+                    user: UserResolverGuard
+                }
             }
         ])
     ],
@@ -186,7 +190,8 @@ import {EditUserComponent} from "./containers/edit-user/edit-user.component";
     providers: [
         ParticipantGuard, ClerkGuard, AuthorGuard, AdministratorGuard, SurveyEditGuard,
         SurveyResolverGuard, ProgressResolverGuard, SurveysResolverGuard, UserSurveysResolverGuard,
-        FinishedProgressResolverGuard, SurveyResultsGuard, RegistrationsResolverGuard, UsersResolverGuard
+        FinishedProgressResolverGuard, SurveyResultsGuard, RegistrationsResolverGuard, UsersResolverGuard,
+        UserResolverGuard
     ]
 })
 export class AppRoutingModule{}
