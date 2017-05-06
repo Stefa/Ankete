@@ -5,7 +5,8 @@ import {Answer} from "../../../data/answer.data";
 @Component({
     moduleId: module.id,
     selector: 'long-text-answer',
-    templateUrl: 'long-text-answer.component.html'
+    templateUrl: 'long-text-answer.component.html',
+    styleUrls: ['long-text-answer.component.css']
 })
 export class LongTextAnswerComponent implements OnInit {
     @Input() question: Question;

@@ -23,6 +23,7 @@ import {QuestionPagerComponentPage} from "../question-pager/question-pager.compo
 import {Observable} from "rxjs/Observable";
 import {MockRouter} from "../../test/mock.router";
 import {ProgressService} from "../../services/progress/progress.service";
+
 describe('SurveyFillOutComponent', () => {
     let question1 = {
         id: 2,

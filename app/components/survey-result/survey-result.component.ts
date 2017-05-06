@@ -37,4 +37,19 @@ export class SurveyResultComponent implements OnInit {
         ));
     }
 
+    private goBack() {
+        let backLink;
+        switch(this.route.routeConfig.path) {
+            case 'result/:surveyId/:progressId':
+                backLink = ['/results', this.survey.id];
+                break;
+            case 'result':
+                backLink = ['/survey', this.survey.id, 'info'];
+                break;
+            case 'result/:progressId':
+                backLink = ['/surveys'];
+                break;
+        }
+        this.router.navigate(backLink);
+    }
 }

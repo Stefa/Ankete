@@ -14,6 +14,7 @@ import {TextAnswerComponent} from "../survey-result-answers/text-answer/text-ans
 import {LongTextAnswerComponent} from "../survey-result-answers/long-text-answer/long-text-answer.component";
 import {ChooseOneAnswerComponent} from "../survey-result-answers/choose-one-answer/choose-one-answer.component";
 import {ChooseMultipleAnswerComponent} from "../survey-result-answers/choose-multiple-answer/choose-multiple-answer.component";
+import {DebugElement} from "@angular/core";
 
 describe('SurveyResultComponent', () => {
     let question1 = {
@@ -148,5 +149,11 @@ describe('SurveyResultComponent', () => {
             expect(answerComponents.length).toBe(3);
         }
     ));
+
+    it('should display back button', () => {
+        let backButton = fixture.debugElement.query(By.css('.back'));
+        expect(backButton instanceof DebugElement).toBe(true);
+    });
+
 
 });

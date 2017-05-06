@@ -21,7 +21,6 @@ export class EditUserComponent implements OnInit {
     }
 
     onUserFormSubmit(userObject) {
-        console.log(userObject);
         this.userService.updateUser(this.user.id, userObject).subscribe(
             createdUser => this.router.navigate(['/users'])
         );

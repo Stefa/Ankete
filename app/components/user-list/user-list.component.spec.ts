@@ -89,7 +89,7 @@ describe('UserListComponent', () => {
         }
     ));
 
-    it('should all the users except for currently logged in user', inject([ActivatedRoute, AuthService],
+    it('should display all the users except for currently logged in user', inject([ActivatedRoute, AuthService],
         (route: MockActivatedRoute, authService: AuthService) => {
             setActivatedRoute(route);
             spyOn(authService, 'getLoggedInUser').and.returnValue(obrien);
