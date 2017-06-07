@@ -144,4 +144,14 @@ export class UserService {
                 throw new Error('Objekat korisnika nije validan.');
             });
     }
+
+    changePassword(userId: number, oldPassword: string, newPassword: string): Observable<User> {
+        return this.api.get('users/'+userId)
+            .concatMap(res => {
+                if(res.password != oldPassword) {
+                    throw new Error('Uneta je pogrešna prethodna lozinka.');
+                }
+                return this.api.patch('users/'+userId, {password: newPassword});
+            });
+    }
 }

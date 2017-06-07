@@ -312,4 +312,60 @@ describe('UserService', () => {
             }
         ));
     });
+
+    describe('changePassword', () => {
+        it('should get the user with id from the api', inject(
+            [ApiService, UserService],
+            (apiService: MockApiService, userService: UserService) => {
+                let user = $.extend(true, {}, leonardoUserObject);
+
+                apiService.setResponse(user);
+                apiService.init();
+                userService.changePassword(1, 'turtlePower', 'rewopEltrut').subscribe();
+
+                expect(apiService.get).toHaveBeenCalledWith('users/1');
+            }
+        ));
+
+        it('should throw an error if old password is wrong', inject(
+            [ApiService, UserService],
+            (apiService: MockApiService, userService: UserService) => {
+                let user = $.extend(true, {}, leonardoUserObject);
+                let responseUser: User;
+                let errorMessage: string = "";
+
+                apiService.setResponse(user);
+                apiService.init();
+                userService.changePassword(1, '12345', '54321').subscribe(
+                    newUser => responseUser = newUser,
+                    error => errorMessage = error.message
+                );
+
+                expect(errorMessage).toBe('Uneta je pogrešna prethodna lozinka.');
+                expect(responseUser).toBeUndefined();
+            }
+        ));
+
+        it('should send the patch request with new password if old password is correct', inject(
+            [ApiService, UserService],
+            (apiService: MockApiService, userService: UserService) => {
+                let user = $.extend(true, {}, leonardoUserObject);
+                let userWithNewPassword = $.extend(true, {}, leonardoUserObject);
+                userWithNewPassword.password = '54321';
+
+                let responseUser: User;
+                let errorMessage: string = "";
+
+                apiService.setResponse(user);
+                apiService.init();
+                userService.changePassword(1, 'turtlePower', '54321').subscribe(
+                    newUser => responseUser = newUser,
+                    error => errorMessage = error.message
+                );
+
+                expect(errorMessage).toBe('');
+                expect(apiService.patch).toHaveBeenCalledWith('users/1', {password: '54321'});
+            }
+        ));
+    });
 });

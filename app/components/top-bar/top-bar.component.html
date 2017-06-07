@@ -35,10 +35,24 @@
                 class="ui header item"
         > Novi korisnik </a>
 
-        <button
-                *ngIf="currentUserPermission > userPermissions.anonymous"
-                class="ui right floated header item logout"
-                (click)="logout()"
-        > Odjava </button>
+
+        <div class="ui right floated item">
+            <button
+                    *ngIf="currentUserPermission > userPermissions.anonymous"
+                    class="ui item icon user-settings button"
+                    (click)="changePassword()"
+            >
+                <i class="big icons">
+                    <i class="user icon"></i>
+                    <i class="inverted corner setting icon"></i>
+                </i>
+            </button>
+
+            <button
+                    *ngIf="currentUserPermission > userPermissions.anonymous"
+                    class="ui item icon logout button"
+                    (click)="logout()"
+            > <i class="power big icon"></i> </button>
+        </div>
     </div>
 </div>

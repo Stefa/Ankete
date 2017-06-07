@@ -52,6 +52,7 @@ import {RegistrationService} from "./services/registration/registration.service"
 import {RegistrationsComponent} from "./components/reigistrations/registrations.component";
 import {UserListComponent} from "./components/user-list/user-list.component";
 import {EditUserComponent} from "./containers/edit-user/edit-user.component";
+import {ChangePasswordForm} from "./forms/change-password/change-password.form";
 
 @NgModule({
     imports:      [
@@ -71,7 +72,7 @@ import {EditUserComponent} from "./containers/edit-user/edit-user.component";
         NumericQuestionForm, TextQuestionForm, LongTextQuestionForm, ChooseOneQuestionForm, ChooseMultipleQuestionForm,
         NumericAnswerComponent, TextAnswerComponent, LongTextAnswerComponent, ChooseOneAnswerComponent, ChooseMultipleAnswerComponent,
         SurveyListComponent, EditSurveyComponent, NewSurveyComponent, ResultsComponent, RegisterComponent, CreateUserComponent,
-        RegistrationsComponent, UserListComponent, EditUserComponent
+        RegistrationsComponent, UserListComponent, EditUserComponent, ChangePasswordForm
     ],
     bootstrap:    [ AppComponent ],
     providers: [

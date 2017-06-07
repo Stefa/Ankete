@@ -1,16 +1,12 @@
-import {async, TestBed, inject, ComponentFixture} from "@angular/core/testing";
+import {async, TestBed, ComponentFixture} from "@angular/core/testing";
 import {FormsModule, ReactiveFormsModule, FormGroup} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {UserForm} from "./user.form";
-import {UserService} from "../../services/user/user.service";
-import {ApiService} from "../../services/api/api.service";
-import {AuthService} from "../../services/authentication/auth.service";
 import {By} from "@angular/platform-browser";
 import {DebugElement} from "@angular/core";
-import {userTypeTitles, userTypes, User} from "../../data/user.data";
+import {userTypeTitles, User} from "../../data/user.data";
 import {UserFormPage} from "./user.form.page";
 import {formInputUser, fibonacciUserObject} from "../../test/users";
-import {Observable} from 'rxjs/Rx';
 import {FormErrorComponent} from "../../components/form-error/form-error.component";
 import {UserFormValidator} from "../../form-validators/user/user.form-validator";
 

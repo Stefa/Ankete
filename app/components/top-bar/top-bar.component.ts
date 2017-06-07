@@ -30,4 +30,8 @@ export class TopBarComponent implements OnInit {
         this.authService.logout();
         this.router.navigate(['/login']);
     }
+
+    changePassword() {
+        this.router.navigate(['/change-password']);
+    }
 }

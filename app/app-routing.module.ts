@@ -31,6 +31,7 @@ import {UserListComponent} from "./components/user-list/user-list.component";
 import {UsersResolverGuard} from "./guards/users-resolver/users-resolver.guard";
 import {EditUserComponent} from "./containers/edit-user/edit-user.component";
 import {UserResolverGuard} from "./guards/user-resolver/user-resolver.guard";
+import {ChangePasswordForm} from "./forms/change-password/change-password.form";
 
 @NgModule({
     imports: [
@@ -183,6 +184,11 @@ import {UserResolverGuard} from "./guards/user-resolver/user-resolver.guard";
                 resolve: {
                     user: UserResolverGuard
                 }
+            },
+            {
+                path: 'change-password',
+                component: ChangePasswordForm,
+                canActivate: [ParticipantGuard]
             }
         ])
     ],
