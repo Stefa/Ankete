@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Survey} from "../../data/survey.data";
 import {SurveyService} from "../../services/survey/survey.service";
 import {AuthService} from "../../services/authentication/auth.service";
-import {User, UserPermissions} from "../../data/user.data";
+import {User, UserPermissions, userTypes} from "../../data/user.data";
 import * as moment from 'moment/moment';
 
 @Component({
@@ -19,8 +19,6 @@ export class SurveyListComponent implements OnInit, AfterViewInit {
     sortDirection: number = 1;
     showActionColumn: boolean = false;
 
-    showSurveyActions: boolean;
-
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -30,8 +28,12 @@ export class SurveyListComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.surveys = this.route.snapshot.data['surveys'];
+        let currentUser = this.authService.getLoggedInUser();
         this.surveys.map(survey => {
-            survey.canEdit = moment().isBefore(moment(survey.start));
+            let hasAccessToSurvey = currentUser.type == userTypes.administrator || currentUser.id == survey.author.id;
+            survey.canEdit = moment().isBefore(moment(survey.start)) && hasAccessToSurvey;
+            survey.canDelete = hasAccessToSurvey;
+            survey.canViewResults = hasAccessToSurvey;
             return survey;
         });
         this.onMySurveysPage = this.route.snapshot.data['mySurveys'];
@@ -47,7 +49,6 @@ export class SurveyListComponent implements OnInit, AfterViewInit {
         let userPermission: UserPermissions = UserPermissions[currentUser.type];
 
         this.showActionColumn = userPermission >= UserPermissions.clerk;
-        this.showSurveyActions = userPermission >= UserPermissions.administrator || this.onMySurveysPage;
     }
 
     sortByName() {
@@ -82,7 +83,8 @@ export class SurveyListComponent implements OnInit, AfterViewInit {
         this.router.navigate(['/survey-proxy', surveyId, 'info']);
     }
 
-    deleteSurvey(surveyId) {
+    deleteSurvey(surveyId, canDelete) {
+        if(!canDelete) return;
         this.surveyService.deleteSurvey(surveyId).subscribe(_ => {
             this.surveys = this.surveys.filter(survey => survey.id != surveyId);
         });

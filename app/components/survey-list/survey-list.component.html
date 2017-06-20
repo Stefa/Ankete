@@ -30,7 +30,12 @@
                     <button class="ui button" (click)="goToSurveyProxy(survey.id)" data-content="Popuni kao službenik">
                         <i class="add user icon"></i>
                     </button>
-                    <button class="ui delete button" (click)="deleteSurvey(survey.id)" data-content="Obriši anketu">
+                    <button
+                            class="ui delete button"
+                            [class.noedit]="!survey.canDelete"
+                            (click)="deleteSurvey(survey.id, survey.canDelete)"
+                            data-content="Obriši anketu"
+                    >
                         <i class="remove icon"></i>
                     </button>
                     <button
@@ -41,7 +46,12 @@
                     >
                         <i class="write icon"></i>
                     </button>
-                    <button class="ui button" (click)="goToSurveyResults(survey.id)" data-content="Rezultati ankete">
+                    <button
+                            class="ui button"
+                            [class.noedit]="!survey.canViewResults"
+                            (click)="goToSurveyResults(survey.id)"
+                            data-content="Rezultati ankete"
+                    >
                         <i class="tasks icon"></i>
                     </button>
                 </div>
