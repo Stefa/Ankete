@@ -53,6 +53,8 @@ import {RegistrationsComponent} from "./components/reigistrations/registrations.
 import {UserListComponent} from "./components/user-list/user-list.component";
 import {EditUserComponent} from "./containers/edit-user/edit-user.component";
 import {ChangePasswordForm} from "./forms/change-password/change-password.form";
+import {QuestionTemplateService} from "./services/question-template/question-template.service";
+import {QuestionTemplateSearchComponent} from "./components/question-template-search/question-template-search.component";
 
 @NgModule({
     imports:      [
@@ -72,13 +74,14 @@ import {ChangePasswordForm} from "./forms/change-password/change-password.form";
         NumericQuestionForm, TextQuestionForm, LongTextQuestionForm, ChooseOneQuestionForm, ChooseMultipleQuestionForm,
         NumericAnswerComponent, TextAnswerComponent, LongTextAnswerComponent, ChooseOneAnswerComponent, ChooseMultipleAnswerComponent,
         SurveyListComponent, EditSurveyComponent, NewSurveyComponent, ResultsComponent, RegisterComponent, CreateUserComponent,
-        RegistrationsComponent, UserListComponent, EditUserComponent, ChangePasswordForm
+        RegistrationsComponent, UserListComponent, EditUserComponent, ChangePasswordForm, QuestionTemplateSearchComponent
     ],
     bootstrap:    [ AppComponent ],
     providers: [
         ApiService, UserService, AuthService, QuestionService,
         UserFormValidator, SurveyService, SurveyFormValidator,
-        ProgressService, AnswerService, RegistrationService
+        ProgressService, AnswerService, RegistrationService,
+        QuestionTemplateService
     ]
 })
 export class AppModule { }

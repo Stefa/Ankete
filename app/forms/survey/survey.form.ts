@@ -8,7 +8,9 @@ import {AuthService} from "../../services/authentication/auth.service";
 import {Question} from "../../data/question.data";
 import {QuestionService} from "../../services/question/question.service";
 import {DragulaService} from "ng2-dragula";
-import {ActivatedRoute} from "@angular/router";
+import {QuestionTemplateService} from "../../services/question-template/question-template.service";
+import {QuestionTemplate} from "../../data/questionTemplate.data";
+import {ApiService} from "../../services/api/api.service";
 
 @Component({
     moduleId: module.id,
@@ -24,6 +26,7 @@ export class SurveyForm implements OnInit, OnDestroy {
 
     surveyFormGroup: FormGroup;
     showQuestionForm: boolean = false;
+    showImportQuestion: boolean = false;
     questions: Array<Question> = [];
     questionIdsBeforeDelete: Array<number> = [];
 
@@ -56,9 +59,11 @@ export class SurveyForm implements OnInit, OnDestroy {
         private formBuilder: FormBuilder,
         private surveyService: SurveyService,
         private surveyFormValidator: SurveyFormValidator,
+        private questionTemplateService: QuestionTemplateService,
         private authService: AuthService,
         private questionService: QuestionService,
-        private dragulaService: DragulaService
+        private dragulaService: DragulaService,
+        private api: ApiService
     ) {
         dragulaService.setOptions('questions-bag', {
             removeOnSpill: true,
@@ -242,9 +247,10 @@ export class SurveyForm implements OnInit, OnDestroy {
         this.onCancel.emit();
     }
 
-    addQuestionForm(event) {
-        if(this.showQuestionForm) return;
-        this.showQuestionForm = true;
+    displayQuestionForm(event, type) {
+        if(this.showQuestionForm || this.showImportQuestion) return;
+        this.showQuestionForm = type == 'new';
+        this.showImportQuestion = type == 'import';
         this.dimSurveyForm();
         event.preventDefault();
     }
@@ -261,15 +267,40 @@ export class SurveyForm implements OnInit, OnDestroy {
         this.$buttons.dimmer('hide');
     }
 
-    addQuestion(question: Question) {
+    addQuestion(question: Question, createTemplate: boolean = true) {
         this.questions.push(question);
         this.showQuestionForm = false;
+        this.showImportQuestion = false;
         this.undimSurveyForm();
         this.validatePages();
+
+        if(createTemplate)
+            this.createQuestionTemplate(question);
+    }
+
+    private createQuestionTemplate(question: Question) {
+        let questionTemplate: QuestionTemplate = {
+            text: question.text,
+            author: question.author,
+            type: question.type,
+            required: question.required
+        };
+        if(question.answerLabels) {
+            questionTemplate.answerLabels = question.answerLabels;
+        }
+        if(question.otherAnswer) {
+            questionTemplate.otherAnswer = question.otherAnswer;
+        }
+        this.questionTemplateService.create(questionTemplate).subscribe();
     }
 
     cancelQuestion() {
         this.showQuestionForm = false;
+        this.undimSurveyForm();
+    }
+
+    cancelImport() {
+        this.showImportQuestion = false;
         this.undimSurveyForm();
     }
 

@@ -1,3 +1,13 @@
 .survey-buttons {
     padding-top: 10px;
 }
+
+.template-search {
+    min-height: 235px;
+}
+
+.import-cancel {
+    position:absolute;
+    bottom: 12px;
+    right: 12px;
+}

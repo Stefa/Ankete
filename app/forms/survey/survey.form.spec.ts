@@ -23,6 +23,7 @@ import {questionTypes, Question} from "../../data/question.data";
 import {MockActivatedRoute} from "../../test/mock.activated-route";
 import {ActivatedRoute} from "@angular/router";
 import {userTypes} from "../../data/user.data";
+import {QuestionTemplateService} from "../../services/question-template/question-template.service";
 
 describe('SurveyForm', () => {
     beforeEach(async(() => {
@@ -31,6 +32,7 @@ describe('SurveyForm', () => {
             declarations: [SurveyForm, FormErrorComponent, QuestionForm],
             providers: [
                 SurveyService, ApiService, SurveyFormValidator, AuthService, UserService, QuestionService,
+                QuestionTemplateService,
                 {provide: ActivatedRoute, useClass: MockActivatedRoute}
             ]
         })
@@ -243,7 +245,7 @@ describe('SurveyForm', () => {
             type: questionTypes.numeric,
             text: 'Test question?',
             required: true,
-            answers: ['answer1', 'answer2', 'answer3'],
+            answerLabels: ['answer1', 'answer2', 'answer3'],
             author: leonardoUserObject
         };
         let createdQuestion1: Question = Object.assign({id: 1}, newQuestion1);
@@ -251,7 +253,7 @@ describe('SurveyForm', () => {
             type: questionTypes.choose_one,
             text: 'Choose one result?',
             required: false,
-            answers: ['result1', 'result2', 'result3'],
+            answerLabels: ['result1', 'result2', 'result3'],
             author: leonardoUserObject
         };
         let createdQuestion2: Question = Object.assign({id: 2}, newQuestion2);
@@ -287,9 +289,18 @@ describe('SurveyForm', () => {
             expect(surveyFormPage.addQuestionButton.classes.disabled).toBe(true);
         });
 
-        function setQuestionSpies(questionService, authService, returnQuestion) {
+        function setQuestionSpies(
+            questionService: QuestionService,
+            authService: AuthService,
+            questionTemplateService: QuestionTemplateService,
+            returnQuestion
+        ) {
             spyOn(questionService, 'createQuestion').and.returnValue(Observable.of(returnQuestion));
             spyOn(authService, 'getLoggedInUser').and.returnValue(leonardoUserObject);
+
+            let returnTemplate = jQuery.extend({}, returnQuestion);
+            delete returnTemplate.survey;
+            spyOn(questionTemplateService, 'create').and.returnValue(Observable.of(returnTemplate));
         }
 
         function addQuestion(newQuestion) {
@@ -301,26 +312,35 @@ describe('SurveyForm', () => {
             surveyFormPage.questionFormPage.setText(newQuestion.text);
             fixture.detectChanges();
             surveyFormPage.questionFormPage.getAnswerInput();
-            newQuestion.answers.forEach(answer => surveyFormPage.questionFormPage.setAnswer(answer));
+            newQuestion.answerLabels.forEach(answer => surveyFormPage.questionFormPage.setAnswer(answer));
             fixture.detectChanges();
             surveyFormPage.questionFormPage.submitForm();
         }
 
-        it('should add question to questions array when question form is submitted',
-            inject([QuestionService, AuthService],
-            (questionService: QuestionService, authService: AuthService) => {
-                setQuestionSpies(questionService, authService, createdQuestion1);
+        it('should add question to questions array when question form is submitted', inject(
+            [QuestionService, AuthService, QuestionTemplateService],
+            (questionService: QuestionService, authService: AuthService, questionTemplateService: QuestionTemplateService) => {
+                setQuestionSpies(questionService, authService, questionTemplateService, createdQuestion1);
                 addQuestion(newQuestion1);
                 expect(fixture.componentInstance.questions[0]).toEqual(createdQuestion1);
             }
         ));
 
-        it('should add two questions to questions array when question form is submitted two times',
-            inject([QuestionService, AuthService],
-            (questionService: QuestionService, authService: AuthService) => {
+        it('should add two questions to questions array when question form is submitted two times', inject(
+            [QuestionService, AuthService, QuestionTemplateService],
+            (questionService: QuestionService, authService: AuthService, questionTemplateService: QuestionTemplateService) => {
                 spyOn(questionService, 'createQuestion').and.returnValues(
                     Observable.of(createdQuestion1), Observable.of(createdQuestion2)
                 );
+
+                let createdTemplate1 = jQuery.extend({}, createdQuestion1);
+                delete createdTemplate1.survey;
+                let createdTemplate2 = jQuery.extend({}, createdQuestion2);
+                delete createdTemplate2.survey;
+                spyOn(questionTemplateService, 'create').and.returnValues(
+                    Observable.of(createdTemplate1), Observable.of(createdTemplate2)
+                );
+
                 spyOn(authService, 'getLoggedInUser').and.returnValue(leonardoUserObject);
                 addQuestion(newQuestion1);
                 fixture.detectChanges();
@@ -331,9 +351,10 @@ describe('SurveyForm', () => {
             }
         ));
 
-        it('should remove question form after successful submit', inject([QuestionService, AuthService],
-            (questionService: QuestionService, authService: AuthService) => {
-                setQuestionSpies(questionService, authService, createdQuestion1);
+        it('should remove question form after successful submit', inject(
+            [QuestionService, AuthService, QuestionTemplateService],
+            (questionService: QuestionService, authService: AuthService, questionTemplateService: QuestionTemplateService) => {
+                setQuestionSpies(questionService, authService, questionTemplateService, createdQuestion1);
                 addQuestion(newQuestion1);
                 fixture.detectChanges();
                 let questionForm = fixture.debugElement.query(By.directive(QuestionForm));
@@ -341,12 +362,22 @@ describe('SurveyForm', () => {
             }
         ));
 
-        it('should enable Add question button after question form is submitted', inject([QuestionService, AuthService],
-            (questionService: QuestionService, authService: AuthService) => {
-                setQuestionSpies(questionService, authService, createdQuestion1);
+        it('should enable Add question button after question form is submitted', inject(
+            [QuestionService, AuthService, QuestionTemplateService],
+            (questionService: QuestionService, authService: AuthService, questionTemplateService: QuestionTemplateService) => {
+                setQuestionSpies(questionService, authService, questionTemplateService, createdQuestion1);
                 addQuestion(newQuestion1);
                 fixture.detectChanges();
                 expect(surveyFormPage.addQuestionButton.classes.disabled).toBe(false);
+            }
+        ));
+
+        it('should create question template after question form is submitted', inject(
+            [QuestionService, AuthService, QuestionTemplateService],
+            (questionService: QuestionService, authService: AuthService, questionTemplateService: QuestionTemplateService) => {
+                setQuestionSpies(questionService, authService, questionTemplateService, createdQuestion1);
+                addQuestion(newQuestion1);
+                expect(questionTemplateService.create).toHaveBeenCalledWith(newQuestion1);
             }
         ));
 
@@ -394,8 +425,13 @@ describe('SurveyForm', () => {
         }
         
         it('should update all the questions with surveyId on successful survey form submit', inject(
-            [SurveyService, AuthService, QuestionService],
-            (surveyService: SurveyService, authService: AuthService, questionService: QuestionService) => {
+            [SurveyService, AuthService, QuestionService, QuestionTemplateService],
+            (
+                surveyService: SurveyService,
+                authService: AuthService,
+                questionService: QuestionService,
+                questionTemplateService: QuestionTemplateService
+            ) => {
                 let newSurvey = Object.assign({}, newTestSurveyFormInput);
                 let surveyResponse = Object.assign({}, newTestSurvey);
                 let surveyRequest = Object.assign({}, newTestSurvey);
@@ -405,6 +441,11 @@ describe('SurveyForm', () => {
                 setSpies(surveyService, surveyResponse, authService);
                 spyOn(questionService, 'createQuestion').and.returnValues(
                     Observable.of(createdQuestion1), Observable.of(createdQuestion2)
+                );
+                let createdTemplate1 = jQuery.extend({}, createdQuestion1);
+                let createdTemplate2 = jQuery.extend({}, createdQuestion2);
+                spyOn(questionTemplateService, 'create').and.returnValues(
+                    Observable.of(createdTemplate1), Observable.of(createdTemplate2)
                 );
 
                 let updatedQuestion1 = Object.assign({survey:{id: 1}}, createdQuestion1);
@@ -434,14 +475,24 @@ describe('SurveyForm', () => {
         ));
 
         it('should display error on submit when number of pages is larger than number of questions', inject(
-            [SurveyService, AuthService, QuestionService],
-            (surveyService: SurveyService, authService: AuthService, questionService: QuestionService) => {
+            [SurveyService, AuthService, QuestionService, QuestionTemplateService],
+            (
+                    surveyService: SurveyService,
+                    authService: AuthService,
+                    questionService: QuestionService,
+                    questionTemplateService: QuestionTemplateService
+            ) => {
                 let newSurvey = Object.assign({}, newTestSurveyFormInput);
                 newSurvey.pages = 3;
                 setSpies(surveyService, null, authService);
 
                 spyOn(questionService, 'createQuestion').and.returnValues(
                     Observable.of(createdQuestion1), Observable.of(createdQuestion2)
+                );
+                let createdTemplate1 = jQuery.extend({}, createdQuestion1);
+                let createdTemplate2 = jQuery.extend({}, createdQuestion2);
+                spyOn(questionTemplateService, 'create').and.returnValues(
+                    Observable.of(createdTemplate1), Observable.of(createdTemplate2)
                 );
 
                 addQuestion(newQuestion1);
