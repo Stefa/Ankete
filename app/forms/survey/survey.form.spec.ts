@@ -24,12 +24,13 @@ import {MockActivatedRoute} from "../../test/mock.activated-route";
 import {ActivatedRoute} from "@angular/router";
 import {userTypes} from "../../data/user.data";
 import {QuestionTemplateService} from "../../services/question-template/question-template.service";
+import {QuestionTemplateSearchComponent} from "../../components/question-template-search/question-template-search.component";
 
 describe('SurveyForm', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             imports: [FormsModule, ReactiveFormsModule, HttpModule, DragulaModule, MyDatePickerModule],
-            declarations: [SurveyForm, FormErrorComponent, QuestionForm],
+            declarations: [SurveyForm, FormErrorComponent, QuestionForm, QuestionTemplateSearchComponent],
             providers: [
                 SurveyService, ApiService, SurveyFormValidator, AuthService, UserService, QuestionService,
                 QuestionTemplateService,
