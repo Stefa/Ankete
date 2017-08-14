@@ -11,9 +11,7 @@ import {AppRoutingModule} from "./app-routing.module";
 import { HomeComponent } from './containers/home/home.component';
 import { TopBarComponent } from './components/top-bar/top-bar.component';
 import {QuestionForm} from "./forms/question/question.form";
-import {TestComponent} from "./containers/test/test.component";
 import {QuestionService} from "./services/question/question.service";
-import {TestForm} from "./forms/test/test.form";
 import {UserForm} from "./forms/user/user.form";
 import {MyDatePickerModule} from "mydatepicker";
 import {FormErrorComponent} from "./components/form-error/form-error.component";
@@ -27,8 +25,6 @@ import {ProgressService} from "./services/progress/progress.service";
 import {AnswerService} from "./services/answer/answer.service";
 import {SurveyFillOutComponent} from "./components/survey-fill-out/survey-fill-out.component";
 import {SurveyResultComponent} from "./components/survey-result/survey-result.component";
-import {UnoForm} from "./forms/test/uno/uno.form";
-import {DosForm} from "./forms/test/dos/dos.form";
 import {QuestionPagerComponent} from "./components/question-pager/question-pager.component";
 import {QuestionComponent} from "./components/question/question.component";
 import {NumericQuestionForm} from "./forms/survey-fill-out/numeric-question/numeric-question.form";
@@ -71,9 +67,9 @@ import {QuestionStatisticsComponent} from "./components/question-statistics/ques
     ],
     declarations: [
         AppComponent, LoginForm, HomeComponent, TopBarComponent,
-        QuestionForm, TestComponent, TestForm, UserForm,
+        QuestionForm, UserForm,
         FormErrorComponent, SurveyForm, SurveyInfoComponent, SurveyFillOutComponent, SurveyResultComponent,
-        UnoForm, DosForm, QuestionPagerComponent, QuestionComponent, AnswerComponent,
+        QuestionPagerComponent, QuestionComponent, AnswerComponent,
         NumericQuestionForm, TextQuestionForm, LongTextQuestionForm, ChooseOneQuestionForm, ChooseMultipleQuestionForm,
         NumericAnswerComponent, TextAnswerComponent, LongTextAnswerComponent, ChooseOneAnswerComponent, ChooseMultipleAnswerComponent,
         SurveyListComponent, EditSurveyComponent, NewSurveyComponent, ResultsComponent, RegisterComponent, CreateUserComponent,
