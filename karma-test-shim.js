@@ -16,14 +16,35 @@ function isSpecFile(path) {
 }
 function isSpecFile1(path) {
     var files = [
-        // 'question.form.spec.js',
-        // 'progress.service.spec.js',
+        // 'answer.component.spec.js',
         // 'answer.service.spec.js',
-        // 'survey.form.spec.js',
-        'survey-info.component.spec.js'
+        // 'api.service.spec.js',
+        // 'change-password.form.spec.js',
+        // 'choose-multiple-answer.component.spec.js',
+        // 'choose-multiple-question.form.spec.js',
+        // 'choose-one-answer.component.spec.js',
+        // 'choose-one-question.form.spec.js',
+        // 'long-text-answer.component.spec.js',
+        // 'long-text-question.form.spec.js',
+        // 'numeric-answer.component.spec.js',
+        // 'numeric-question.form.spec.js',
+        // 'progress.service.spec.js',
+        // 'question-pager.component.spec.js',
+        // 'question-template.service.spec.js',
+        // 'question.form.spec.js',
         // 'question.service.spec.js',
-        // 'survey.data-validator.spec.js'
-        // 'api.service.spec.js'
+        // 'registrations.component.spec.js',
+        // 'registration.service.spec.js',
+        // 'results.component.spec.js',
+        // 'survey-fill-out.component.spec.js',
+        // 'survey-list.component.spec.js',
+        // 'survey-result.component.spec.js',
+        // 'survey.data-validator.spec.js',
+        'survey.form.spec.js',
+        // 'survey.service.spec.js',
+        // 'text-answer.component.spec.js',
+        // 'text-question.form.spec.js',
+        // 'user-list.component.spec.js',
     ];
     for(var i = 0; i<files.length; i++) {
         var flength = files[i].length;
@@ -38,7 +59,7 @@ function isAppFile(path) {
 }
 
 var allSpecFiles = Object.keys(window.__karma__.files)
-    .filter(isSpecFile1)
+    .filter(isSpecFile)
     .filter(isAppFile);
 
 // Load our SystemJS configuration.

@@ -101,4 +101,11 @@ export class QuestionService {
                 .map(this.createQuestionFromApiResponse);
         });
     }
+
+    getSurveyQuestionsWithAnswers(surveyId: number): Observable<any[]> {
+        return this.api.get('questions?surveyId='+surveyId+'&_embed=answers').map((res: any) => {
+            return res
+                .map(this.createQuestionFromApiResponse);
+        });
+    }
 }

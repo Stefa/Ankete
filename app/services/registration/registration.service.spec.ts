@@ -36,14 +36,7 @@ describe('RegistrationService', () => {
         newRegistrationApiResponse.birthday = "1945-04-15T16:00:00.000Z";
         newRegistrationApiResponse.id = 1;
 
-        it('should send post request to the api', inject([ApiService, RegistrationService],
-            fakeAsync((apiService: MockApiService, registrationService: RegistrationService) => {
-                apiService.setResponse(newRegistrationApiResponse);
-                apiService.init();
-                registrationService.createRegistration(newRegistration).subscribe();
-                expect(apiService.post).toHaveBeenCalledWith('registrations', newRegistration);
-            }))
-        );
+
 
         it('should return true if api returned valid data', inject([ApiService, RegistrationService],
             fakeAsync((apiService: MockApiService, registrationService: RegistrationService) => {

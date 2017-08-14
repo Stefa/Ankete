@@ -55,6 +55,9 @@ import {EditUserComponent} from "./containers/edit-user/edit-user.component";
 import {ChangePasswordForm} from "./forms/change-password/change-password.form";
 import {QuestionTemplateService} from "./services/question-template/question-template.service";
 import {QuestionTemplateSearchComponent} from "./components/question-template-search/question-template-search.component";
+import {SurveyStatisticsComponent} from "./components/survey-statistics/survey-statistics.component";
+import {StatisticsService} from "./services/statistics/statistics.service";
+import {QuestionStatisticsComponent} from "./components/question-statistics/question-statistics.component";
 
 @NgModule({
     imports:      [
@@ -74,14 +77,15 @@ import {QuestionTemplateSearchComponent} from "./components/question-template-se
         NumericQuestionForm, TextQuestionForm, LongTextQuestionForm, ChooseOneQuestionForm, ChooseMultipleQuestionForm,
         NumericAnswerComponent, TextAnswerComponent, LongTextAnswerComponent, ChooseOneAnswerComponent, ChooseMultipleAnswerComponent,
         SurveyListComponent, EditSurveyComponent, NewSurveyComponent, ResultsComponent, RegisterComponent, CreateUserComponent,
-        RegistrationsComponent, UserListComponent, EditUserComponent, ChangePasswordForm, QuestionTemplateSearchComponent
+        RegistrationsComponent, UserListComponent, EditUserComponent, ChangePasswordForm, QuestionTemplateSearchComponent,
+        SurveyStatisticsComponent, QuestionStatisticsComponent
     ],
     bootstrap:    [ AppComponent ],
     providers: [
         ApiService, UserService, AuthService, QuestionService,
         UserFormValidator, SurveyService, SurveyFormValidator,
         ProgressService, AnswerService, RegistrationService,
-        QuestionTemplateService
+        QuestionTemplateService, StatisticsService
     ]
 })
 export class AppModule { }

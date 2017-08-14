@@ -34,6 +34,7 @@ export class SurveyListComponent implements OnInit, AfterViewInit {
             survey.canEdit = moment().isBefore(moment(survey.start)) && hasAccessToSurvey;
             survey.canDelete = hasAccessToSurvey;
             survey.canViewResults = hasAccessToSurvey;
+            survey.canViewStatistics = hasAccessToSurvey;
             return survey;
         });
         this.onMySurveysPage = this.route.snapshot.data['mySurveys'];
@@ -96,5 +97,9 @@ export class SurveyListComponent implements OnInit, AfterViewInit {
 
     goToSurveyResults(surveyId) {
         this.router.navigate(['/results', surveyId]);
+    }
+
+    goToSurveyStatistics(surveyId) {
+        this.router.navigate(['/statistics', surveyId]);
     }
 }

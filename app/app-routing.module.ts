@@ -32,6 +32,8 @@ import {UsersResolverGuard} from "./guards/users-resolver/users-resolver.guard";
 import {EditUserComponent} from "./containers/edit-user/edit-user.component";
 import {UserResolverGuard} from "./guards/user-resolver/user-resolver.guard";
 import {ChangePasswordForm} from "./forms/change-password/change-password.form";
+import {SurveyStatisticsComponent} from "./components/survey-statistics/survey-statistics.component";
+import {AnswersResolverGuard} from "./guards/answers-resolver/answers-resolver.guard";
 
 @NgModule({
     imports: [
@@ -153,6 +155,14 @@ import {ChangePasswordForm} from "./forms/change-password/change-password.form";
                 }
             },
             {
+                path: 'statistics/:surveyId',
+                component: SurveyStatisticsComponent,
+                canActivate: [AuthorGuard, SurveyResultsGuard],
+                resolve: {
+                    questions: AnswersResolverGuard,
+                }
+            },
+            {
                 path: 'register',
                 component: RegisterComponent
             },
@@ -197,7 +207,7 @@ import {ChangePasswordForm} from "./forms/change-password/change-password.form";
         ParticipantGuard, ClerkGuard, AuthorGuard, AdministratorGuard, SurveyEditGuard,
         SurveyResolverGuard, ProgressResolverGuard, SurveysResolverGuard, UserSurveysResolverGuard,
         FinishedProgressResolverGuard, SurveyResultsGuard, RegistrationsResolverGuard, UsersResolverGuard,
-        UserResolverGuard
+        UserResolverGuard, AnswersResolverGuard
     ]
 })
 export class AppRoutingModule{}

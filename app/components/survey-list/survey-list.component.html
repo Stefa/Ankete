@@ -54,6 +54,14 @@
                     >
                         <i class="tasks icon"></i>
                     </button>
+                    <button
+                            class="ui button"
+                            [class.noedit]="!survey.canViewStatistics"
+                            (click)="goToSurveyStatistics(survey.id)"
+                            data-content="Izveštaj ankete"
+                    >
+                        <i class="bar chart icon"></i>
+                    </button>
                 </div>
             </td>
         </tr>
